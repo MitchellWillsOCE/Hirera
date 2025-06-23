@@ -47,18 +47,37 @@ export function JobCard({
   getStatusColor, 
   getPriorityColor 
 }: JobCardProps) {
-  const formatSalary = (salary: JobApplication['salary']) => {
-    if (!salary) return null;
-    const { min, max, currency } = salary;
-    if (min && max) {
-      return `${currency === 'USD' ? '$' : currency}${min.toLocaleString()} - ${currency === 'USD' ? '$' : currency}${max.toLocaleString()}`;
+  const formatSalary = (job: JobApplication) => {
+    // Handle new schema with salaryMin/salaryMax
+    if ((job as any).salaryMin || (job as any).salaryMax) {
+      const min = (job as any).salaryMin;
+      const max = (job as any).salaryMax;
+      const currency = (job as any).salaryCurrency || 'USD';
+      const symbol = currency === 'USD' ? '$' : currency;
+      
+      if (min && max) {
+        return `${symbol}${min.toLocaleString()} - ${symbol}${max.toLocaleString()}`;
+      } else if (min) {
+        return `From ${symbol}${min.toLocaleString()}`;
+      } else if (max) {
+        return `Up to ${symbol}${max.toLocaleString()}`;
+      }
     }
-    if (min) {
-      return `${currency === 'USD' ? '$' : currency}${min.toLocaleString()}+`;
+    
+    // Handle old schema with single salary field
+    if (job.salary) {
+      const { min, max, currency } = job.salary;
+      const symbol = currency === 'USD' ? '$' : currency;
+      
+      if (min && max) {
+        return `${symbol}${min.toLocaleString()} - ${symbol}${max.toLocaleString()}`;
+      } else if (min) {
+        return `From ${symbol}${min.toLocaleString()}`;
+      } else if (max) {
+        return `Up to ${symbol}${max.toLocaleString()}`;
+      }
     }
-    if (max) {
-      return `Up to ${currency === 'USD' ? '$' : currency}${max.toLocaleString()}`;
-    }
+    
     return null;
   };
 
@@ -66,9 +85,16 @@ export function JobCard({
     'applied', 'screening', 'interview', 'offer', 'rejected', 'withdrawn'
   ];
 
-  const getDaysAgo = (date: Date) => {
+  const getDaysAgo = (date: Date | string | null | undefined) => {
+    if (!date) return 0;
+    
     const now = new Date();
-    const diffTime = Math.abs(now.getTime() - date.getTime());
+    const dateObj = typeof date === 'string' ? new Date(date) : date;
+    
+    // Check if the date is valid
+    if (isNaN(dateObj.getTime())) return 0;
+    
+    const diffTime = Math.abs(now.getTime() - dateObj.getTime());
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
     return diffDays;
   };
@@ -83,6 +109,21 @@ export function JobCard({
       withdrawn: '🚫'
     };
     return statusEmojis[status];
+  };
+
+  const formatDate = (date: Date | string | null | undefined, formatString: string) => {
+    if (!date) return 'N/A';
+    
+    try {
+      const dateObj = typeof date === 'string' ? new Date(date) : date;
+      
+      // Check if the date is valid
+      if (isNaN(dateObj.getTime())) return 'N/A';
+      
+      return format(dateObj, formatString);
+    } catch (error) {
+      return 'N/A';
+    }
   };
 
   return (
@@ -157,13 +198,13 @@ export function JobCard({
           </div>
 
           {/* Salary */}
-          {job.salary && formatSalary(job.salary) && (
+          {(job.salary || (job as any).salaryMin || (job as any).salaryMax) && formatSalary(job) && (
             <motion.div 
               className="flex items-center text-sm text-slate-700 dark:text-slate-300"
               whileHover={{ scale: 1.05 }}
             >
               <DollarSign className="h-4 w-4 mr-1 text-green-600" />
-              <span className="font-semibold">{formatSalary(job.salary)}</span>
+              <span className="font-semibold">{formatSalary(job)}</span>
             </motion.div>
           )}
 
@@ -288,10 +329,10 @@ export function JobCard({
           <div className="flex items-center justify-between text-xs text-slate-500 pt-2 border-t border-slate-100 dark:border-slate-700">
             <div className="flex items-center">
               <Calendar className="h-3 w-3 mr-1" />
-              Applied: {format(job.appliedDate, 'MMM dd, yyyy')}
+              Applied: {formatDate(job.appliedDate, 'MMM dd, yyyy')}
             </div>
             <div>
-              Updated: {format(job.lastUpdated, 'MMM dd')}
+              Updated: {formatDate(job.lastUpdated, 'MMM dd')}
             </div>
           </div>
         </CardContent>
