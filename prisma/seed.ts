@@ -29,7 +29,7 @@ async function main() {
 
   // Create predefined users with varied data
   console.log('👥 Creating predefined users...')
-  const createdUsers = []
+  const createdUsers: { user: any, profile: MockUser }[] = []
 
   for (const profile of mockUserProfiles) {
     const hashedPassword = await bcrypt.hash('password123', 10)
@@ -47,12 +47,12 @@ async function main() {
     })
 
     createdUsers.push({ user, profile })
-    console.log(`   ✓ Created user: ${profile.firstName} ${profile.lastName} (${profile.country})`)
+    console.log(`   ✓ Created user: ${profile.firstName} ${profile.lastName} (${profile.country}) - ${profile.applicationCount} apps planned`)
   }
 
   // Generate additional random users
   console.log('🎲 Creating additional random users...')
-  const randomUsers = generateMockUsers(15)
+  const randomUsers = generateMockUsers(20) // Increased from 15 to 20
   
   for (const mockUser of randomUsers) {
     const hashedPassword = await bcrypt.hash(mockUser.password, 10)
@@ -69,99 +69,144 @@ async function main() {
       }
     })
 
-    const applicationCount = Math.floor(Math.random() * 20) + 5 // 5-25 applications
-    createdUsers.push({ 
-      user, 
-      profile: { 
-        ...mockUser, 
-        applicationCount,
-        successRate: Math.floor(Math.random() * 25) + 5 // 5-30% success rate
-      } 
-    })
-    console.log(`   ✓ Created user: ${mockUser.firstName} ${mockUser.lastName} (${mockUser.country})`)
+    createdUsers.push({ user, profile: mockUser })
+    console.log(`   ✓ Created user: ${mockUser.firstName} ${mockUser.lastName} (${mockUser.country}) - ${mockUser.applicationCount} apps planned`)
   }
 
   // Create job applications for each user
   console.log('💼 Creating job applications...')
   const allTags = new Set<string>()
+  let totalApplications = 0
 
   for (const { user, profile } of createdUsers) {
-    const applications = generateMockJobApplications(profile.applicationCount)
+    const applicationCount = profile.applicationCount || Math.floor(Math.random() * 30) + 10
+    const applications = generateMockJobApplications(applicationCount)
+    
+    let userApplicationsCreated = 0
     
     for (const app of applications) {
-      // Create job application
-      const jobApp = await prisma.jobApplication.create({
-        data: {
-          jobTitle: app.jobTitle,
-          company: app.company,
-          location: app.location,
-          jobPostUrl: app.jobPostUrl,
-          salaryMin: app.salaryMin,
-          salaryMax: app.salaryMax,
-          salaryCurrency: app.salaryCurrency,
-          contactName: app.contactName,
-          contactEmail: app.contactEmail,
-          contactPhone: app.contactPhone,
-          notes: app.notes,
-          status: app.status.toUpperCase() as any,
-          priority: app.priority.toUpperCase() as any,
-          appliedDate: app.appliedDate,
-          userId: user.id
-        }
-      })
+      try {
+        // Create job application
+        const jobApp = await prisma.jobApplication.create({
+          data: {
+            jobTitle: app.jobTitle,
+            company: app.company,
+            location: app.location,
+            jobPostUrl: app.jobPostUrl,
+            salaryMin: app.salaryMin,
+            salaryMax: app.salaryMax,
+            salaryCurrency: app.salaryCurrency,
+            contactName: app.contactName,
+            contactEmail: app.contactEmail,
+            contactPhone: app.contactPhone,
+            notes: app.notes,
+            status: app.status.toUpperCase() as any,
+            priority: app.priority.toUpperCase() as any,
+            appliedDate: app.appliedDate,
+            userId: user.id
+          }
+        })
 
-      // Track tags
-      app.tags.forEach(tag => allTags.add(tag))
+        // Track tags
+        app.tags.forEach(tag => allTags.add(tag))
 
-      // Create activity log for application
-      await prisma.activityLog.create({
-        data: {
-          userId: user.id,
-          jobApplicationId: jobApp.id,
-          action: 'CREATE',
-          description: `Applied to ${app.jobTitle} at ${app.company}`,
-          timestamp: app.appliedDate
-        }
-      })
-
-      // Create status update activity if not 'applied'
-      if (app.status !== 'applied') {
-        const statusDate = new Date(app.appliedDate.getTime() + Math.random() * 14 * 24 * 60 * 60 * 1000)
+        // Create activity log for application
         await prisma.activityLog.create({
           data: {
             userId: user.id,
             jobApplicationId: jobApp.id,
-            action: 'UPDATE_STATUS',
-            description: `Status changed to ${app.status}`,
-            timestamp: statusDate
+            action: 'CREATE',
+            description: `Applied to ${app.jobTitle} at ${app.company}`,
+            timestamp: app.appliedDate
           }
         })
+
+        // Create status update activity if not 'applied'
+        if (app.status !== 'applied') {
+          const statusUpdateDays = app.status === 'screening' ? Math.random() * 3 + 1 :
+                                 app.status === 'interview' ? Math.random() * 7 + 2 :
+                                 app.status === 'offer' ? Math.random() * 10 + 3 :
+                                 app.status === 'rejected' ? Math.random() * 14 + 1 :
+                                 Math.random() * 5 + 1
+
+          const statusDate = new Date(app.appliedDate.getTime() + statusUpdateDays * 24 * 60 * 60 * 1000)
+          
+          await prisma.activityLog.create({
+            data: {
+              userId: user.id,
+              jobApplicationId: jobApp.id,
+              action: 'UPDATE_STATUS',
+              description: `Status changed to ${app.status}`,
+              timestamp: statusDate
+            }
+          })
+
+          // Add additional activity for interview and offer statuses
+          if (app.status === 'interview') {
+            const interviewDate = new Date(statusDate.getTime() + Math.random() * 3 * 24 * 60 * 60 * 1000)
+            await prisma.activityLog.create({
+              data: {
+                userId: user.id,
+                jobApplicationId: jobApp.id,
+                action: 'INTERVIEW',
+                description: `Interview scheduled with ${app.company}`,
+                timestamp: interviewDate
+              }
+            })
+          } else if (app.status === 'offer') {
+            const offerDate = new Date(statusDate.getTime() + Math.random() * 2 * 24 * 60 * 60 * 1000)
+            await prisma.activityLog.create({
+              data: {
+                userId: user.id,
+                jobApplicationId: jobApp.id,
+                action: 'OFFER',
+                description: `Received offer from ${app.company}`,
+                timestamp: offerDate
+              }
+            })
+          }
+        }
+
+        userApplicationsCreated++
+        totalApplications++
+      } catch (error) {
+        console.error(`Error creating application for ${user.username}:`, error)
       }
     }
 
-    console.log(`   ✓ Created ${profile.applicationCount} applications for ${user.username}`)
+    console.log(`   ✓ Created ${userApplicationsCreated} applications for ${user.username}`)
   }
 
   // Create tags
   console.log('🏷️  Creating tags...')
-  const tagPromises = Array.from(allTags).map(tagName =>
+  const tagArray = Array.from(allTags)
+  console.log(`   Creating ${tagArray.length} unique tags...`)
+  
+  const tagPromises = tagArray.map(tagName =>
     prisma.tag.create({
       data: { name: tagName }
+    }).catch(error => {
+      console.error(`Error creating tag ${tagName}:`, error)
+      return null
     })
   )
-  await Promise.all(tagPromises)
+  
+  const createdTags = (await Promise.all(tagPromises)).filter(Boolean)
+  console.log(`   ✓ Created ${createdTags.length} tags`)
 
   // Link job applications to tags
   console.log('🔗 Linking applications to tags...')
   const allJobApps = await prisma.jobApplication.findMany()
   const allDbTags = await prisma.tag.findMany()
+  
+  let tagLinksCreated = 0
 
   for (const jobApp of allJobApps) {
-    // Get original application data to match tags
-    const mockApps = generateMockJobApplications(1)
-    const randomTags = mockApps[0].tags.slice(0, Math.floor(Math.random() * 4) + 1)
+    // Generate random tags for this application (simulate the original tag generation)
+    const mockApp = generateMockJobApplications(1)[0]
+    const tagsToLink = mockApp.tags.slice(0, Math.floor(Math.random() * 6) + 2) // 2-8 tags per application
     
-    for (const tagName of randomTags) {
+    for (const tagName of tagsToLink) {
       const tag = allDbTags.find(t => t.name === tagName)
       if (tag) {
         try {
@@ -171,6 +216,7 @@ async function main() {
               tagId: tag.id
             }
           })
+          tagLinksCreated++
         } catch (error) {
           // Tag already linked, skip
         }
@@ -178,116 +224,174 @@ async function main() {
     }
   }
 
-  // Create goals for some users
+  console.log(`   ✓ Created ${tagLinksCreated} tag associations`)
+
+  // Create goals for users
   console.log('🎯 Creating user goals...')
-  const usersWithGoals = createdUsers.slice(0, 10) // First 10 users get goals
+  const usersWithGoals = createdUsers.slice(0, 15) // First 15 users get goals
+  let goalsCreated = 0
   
   for (const { user } of usersWithGoals) {
-    const goalTypes = ['APPLICATIONS', 'INTERVIEWS', 'OFFERS', 'RESPONSES']
-    const randomGoalType = goalTypes[Math.floor(Math.random() * goalTypes.length)]
-    const target = randomGoalType === 'APPLICATIONS' ? Math.floor(Math.random() * 20) + 10 :
-                  randomGoalType === 'INTERVIEWS' ? Math.floor(Math.random() * 5) + 2 :
-                  randomGoalType === 'OFFERS' ? Math.floor(Math.random() * 3) + 1 :
-                  Math.floor(Math.random() * 10) + 5
-
-    const achieved = Math.floor(target * (Math.random() * 0.8)) // 0-80% progress
-
-    const startDate = new Date()
-    startDate.setMonth(startDate.getMonth() - 1)
-    const endDate = new Date()
-    endDate.setMonth(endDate.getMonth() + 1)
-
-    await prisma.goal.create({
-      data: {
-        userId: user.id,
-        type: randomGoalType as any,
-        target,
-        achieved,
-        period: 'MONTHLY',
-        startDate,
-        endDate,
-        isActive: true
-      }
-    })
-  }
-
-  // Create achievements for users who completed goals
-  console.log('🏆 Creating achievements...')
-  const achievementTypes = [
-    'FIRST_APPLICATION', 'FIRST_INTERVIEW', 'FIRST_OFFER',
-    'MILESTONE_10_APPS', 'MILESTONE_50_APPS', 'STREAK_7_DAYS'
-  ]
-
-  for (const { user, profile } of createdUsers) {
-    const userAchievements = []
+    const goalCount = Math.floor(Math.random() * 3) + 1 // 1-3 goals per user
     
-    // Everyone gets first application
-    userAchievements.push('FIRST_APPLICATION')
-    
-    // Based on application count and success rate
-    if (profile.applicationCount >= 10) userAchievements.push('MILESTONE_10_APPS')
-    if (profile.applicationCount >= 50) userAchievements.push('MILESTONE_50_APPS')
-    if (profile.successRate > 15) userAchievements.push('FIRST_INTERVIEW')
-    if (profile.successRate > 20) userAchievements.push('FIRST_OFFER')
-    if (Math.random() > 0.7) userAchievements.push('STREAK_7_DAYS')
+    for (let i = 0; i < goalCount; i++) {
+      const goalTypes = ['APPLICATIONS', 'INTERVIEWS', 'OFFERS', 'RESPONSES']
+      const periods = ['WEEKLY', 'MONTHLY', 'QUARTERLY']
+      
+      const randomGoalType = goalTypes[Math.floor(Math.random() * goalTypes.length)]
+      const randomPeriod = periods[Math.floor(Math.random() * periods.length)]
+      
+      const target = randomGoalType === 'APPLICATIONS' ? Math.floor(Math.random() * 15) + 10 :
+                    randomGoalType === 'INTERVIEWS' ? Math.floor(Math.random() * 4) + 2 :
+                    randomGoalType === 'OFFERS' ? Math.floor(Math.random() * 2) + 1 :
+                    Math.floor(Math.random() * 8) + 3
 
-    for (const achievementType of userAchievements) {
-      const achievementData = {
-        FIRST_APPLICATION: { title: 'First Application', description: 'Submitted your first job application!' },
-        FIRST_INTERVIEW: { title: 'First Interview', description: 'Landed your first interview!' },
-        FIRST_OFFER: { title: 'First Offer', description: 'Received your first job offer!' },
-        MILESTONE_10_APPS: { title: '10 Applications', description: 'Submitted 10 job applications!' },
-        MILESTONE_50_APPS: { title: '50 Applications', description: 'Reached 50 job applications!' },
-        STREAK_7_DAYS: { title: '7-Day Streak', description: 'Applied to jobs for 7 consecutive days!' }
+      const achieved = Math.floor(target * (Math.random() * 0.9)) // 0-90% progress
+
+      const startDate = new Date()
+      const endDate = new Date()
+      
+      if (randomPeriod === 'WEEKLY') {
+        startDate.setDate(startDate.getDate() - 7)
+        endDate.setDate(endDate.getDate() + 7)
+      } else if (randomPeriod === 'MONTHLY') {
+        startDate.setMonth(startDate.getMonth() - 1)
+        endDate.setMonth(endDate.getMonth() + 1)
+      } else {
+        startDate.setMonth(startDate.getMonth() - 3)
+        endDate.setMonth(endDate.getMonth() + 3)
       }
 
-      const data = achievementData[achievementType as keyof typeof achievementData]
-      if (data) {
-        await prisma.achievement.create({
+      try {
+        await prisma.goal.create({
           data: {
             userId: user.id,
-            type: achievementType as any,
-            title: data.title,
-            description: data.description,
-            unlockedAt: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000) // Random date in last 30 days
+            type: randomGoalType as any,
+            target,
+            achieved,
+            period: randomPeriod as any,
+            startDate,
+            endDate,
+            isActive: achieved < target && endDate > new Date()
           }
         })
+        goalsCreated++
+      } catch (error) {
+        console.error(`Error creating goal for ${user.username}:`, error)
       }
     }
   }
 
-  // Create analytics data
-  console.log('📊 Creating analytics data...')
-  for (const { user } of createdUsers) {
-    const userApps = await prisma.jobApplication.findMany({
-      where: { userId: user.id }
-    })
+  console.log(`   ✓ Created ${goalsCreated} goals`)
 
-    const totalApps = userApps.length
-    const interviews = userApps.filter(app => ['INTERVIEW', 'OFFER'].includes(app.status)).length
-    const offers = userApps.filter(app => app.status === 'OFFER').length
-    const responses = userApps.filter(app => app.status !== 'APPLIED').length
+  // Create achievements for users who completed goals
+  console.log('🏆 Creating achievements...')
+  const completedGoals = await prisma.goal.findMany({
+    where: { achieved: { gte: prisma.goal.fields.target } },
+    include: { user: true }
+  })
 
-    await prisma.analytics.create({
-      data: {
-        userId: user.id,
-        period: 'monthly',
-        date: new Date(),
-        totalApps,
-        responsesRate: totalApps > 0 ? (responses / totalApps) * 100 : 0,
-        interviewRate: totalApps > 0 ? (interviews / totalApps) * 100 : 0,
-        offerRate: totalApps > 0 ? (offers / totalApps) * 100 : 0,
-        avgResponseTime: Math.floor(Math.random() * 14) + 3 // 3-17 days
-      }
-    })
+  let achievementsCreated = 0
+  
+  for (const goal of completedGoals) {
+    const achievementTypes = ['GOAL_COMPLETED', 'MILESTONE_REACHED', 'STREAK_ACHIEVED']
+    const randomType = achievementTypes[Math.floor(Math.random() * achievementTypes.length)]
+    
+    try {
+      await prisma.achievement.create({
+        data: {
+          userId: goal.userId,
+          type: randomType as any,
+          title: `${goal.type} Goal Completed`,
+          description: `Successfully achieved ${goal.achieved}/${goal.target} ${goal.type.toLowerCase()} in ${goal.period.toLowerCase()} period`,
+          unlockedAt: goal.endDate
+        }
+      })
+      achievementsCreated++
+    } catch (error) {
+      console.error(`Error creating achievement for goal ${goal.id}:`, error)
+    }
   }
 
-  console.log('✅ Database seeding completed successfully!')
-  console.log(`📈 Summary:`)
-  console.log(`   👥 Users created: ${createdUsers.length}`)
-  console.log(`   💼 Job applications: ${allJobApps.length}`)
-  console.log(`   🏷️  Tags created: ${allTags.size}`)
-  console.log(`   🎯 Goals created: ${usersWithGoals.length}`)
+  console.log(`   ✓ Created ${achievementsCreated} achievements`)
+
+  // Create analytics data for all users
+  console.log('📊 Creating analytics data...')
+  let analyticsCreated = 0
+  
+  for (const { user } of createdUsers) {
+    const periods = ['weekly', 'monthly', 'quarterly', 'yearly']
+    
+    for (const period of periods) {
+      try {
+        await prisma.analytics.create({
+          data: {
+            userId: user.id,
+            period,
+            date: new Date(),
+            totalApps: Math.floor(Math.random() * 50) + 10,
+            responsesRate: Math.floor(Math.random() * 25) + 5,
+            interviewRate: Math.floor(Math.random() * 15) + 2,
+            offerRate: Math.floor(Math.random() * 5) + 1,
+            avgResponseTime: Math.floor(Math.random() * 14) + 3
+          }
+        })
+        analyticsCreated++
+      } catch (error) {
+        console.error(`Error creating analytics for ${user.username}:`, error)
+      }
+    }
+  }
+
+  console.log(`   ✓ Created ${analyticsCreated} analytics records`)
+
+  // Create some notifications
+  console.log('🔔 Creating notifications...')
+  let notificationsCreated = 0
+  
+  for (const { user } of createdUsers.slice(0, 10)) { // First 10 users get notifications
+    const notificationCount = Math.floor(Math.random() * 3) + 1
+    
+    for (let i = 0; i < notificationCount; i++) {
+      const notificationTypes = [
+        'Goal deadline approaching',
+        'New achievement unlocked',
+        'Weekly progress summary',
+        'Application status reminder'
+      ]
+      
+      const randomMessage = notificationTypes[Math.floor(Math.random() * notificationTypes.length)]
+      
+      try {
+        await prisma.notification.create({
+          data: {
+            userId: user.id,
+            type: 'SYSTEM',
+            message: randomMessage,
+            isRead: Math.random() > 0.3, // 70% chance of being read
+            title: 'Notification Title'
+          }
+        })
+        notificationsCreated++
+      } catch (error) {
+        console.error(`Error creating notification for ${user.username}:`, error)
+      }
+    }
+  }
+
+  console.log(`   ✓ Created ${notificationsCreated} notifications`)
+
+  // Summary
+  console.log('\n📈 Seeding Summary:')
+  console.log(`   👥 Users: ${createdUsers.length}`)
+  console.log(`   💼 Job Applications: ${totalApplications}`)
+  console.log(`   🏷️  Tags: ${createdTags.length}`)
+  console.log(`   🔗 Tag Links: ${tagLinksCreated}`)
+  console.log(`   🎯 Goals: ${goalsCreated}`)
+  console.log(`   🏆 Achievements: ${achievementsCreated}`)
+  console.log(`   📊 Analytics: ${analyticsCreated}`)
+  console.log(`   🔔 Notifications: ${notificationsCreated}`)
+  console.log('\n✅ Database seeding completed successfully!')
 }
 
 main()

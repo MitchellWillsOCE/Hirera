@@ -8,8 +8,9 @@ import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Badge } from '@/components/ui/badge'
 import { Progress } from '@/components/ui/progress'
-import { Target, Plus, CheckCircle, Clock, TrendingUp } from 'lucide-react'
+import { Target, Plus, CheckCircle, Clock, TrendingUp, Award, Calendar } from 'lucide-react'
 import { motion } from 'framer-motion'
+import { RadialChart, MultiRadialChart } from '@/components/ui/radial-chart'
 
 interface Goal {
   id: string
@@ -90,6 +91,16 @@ export function GoalSetting({ goals, onCreateGoal, onUpdateGoal }: GoalSettingPr
 
   const getGoalTypeColor = (type: string) => {
     switch (type) {
+      case 'APPLICATIONS': return '#3b82f6' // blue
+      case 'INTERVIEWS': return '#8b5cf6' // purple
+      case 'OFFERS': return '#10b981' // green
+      case 'RESPONSES': return '#f59e0b' // orange
+      default: return '#6b7280' // gray
+    }
+  }
+
+  const getGoalTypeGradient = (type: string) => {
+    switch (type) {
       case 'APPLICATIONS': return 'from-blue-500 to-blue-600'
       case 'INTERVIEWS': return 'from-purple-500 to-purple-600'
       case 'OFFERS': return 'from-green-500 to-green-600'
@@ -97,6 +108,20 @@ export function GoalSetting({ goals, onCreateGoal, onUpdateGoal }: GoalSettingPr
       default: return 'from-gray-500 to-gray-600'
     }
   }
+
+  const activeGoals = goals.filter(goal => goal.isActive)
+  const completedGoals = goals.filter(goal => getProgressPercentage(goal) >= 100)
+  
+  const overviewData = activeGoals.map(goal => ({
+    name: goal.type,
+    value: goal.achieved,
+    maxValue: goal.target,
+    color: getGoalTypeColor(goal.type)
+  }))
+
+  const totalProgress = activeGoals.length > 0 
+    ? Math.round(activeGoals.reduce((sum, goal) => sum + getProgressPercentage(goal), 0) / activeGoals.length)
+    : 0
 
   return (
     <div className="space-y-6">
@@ -114,6 +139,77 @@ export function GoalSetting({ goals, onCreateGoal, onUpdateGoal }: GoalSettingPr
           Set New Goal
         </Button>
       </div>
+
+      {/* Overview Section */}
+      {activeGoals.length > 0 && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          <Card className="bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 border-0 shadow-lg">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-xl">
+                <Award className="h-5 w-5 text-purple-600" />
+                Goals Overview
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                {/* Overall Progress */}
+                <div className="flex flex-col items-center space-y-4">
+                  <RadialChart
+                    value={totalProgress}
+                    maxValue={100}
+                    size={140}
+                    strokeWidth={12}
+                    color="#8b5cf6"
+                    centerContent={
+                      <div className="text-center">
+                        <div className="text-2xl font-bold text-purple-600">
+                          {totalProgress}%
+                        </div>
+                        <div className="text-sm text-gray-600">Overall</div>
+                      </div>
+                    }
+                  />
+                  <div className="text-center">
+                    <h3 className="font-semibold text-gray-900">Average Progress</h3>
+                    <p className="text-sm text-gray-600">Across all active goals</p>
+                  </div>
+                </div>
+
+                {/* Multi-Goal Progress */}
+                <div className="flex flex-col items-center space-y-4">
+                  <MultiRadialChart data={overviewData.slice(0, 3)} size={140} />
+                  <div className="text-center">
+                    <h3 className="font-semibold text-gray-900">Active Goals</h3>
+                    <p className="text-sm text-gray-600">{activeGoals.length} goals in progress</p>
+                  </div>
+                </div>
+
+                {/* Stats */}
+                <div className="space-y-4">
+                  <div className="text-center p-4 bg-white/70 rounded-lg">
+                    <div className="text-2xl font-bold text-green-600">{completedGoals.length}</div>
+                    <div className="text-sm text-gray-600">Completed Goals</div>
+                  </div>
+                  <div className="text-center p-4 bg-white/70 rounded-lg">
+                    <div className="text-2xl font-bold text-blue-600">{activeGoals.length}</div>
+                    <div className="text-sm text-gray-600">Active Goals</div>
+                  </div>
+                  <div className="text-center p-4 bg-white/70 rounded-lg">
+                    <div className="text-2xl font-bold text-orange-600">
+                      {activeGoals.reduce((sum, goal) => sum + getDaysRemaining(goal.endDate), 0)}
+                    </div>
+                    <div className="text-sm text-gray-600">Total Days Left</div>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
+      )}
 
       {/* Goal Creation Form */}
       {showForm && (
@@ -208,20 +304,27 @@ export function GoalSetting({ goals, onCreateGoal, onUpdateGoal }: GoalSettingPr
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.3 }}
             >
-              <Card className="hover:shadow-lg transition-shadow">
-                <CardHeader className="pb-2">
+              <Card className="hover:shadow-lg transition-shadow h-full">
+                <CardHeader className="pb-4">
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-2">
-                      <div className={`bg-gradient-to-r ${getGoalTypeColor(goal.type)} w-10 h-10 rounded-full flex items-center justify-center`}>
+                    <div className="flex items-center space-x-3">
+                      <div className={`bg-gradient-to-r ${getGoalTypeGradient(goal.type)} w-10 h-10 rounded-full flex items-center justify-center`}>
                         <span className="text-lg">{getGoalTypeIcon(goal.type)}</span>
                       </div>
                       <div>
                         <CardTitle className="text-lg">
                           {goal.type.charAt(0) + goal.type.slice(1).toLowerCase()}
                         </CardTitle>
-                        <Badge variant="outline" className="text-xs">
-                          {goal.period.toLowerCase()}
-                        </Badge>
+                        <div className="flex items-center gap-2">
+                          <Badge variant="outline" className="text-xs">
+                            {goal.period.toLowerCase()}
+                          </Badge>
+                          {getProgressPercentage(goal) >= 100 && (
+                            <Badge className="bg-green-100 text-green-800 text-xs">
+                              Completed
+                            </Badge>
+                          )}
+                        </div>
                       </div>
                     </div>
                     {getProgressPercentage(goal) >= 100 && (
@@ -229,34 +332,52 @@ export function GoalSetting({ goals, onCreateGoal, onUpdateGoal }: GoalSettingPr
                     )}
                   </div>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                  {/* Progress */}
-                  <div className="space-y-2">
-                    <div className="flex justify-between text-sm">
-                      <span className="font-medium">Progress</span>
-                      <span className="text-gray-600">
-                        {goal.achieved} / {goal.target}
-                      </span>
-                    </div>
-                    <Progress value={getProgressPercentage(goal)} className="h-2" />
-                    <div className="text-sm text-gray-600">
-                      {getProgressPercentage(goal).toFixed(0)}% completed
-                    </div>
+                <CardContent className="space-y-6">
+                  {/* Radial Progress Chart */}
+                  <div className="flex justify-center">
+                    <RadialChart
+                      value={goal.achieved}
+                      maxValue={goal.target}
+                      size={120}
+                      strokeWidth={10}
+                      color={getGoalTypeColor(goal.type)}
+                      centerContent={
+                        <div className="text-center">
+                          <div className="text-lg font-bold text-gray-900">
+                            {goal.achieved}
+                          </div>
+                          <div className="text-xs text-gray-600">
+                            of {goal.target}
+                          </div>
+                        </div>
+                      }
+                    />
                   </div>
 
-                  {/* Time Remaining */}
-                  <div className="flex items-center justify-between text-sm">
-                    <div className="flex items-center space-x-1">
-                      <Clock className="h-4 w-4 text-gray-500" />
-                      <span className="text-gray-600">
-                        {getDaysRemaining(goal.endDate)} days left
-                      </span>
+                  {/* Details */}
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between text-sm">
+                      <div className="flex items-center space-x-1">
+                        <Calendar className="h-4 w-4 text-gray-500" />
+                        <span className="text-gray-600">
+                          {getDaysRemaining(goal.endDate)} days left
+                        </span>
+                      </div>
+                      <div className="flex items-center space-x-1">
+                        <TrendingUp className="h-4 w-4 text-green-500" />
+                        <span className="text-green-600 font-medium">
+                          {getProgressPercentage(goal).toFixed(0)}%
+                        </span>
+                      </div>
                     </div>
-                    <div className="flex items-center space-x-1">
-                      <TrendingUp className="h-4 w-4 text-green-500" />
-                      <span className="text-green-600 font-medium">
-                        {Math.round((goal.achieved / Math.max(1, (new Date().getTime() - new Date(goal.startDate).getTime()) / (1000 * 60 * 60 * 24))) * 30)} per month
-                      </span>
+
+                    {/* Progress Rate */}
+                    <div className="text-center p-2 bg-gray-50 rounded-lg">
+                      <div className="text-sm text-gray-600">
+                        Rate: <span className="font-medium text-gray-900">
+                          {Math.round((goal.achieved / Math.max(1, (new Date().getTime() - new Date(goal.startDate).getTime()) / (1000 * 60 * 60 * 24))) * 30)} per month
+                        </span>
+                      </div>
                     </div>
                   </div>
 
@@ -267,7 +388,7 @@ export function GoalSetting({ goals, onCreateGoal, onUpdateGoal }: GoalSettingPr
                       variant="outline"
                       onClick={() => onUpdateGoal(goal.id, goal.achieved + 1)}
                       disabled={getProgressPercentage(goal) >= 100}
-                      className="flex-1"
+                      className="flex-1 text-green-600 border-green-200 hover:bg-green-50"
                     >
                       +1
                     </Button>
@@ -276,7 +397,7 @@ export function GoalSetting({ goals, onCreateGoal, onUpdateGoal }: GoalSettingPr
                       variant="outline"
                       onClick={() => onUpdateGoal(goal.id, Math.max(0, goal.achieved - 1))}
                       disabled={goal.achieved === 0}
-                      className="flex-1"
+                      className="flex-1 text-red-600 border-red-200 hover:bg-red-50"
                     >
                       -1
                     </Button>

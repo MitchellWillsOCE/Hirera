@@ -16,31 +16,34 @@ export const authOptions: NextAuthOptions = {
           return null
         }
 
-        const user = await prisma.user.findUnique({
-          where: {
-            email: credentials.email
+        try {
+          const user = await prisma.user.findUnique({
+            where: { email: credentials.email }
+          })
+
+          if (!user) {
+            return null
           }
-        })
 
-        if (!user) {
+          const isValidPassword = await bcrypt.compare(
+            credentials.password,
+            user.password
+          )
+
+          if (!isValidPassword) {
+            return null
+          }
+
+          return {
+            id: user.id,
+            username: user.username,
+            country: user.country || null,
+            email: user.email,
+            name: `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.username
+          }
+        } catch (error) {
+          console.error('Auth error:', error)
           return null
-        }
-
-        const isPasswordValid = await bcrypt.compare(
-          credentials.password,
-          user.password
-        )
-
-        if (!isPasswordValid) {
-          return null
-        }
-
-        return {
-          id: user.id,
-          email: user.email,
-          username: user.username,
-          firstName: user.firstName,
-          lastName: user.lastName,
         }
       }
     })
@@ -50,22 +53,35 @@ export const authOptions: NextAuthOptions = {
   },
   secret: process.env.NEXTAUTH_SECRET || 'fallback-secret-key-for-development-only-please-change-in-production',
   callbacks: {
-    async jwt({ token, user }) {
-      if (user) {
-        token.username = user.username
-        token.firstName = user.firstName
-        token.lastName = user.lastName
-      }
-      return token
-    },
     async session({ session, token }) {
-      if (token) {
-        session.user.id = token.sub!
-        session.user.username = token.username as string
-        session.user.firstName = token.firstName as string
-        session.user.lastName = token.lastName as string
+      if (token?.sub) {
+        const user = await prisma.user.findUnique({
+          where: { id: token.sub },
+          select: {
+            id: true,
+            username: true,
+            country: true,
+            firstName: true,
+            lastName: true,
+            email: true
+          }
+        })
+
+        if (user) {
+          session.user.id = user.id
+          session.user.username = user.username
+          session.user.country = user.country
+          session.user.name = `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.username
+          session.user.email = user.email
+        }
       }
       return session
+    },
+    async jwt({ token, user }) {
+      if (user) {
+        token.sub = user.id
+      }
+      return token
     }
   },
   pages: {

@@ -14,8 +14,12 @@ import {
   Award,
   BarChart3,
   PieChart,
-  Activity
+  Activity,
+  CheckCircle,
+  AlertCircle,
+  Users
 } from 'lucide-react';
+import { RadialChart, MultiRadialChart } from '@/components/ui/radial-chart';
 
 interface AnalyticsPanelProps {
   jobs: JobApplication[];
@@ -30,7 +34,9 @@ export function AnalyticsPanel({ jobs }: AnalyticsPanelProps) {
     }, {} as Record<string, number>);
 
     const offersReceived = applicationsByStatus.offer || 0;
+    const interviewsReceived = applicationsByStatus.interview || 0;
     const successRate = totalApplications > 0 ? (offersReceived / totalApplications) * 100 : 0;
+    const interviewRate = totalApplications > 0 ? (interviewsReceived / totalApplications) * 100 : 0;
 
     // Calculate average response time
     const respondedJobs = jobs.filter(job => 
@@ -47,6 +53,9 @@ export function AnalyticsPanel({ jobs }: AnalyticsPanelProps) {
       }, 0);
       averageResponseTime = Math.round(totalDays / respondedJobs.length);
     }
+
+    // Response rate (replied in any way)
+    const responseRate = totalApplications > 0 ? (respondedJobs.length / totalApplications) * 100 : 0;
 
     // Top companies
     const topCompanies = Object.entries(
@@ -76,32 +85,29 @@ export function AnalyticsPanel({ jobs }: AnalyticsPanelProps) {
       totalApplications,
       applicationsByStatus,
       successRate,
+      interviewRate,
+      responseRate,
       averageResponseTime,
       topCompanies,
-      tagAnalytics
+      tagAnalytics,
+      offersReceived,
+      interviewsReceived
     };
   }, [jobs]);
 
   const statusColors = {
-    applied: 'bg-blue-500',
-    screening: 'bg-yellow-500',
-    interview: 'bg-purple-500',
-    offer: 'bg-green-500',
-    rejected: 'bg-red-500',
-    withdrawn: 'bg-gray-500'
+    applied: '#3b82f6', // blue
+    screening: '#f59e0b', // yellow
+    interview: '#8b5cf6', // purple
+    offer: '#10b981', // green
+    rejected: '#ef4444', // red
+    withdrawn: '#6b7280' // gray
   };
 
   const getStatusPercentage = (status: JobApplication['status']) => {
     const total = analytics.totalApplications;
     const count = analytics.applicationsByStatus[status] || 0;
     return total > 0 ? Math.round((count / total) * 100) : 0;
-  };
-
-  const calculateResponseRate = () => {
-    const responded = jobs.filter(job => 
-      ['screening', 'interview', 'offer', 'rejected'].includes(job.status)
-    ).length;
-    return jobs.length > 0 ? Math.round((responded / jobs.length) * 100) : 0;
   };
 
   const getAverageSalary = () => {
@@ -131,31 +137,131 @@ export function AnalyticsPanel({ jobs }: AnalyticsPanelProps) {
   };
 
   const averageSalary = getAverageSalary();
-  const responseRate = calculateResponseRate();
   const commonTags = getMostCommonTags();
 
+  // Prepare data for multi-radial chart
+  const statusChartData = Object.entries(analytics.applicationsByStatus).map(([status, count]) => ({
+    name: status,
+    value: count,
+    maxValue: analytics.totalApplications,
+    color: statusColors[status as keyof typeof statusColors]
+  }));
+
   return (
-    <div className="space-y-4 sm:space-y-6">
-      {/* Overview Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+    <div className="space-y-6">
+      {/* Key Metrics Overview with Radial Charts */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        <Card className="bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 border-0 shadow-lg">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-xl">
+              <BarChart3 className="h-5 w-5 text-purple-600" />
+              Analytics Overview
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+              {/* Success Rate Chart */}
+              <div className="flex flex-col items-center space-y-4">
+                <RadialChart
+                  value={analytics.successRate}
+                  maxValue={100}
+                  size={120}
+                  strokeWidth={10}
+                  color="#10b981"
+                  centerContent={
+                    <div className="text-center">
+                      <div className="text-lg font-bold text-green-600">
+                        {analytics.successRate.toFixed(1)}%
+                      </div>
+                      <div className="text-xs text-gray-600">Success</div>
+                    </div>
+                  }
+                />
+                <div className="text-center">
+                  <h3 className="font-semibold text-gray-900">Success Rate</h3>
+                  <p className="text-sm text-gray-600">{analytics.offersReceived} offers received</p>
+                </div>
+              </div>
+
+              {/* Response Rate Chart */}
+              <div className="flex flex-col items-center space-y-4">
+                <RadialChart
+                  value={analytics.responseRate}
+                  maxValue={100}
+                  size={120}
+                  strokeWidth={10}
+                  color="#f59e0b"
+                  centerContent={
+                    <div className="text-center">
+                      <div className="text-lg font-bold text-orange-600">
+                        {analytics.responseRate.toFixed(1)}%
+                      </div>
+                      <div className="text-xs text-gray-600">Response</div>
+                    </div>
+                  }
+                />
+                <div className="text-center">
+                  <h3 className="font-semibold text-gray-900">Response Rate</h3>
+                  <p className="text-sm text-gray-600">Companies that responded</p>
+                </div>
+              </div>
+
+              {/* Interview Rate Chart */}
+              <div className="flex flex-col items-center space-y-4">
+                <RadialChart
+                  value={analytics.interviewRate}
+                  maxValue={100}
+                  size={120}
+                  strokeWidth={10}
+                  color="#8b5cf6"
+                  centerContent={
+                    <div className="text-center">
+                      <div className="text-lg font-bold text-purple-600">
+                        {analytics.interviewRate.toFixed(1)}%
+                      </div>
+                      <div className="text-xs text-gray-600">Interview</div>
+                    </div>
+                  }
+                />
+                <div className="text-center">
+                  <h3 className="font-semibold text-gray-900">Interview Rate</h3>
+                  <p className="text-sm text-gray-600">{analytics.interviewsReceived} interviews</p>
+                </div>
+              </div>
+
+              {/* Multi-Status Distribution */}
+              <div className="flex flex-col items-center space-y-4">
+                <MultiRadialChart data={statusChartData.slice(0, 3)} size={120} />
+                <div className="text-center">
+                  <h3 className="font-semibold text-gray-900">Status Distribution</h3>
+                  <p className="text-sm text-gray-600">{analytics.totalApplications} total applications</p>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </motion.div>
+
+      {/* Key Stats Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3 }}
         >
-          <Card className="relative overflow-hidden">
-            <CardContent className="p-4 sm:p-6">
-              <div className="flex items-center">
-                <div className="bg-blue-50 p-2 sm:p-3 rounded-lg mr-3 sm:mr-4 flex-shrink-0">
-                  <Target className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600" />
+          <Card className="relative overflow-hidden hover:shadow-lg transition-shadow">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">Total Applications</p>
+                  <p className="text-2xl font-bold text-gray-900">{analytics.totalApplications}</p>
                 </div>
-                <div className="min-w-0 flex-1">
-                  <p className="text-xs sm:text-sm font-medium text-slate-600 dark:text-slate-400 truncate">
-                    Total Applications
-                  </p>
-                  <p className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-slate-100">
-                    {analytics.totalApplications}
-                  </p>
+                <div className="bg-blue-50 p-3 rounded-lg">
+                  <Target className="h-6 w-6 text-blue-600" />
                 </div>
               </div>
             </CardContent>
@@ -167,19 +273,17 @@ export function AnalyticsPanel({ jobs }: AnalyticsPanelProps) {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3, delay: 0.1 }}
         >
-          <Card className="relative overflow-hidden">
-            <CardContent className="p-4 sm:p-6">
-              <div className="flex items-center">
-                <div className="bg-green-50 p-2 sm:p-3 rounded-lg mr-3 sm:mr-4 flex-shrink-0">
-                  <TrendingUp className="h-5 w-5 sm:h-6 sm:w-6 text-green-600" />
+          <Card className="relative overflow-hidden hover:shadow-lg transition-shadow">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">Avg Response Time</p>
+                  <p className="text-2xl font-bold text-gray-900">
+                    {analytics.averageResponseTime} <span className="text-sm text-gray-600">days</span>
+                  </p>
                 </div>
-                <div className="min-w-0 flex-1">
-                  <p className="text-xs sm:text-sm font-medium text-slate-600 dark:text-slate-400 truncate">
-                    Success Rate
-                  </p>
-                  <p className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-slate-100">
-                    {Math.round(analytics.successRate)}%
-                  </p>
+                <div className="bg-purple-50 p-3 rounded-lg">
+                  <Clock className="h-6 w-6 text-purple-600" />
                 </div>
               </div>
             </CardContent>
@@ -191,20 +295,15 @@ export function AnalyticsPanel({ jobs }: AnalyticsPanelProps) {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3, delay: 0.2 }}
         >
-          <Card className="relative overflow-hidden">
-            <CardContent className="p-4 sm:p-6">
-              <div className="flex items-center">
-                <div className="bg-purple-50 p-2 sm:p-3 rounded-lg mr-3 sm:mr-4 flex-shrink-0">
-                  <Clock className="h-5 w-5 sm:h-6 sm:w-6 text-purple-600" />
+          <Card className="relative overflow-hidden hover:shadow-lg transition-shadow">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">Companies Applied</p>
+                  <p className="text-2xl font-bold text-gray-900">{analytics.topCompanies.length}</p>
                 </div>
-                <div className="min-w-0 flex-1">
-                  <p className="text-xs sm:text-sm font-medium text-slate-600 dark:text-slate-400 truncate">
-                    <span className="hidden sm:inline">Avg Response Time</span>
-                    <span className="sm:hidden">Response</span>
-                  </p>
-                  <p className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-slate-100">
-                    {analytics.averageResponseTime} <span className="text-sm">days</span>
-                  </p>
+                <div className="bg-orange-50 p-3 rounded-lg">
+                  <Building className="h-6 w-6 text-orange-600" />
                 </div>
               </div>
             </CardContent>
@@ -216,19 +315,15 @@ export function AnalyticsPanel({ jobs }: AnalyticsPanelProps) {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3, delay: 0.3 }}
         >
-          <Card className="relative overflow-hidden">
-            <CardContent className="p-4 sm:p-6">
-              <div className="flex items-center">
-                <div className="bg-orange-50 p-2 sm:p-3 rounded-lg mr-3 sm:mr-4 flex-shrink-0">
-                  <Activity className="h-5 w-5 sm:h-6 sm:w-6 text-orange-600" />
+          <Card className="relative overflow-hidden hover:shadow-lg transition-shadow">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">Skills Tagged</p>
+                  <p className="text-2xl font-bold text-gray-900">{analytics.tagAnalytics.length}</p>
                 </div>
-                <div className="min-w-0 flex-1">
-                  <p className="text-xs sm:text-sm font-medium text-slate-600 dark:text-slate-400 truncate">
-                    Response Rate
-                  </p>
-                  <p className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-slate-100">
-                    {responseRate}%
-                  </p>
+                <div className="bg-green-50 p-3 rounded-lg">
+                  <Tag className="h-6 w-6 text-green-600" />
                 </div>
               </div>
             </CardContent>
@@ -236,49 +331,46 @@ export function AnalyticsPanel({ jobs }: AnalyticsPanelProps) {
         </motion.div>
       </div>
 
-      {/* Status Distribution */}
+      {/* Detailed Status Distribution with Individual Radial Charts */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.4 }}
       >
         <Card>
-          <CardHeader className="pb-4 sm:pb-6">
-            <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
-              <PieChart className="h-4 w-4 sm:h-5 sm:w-5" />
-              <span className="hidden sm:inline">Application Status Distribution</span>
-              <span className="sm:hidden">Status Distribution</span>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <PieChart className="h-5 w-5" />
+              Application Status Breakdown
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-3 sm:space-y-4">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
               {Object.entries(analytics.applicationsByStatus).map(([status, count], index) => {
                 const percentage = getStatusPercentage(status as JobApplication['status']);
                 return (
                   <motion.div
                     key={status}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
                     transition={{ duration: 0.3, delay: index * 0.1 }}
-                    className="flex items-center space-x-3 sm:space-x-4"
+                    className="flex flex-col items-center space-y-2"
                   >
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center justify-between mb-1 sm:mb-2">
-                        <span className="text-sm font-medium text-slate-700 dark:text-slate-300 capitalize truncate">
-                          {status}
-                        </span>
-                        <span className="text-xs sm:text-sm text-slate-500 flex-shrink-0 ml-2">
-                          {count} ({percentage}%)
-                        </span>
-                      </div>
-                      <div className="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-2">
-                        <motion.div
-                          className={`h-2 rounded-full ${statusColors[status as keyof typeof statusColors]}`}
-                          initial={{ width: 0 }}
-                          animate={{ width: `${percentage}%` }}
-                          transition={{ duration: 1, delay: index * 0.1 }}
-                        />
-                      </div>
+                    <RadialChart
+                      value={count}
+                      maxValue={analytics.totalApplications}
+                      size={80}
+                      strokeWidth={8}
+                      color={statusColors[status as keyof typeof statusColors]}
+                      centerContent={
+                        <div className="text-center">
+                          <div className="text-sm font-bold text-gray-900">{count}</div>
+                        </div>
+                      }
+                    />
+                    <div className="text-center">
+                      <p className="text-xs font-medium text-gray-900 capitalize">{status}</p>
+                      <p className="text-xs text-gray-600">{percentage}%</p>
                     </div>
                   </motion.div>
                 );
@@ -295,7 +387,7 @@ export function AnalyticsPanel({ jobs }: AnalyticsPanelProps) {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.5 }}
         >
-          <Card>
+          <Card className="h-full">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Building className="h-5 w-5" />
@@ -303,25 +395,25 @@ export function AnalyticsPanel({ jobs }: AnalyticsPanelProps) {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="space-y-3">
+              <div className="space-y-4">
                 {analytics.topCompanies.slice(0, 6).map((company, index) => (
                   <motion.div
                     key={company.company}
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.3, delay: index * 0.1 }}
-                    className="flex items-center justify-between"
+                    className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
                   >
-                    <span className="text-sm font-medium">{company.company}</span>
+                    <span className="font-medium text-gray-900">{company.company}</span>
                     <div className="flex items-center space-x-2">
-                      <Badge variant="secondary" className="text-xs">
-                        {company.count} {company.count === 1 ? 'application' : 'applications'}
+                      <Badge variant="secondary" className="bg-blue-100 text-blue-800">
+                        {company.count} apps
                       </Badge>
                     </div>
                   </motion.div>
                 ))}
                 {analytics.topCompanies.length === 0 && (
-                  <p className="text-sm text-slate-500 text-center py-4">
+                  <p className="text-sm text-gray-500 text-center py-8">
                     No companies yet. Start adding applications!
                   </p>
                 )}
@@ -330,13 +422,13 @@ export function AnalyticsPanel({ jobs }: AnalyticsPanelProps) {
           </Card>
         </motion.div>
 
-        {/* Common Tags */}
+        {/* Popular Skills & Tags */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.6 }}
         >
-          <Card>
+          <Card className="h-full">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Tag className="h-5 w-5" />
@@ -344,25 +436,25 @@ export function AnalyticsPanel({ jobs }: AnalyticsPanelProps) {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="space-y-3">
+              <div className="grid grid-cols-1 gap-3">
                 {commonTags.map(([tag, count], index) => (
                   <motion.div
                     key={tag}
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.3, delay: index * 0.1 }}
-                    className="flex items-center justify-between"
+                    className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
                   >
-                    <Badge variant="outline" className="text-sm">
+                    <Badge variant="outline" className="font-medium">
                       {tag}
                     </Badge>
-                    <span className="text-sm text-slate-500">
+                    <span className="text-sm text-gray-600 font-medium">
                       {count} {count === 1 ? 'job' : 'jobs'}
                     </span>
                   </motion.div>
                 ))}
                 {commonTags.length === 0 && (
-                  <p className="text-sm text-slate-500 text-center py-4">
+                  <p className="text-sm text-gray-500 text-center py-8">
                     No tags yet. Add some to your applications!
                   </p>
                 )}
@@ -372,7 +464,7 @@ export function AnalyticsPanel({ jobs }: AnalyticsPanelProps) {
         </motion.div>
       </div>
 
-      {/* Additional Insights */}
+      {/* Performance Insights */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -381,66 +473,54 @@ export function AnalyticsPanel({ jobs }: AnalyticsPanelProps) {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <BarChart3 className="h-5 w-5" />
-              Insights & Recommendations
+              <Award className="h-5 w-5" />
+              Performance Insights
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {averageSalary && (
-                <div className="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg">
-                  <div className="flex items-center gap-2 mb-2">
-                    <DollarSign className="h-4 w-4 text-green-600" />
-                    <span className="text-sm font-medium">Average Salary</span>
-                  </div>
-                  <p className="text-lg font-bold text-green-700 dark:text-green-400">
-                    ${averageSalary.toLocaleString()}
-                  </p>
-                </div>
-              )}
-
-              <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg">
+              <div className="p-4 bg-green-50 rounded-lg">
                 <div className="flex items-center gap-2 mb-2">
-                  <Calendar className="h-4 w-4 text-blue-600" />
-                  <span className="text-sm font-medium">This Month</span>
+                  <CheckCircle className="h-5 w-5 text-green-600" />
+                  <h4 className="font-semibold text-green-800">Success Metrics</h4>
                 </div>
-                <p className="text-lg font-bold text-blue-700 dark:text-blue-400">
-                  {jobs.filter(job => {
-                    const thisMonth = new Date().getMonth();
-                    const jobMonth = job.appliedDate.getMonth();
-                    return jobMonth === thisMonth;
-                  }).length} applications
+                <p className="text-sm text-green-700">
+                  {analytics.successRate > 10 ? 
+                    "Great success rate! Keep applying to similar roles." :
+                    "Focus on tailoring applications to improve success rate."
+                  }
                 </p>
               </div>
-
-              <div className="bg-purple-50 dark:bg-purple-900/20 p-4 rounded-lg">
+              
+              <div className="p-4 bg-blue-50 rounded-lg">
                 <div className="flex items-center gap-2 mb-2">
-                  <Award className="h-4 w-4 text-purple-600" />
-                  <span className="text-sm font-medium">Interview Rate</span>
+                  <Activity className="h-5 w-5 text-blue-600" />
+                  <h4 className="font-semibold text-blue-800">Activity Level</h4>
                 </div>
-                <p className="text-lg font-bold text-purple-700 dark:text-purple-400">
-                  {jobs.length > 0 ? Math.round((jobs.filter(job => 
-                    ['interview', 'offer'].includes(job.status)
-                  ).length / jobs.length) * 100) : 0}%
+                <p className="text-sm text-blue-700">
+                  {analytics.totalApplications > 20 ? 
+                    "Excellent application volume! Maintain consistency." :
+                    "Consider increasing application frequency for better results."
+                  }
                 </p>
               </div>
-            </div>
-
-            <div className="mt-6 p-4 bg-slate-50 dark:bg-slate-800/50 rounded-lg">
-              <h4 className="font-semibold mb-2 flex items-center gap-2">
-                <TrendingUp className="h-4 w-4" />
-                Quick Tips
-              </h4>
-              <ul className="text-sm text-slate-600 dark:text-slate-400 space-y-1">
-                <li>• Track follow-up dates to improve response rates</li>
-                <li>• Update your application status regularly for better insights</li>
-                <li>• Use tags to organize applications by skills and requirements</li>
-                <li>• Review successful applications to identify patterns</li>
-              </ul>
+              
+              <div className="p-4 bg-purple-50 rounded-lg">
+                <div className="flex items-center gap-2 mb-2">
+                  <Clock className="h-5 w-5 text-purple-600" />
+                  <h4 className="font-semibold text-purple-800">Response Time</h4>
+                </div>
+                <p className="text-sm text-purple-700">
+                  {analytics.averageResponseTime < 14 ? 
+                    "Companies are responding quickly to your applications!" :
+                    "Response times are normal. Stay patient and persistent."
+                  }
+                </p>
+              </div>
             </div>
           </CardContent>
         </Card>
       </motion.div>
     </div>
-  );
+  )
 } 

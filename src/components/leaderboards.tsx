@@ -1,26 +1,24 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
+import { motion } from 'framer-motion'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Badge } from '@/components/ui/badge'
 import { 
-  Trophy,
-  Medal,
-  Award,
-  TrendingUp,
-  Target,
-  Clock,
-  Users,
-  Crown,
-  Star,
+  Trophy, 
+  Crown, 
+  Medal, 
+  Award, 
+  Users, 
+  Target, 
+  TrendingUp, 
   BarChart3,
   Filter,
-  Globe
+  Star
 } from 'lucide-react'
-import { motion } from 'framer-motion'
-import { getCountryFlag, getCountryName } from '@/lib/countries'
+import { getCountryFlag } from '@/lib/countries'
 
 interface LeaderboardUser {
   id: string
@@ -54,8 +52,12 @@ export function Leaderboards() {
   const [data, setData] = useState<LeaderboardData | null>(null)
   const [loading, setLoading] = useState(true)
   const [metric, setMetric] = useState('applications')
-  const [period, setPeriod] = useState('all')
+  const [period, setPeriod] = useState('month')
   const [country, setCountry] = useState('')
+
+  useEffect(() => {
+    fetchLeaderboard()
+  }, [])
 
   const fetchLeaderboard = async () => {
     setLoading(true)
@@ -67,40 +69,29 @@ export function Leaderboards() {
       })
       
       const response = await fetch(`/api/leaderboards?${params}`)
-      
-      if (!response.ok) {
-        throw new Error('Failed to fetch leaderboard')
+      if (response.ok) {
+        const result = await response.json()
+        setData(result)
       }
-      
-      const leaderboardData = await response.json()
-      setData(leaderboardData)
     } catch (error) {
-      console.error('Error fetching leaderboard:', error)
+      console.error('Failed to fetch leaderboard:', error)
     } finally {
       setLoading(false)
     }
   }
 
-  useEffect(() => {
-    fetchLeaderboard()
-  }, [metric, period, country])
-
   const getRankIcon = (rank: number) => {
-    switch (rank) {
-      case 1: return <Crown className="h-6 w-6 text-yellow-500" />
-      case 2: return <Medal className="h-6 w-6 text-gray-400" />
-      case 3: return <Award className="h-6 w-6 text-amber-600" />
-      default: return <Trophy className="h-5 w-5 text-gray-400" />
-    }
+    if (rank === 1) return <Crown className="h-6 w-6 text-yellow-500" />
+    if (rank === 2) return <Medal className="h-6 w-6 text-gray-400" />
+    if (rank === 3) return <Award className="h-6 w-6 text-amber-600" />
+    return <Star className="h-5 w-5 text-gray-400" />
   }
 
   const getRankColor = (rank: number) => {
-    switch (rank) {
-      case 1: return 'from-yellow-400 to-yellow-600 text-white'
-      case 2: return 'from-gray-300 to-gray-500 text-white'
-      case 3: return 'from-amber-400 to-amber-600 text-white'
-      default: return 'from-gray-100 to-gray-200 text-gray-700'
-    }
+    if (rank === 1) return 'from-yellow-400 to-yellow-600 text-white'
+    if (rank === 2) return 'from-gray-300 to-gray-500 text-white'
+    if (rank === 3) return 'from-amber-400 to-amber-600 text-white'
+    return 'from-blue-400 to-blue-600 text-white'
   }
 
   const getMetricValue = (user: LeaderboardUser) => {
@@ -109,7 +100,7 @@ export function Leaderboards() {
       case 'success': return `${user.successRate}%`
       case 'interviews': return `${user.interviewRate}%`
       case 'offers': return user.offerCount
-      case 'speed': return user.avgResponseTime > 0 ? `${user.avgResponseTime}d` : 'N/A'
+      case 'speed': return `${user.avgResponseTime}d`
       default: return user.totalApplications
     }
   }
@@ -120,7 +111,7 @@ export function Leaderboards() {
       case 'success': return 'Success Rate'
       case 'interviews': return 'Interview Rate'
       case 'offers': return 'Offers'
-      case 'speed': return 'Avg Response Time'
+      case 'speed': return 'Response Speed'
       default: return 'Applications'
     }
   }
@@ -155,7 +146,7 @@ export function Leaderboards() {
               <label className="text-sm font-medium text-gray-700 mb-2 block">Metric</label>
               <Select value={metric} onValueChange={setMetric}>
                 <SelectTrigger>
-                  <SelectValue />
+                  <SelectValue placeholder="Select metric" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="applications">📝 Total Applications</SelectItem>
@@ -170,7 +161,7 @@ export function Leaderboards() {
               <label className="text-sm font-medium text-gray-700 mb-2 block">Time Period</label>
               <Select value={period} onValueChange={setPeriod}>
                 <SelectTrigger>
-                  <SelectValue />
+                  <SelectValue placeholder="Select period" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="week">This Week</SelectItem>

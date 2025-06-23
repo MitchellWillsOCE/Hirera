@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react'
 import { signOut } from 'next-auth/react'
 import { User } from 'next-auth'
+import Link from 'next/link'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -262,18 +263,20 @@ export function Dashboard({ user }: DashboardProps) {
         <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-14 sm:h-16">
             <div className="flex items-center space-x-3 sm:space-x-4">
-              <Briefcase className="h-6 w-6 sm:h-8 sm:w-8 text-blue-600" />
-              <div>
-                <h1 className="text-lg sm:text-xl font-bold text-slate-900">💼 JobTracker Pro</h1>
-                <p className="text-xs sm:text-sm text-slate-600 hidden sm:block">Professional Job Application Management</p>
-              </div>
+              <Link href="/" className="flex items-center space-x-3 sm:space-x-4 hover:opacity-80 transition-opacity">
+                <Briefcase className="h-6 w-6 sm:h-8 sm:w-8 text-blue-600" />
+                <div>
+                  <h1 className="text-lg sm:text-xl font-bold text-slate-900">💼 JobTracker Pro</h1>
+                  <p className="text-xs sm:text-sm text-slate-600 hidden sm:block">Professional Job Application Management</p>
+                </div>
+              </Link>
             </div>
 
             <div className="flex items-center space-x-2 sm:space-x-4">
-              <div className="flex items-center space-x-2 bg-slate-100 rounded-full px-2 sm:px-3 py-1 sm:py-2">
+              <div className="flex items-center gap-2 min-w-0">
                 <UserIcon className="h-4 w-4 text-slate-600" />
                 <span className="text-xs sm:text-sm font-medium text-slate-700 max-w-[80px] sm:max-w-none truncate">
-                  {user.firstName || user.username}
+                  {user.name || user.username}
                 </span>
               </div>
               <Button

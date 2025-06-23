@@ -13,14 +13,6 @@ export default function HomePage() {
   const { data: session, status } = useSession()
   const router = useRouter()
 
-  useEffect(() => {
-    if (status === 'loading') return // Still loading
-
-    if (session) {
-      router.push('/dashboard')
-    }
-  }, [session, status, router])
-
   // Show loading screen while checking authentication
   if (status === 'loading') {
     return (
@@ -29,7 +21,7 @@ export default function HomePage() {
           <div className="flex items-center justify-center mb-6">
             <Briefcase className="h-16 w-16 text-blue-600 animate-pulse" />
           </div>
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">💼 JobTracker Pro</h1>
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">💼 JobTracker</h1>
           <div className="flex items-center justify-center space-x-2">
             <Loader2 className="h-6 w-6 animate-spin text-blue-600" />
             <p className="text-gray-600">Loading your dashboard...</p>
@@ -39,81 +31,122 @@ export default function HomePage() {
     )
   }
 
-  // If not authenticated, show the landing page
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 relative">
+      {/* Subtle background elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute -top-32 -right-32 w-64 h-64 bg-blue-200/20 rounded-full blur-3xl"></div>
+        <div className="absolute -bottom-32 -left-32 w-64 h-64 bg-purple-200/20 rounded-full blur-3xl"></div>
+      </div>
+
       {/* Navigation */}
-      <nav className="relative z-50 bg-white/80 backdrop-blur-md border-b border-white/20">
+      <nav className="relative bg-white/80 backdrop-blur-sm border-b border-gray-200 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center space-x-2">
-              <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-2 rounded-lg">
+          <div className="flex items-center justify-between h-16">
+            <div className="flex items-center space-x-3">
+              <div className="p-2 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl shadow-lg">
                 <Briefcase className="h-6 w-6 text-white" />
               </div>
-              <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                JobTracker Pro
-              </span>
+              <h1 className="text-2xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">JobTracker Pro</h1>
             </div>
-            <div className="flex space-x-4">
-              <Link href="/auth/signin">
-                <Button variant="ghost" className="hover:bg-blue-50">
-                  Sign In
-                </Button>
-              </Link>
-              <Link href="/auth/signup">
-                <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
-                  Get Started
-                </Button>
-              </Link>
+            <div className="flex items-center space-x-4">
+              {session ? (
+                <>
+                  <span className="text-sm text-gray-700">Welcome back, {session.user?.name || session.user?.username}!</span>
+                  <Link href="/dashboard">
+                    <Button className="bg-blue-600 hover:bg-blue-700 shadow-md hover:shadow-lg transition-all duration-300">
+                      Go to Dashboard
+                    </Button>
+                  </Link>
+                </>
+              ) : (
+                <>
+                  <Link href="/auth/signin">
+                    <Button variant="ghost" className="text-gray-700 hover:bg-gray-100">
+                      Sign In
+                    </Button>
+                  </Link>
+                  <Link href="/auth/signup">
+                    <Button className="bg-blue-600 hover:bg-blue-700 shadow-md hover:shadow-lg transition-all duration-300">
+                      Get Started
+                    </Button>
+                  </Link>
+                </>
+              )}
             </div>
           </div>
         </div>
       </nav>
 
       {/* Hero Section */}
-      <section className="relative overflow-hidden">
-        {/* Animated Background Elements */}
-        <div className="absolute inset-0 opacity-20">
-          <div className="absolute top-10 left-10 w-72 h-72 bg-blue-400 rounded-full mix-blend-multiply filter blur-xl animate-pulse"></div>
-          <div className="absolute top-10 right-10 w-72 h-72 bg-purple-400 rounded-full mix-blend-multiply filter blur-xl animate-pulse delay-1000"></div>
-          <div className="absolute -bottom-8 left-20 w-72 h-72 bg-pink-400 rounded-full mix-blend-multiply filter blur-xl animate-pulse delay-2000"></div>
+      <section className="py-20 relative overflow-hidden">
+        {/* Parallax Background Layers */}
+        <div className="absolute inset-0 overflow-hidden">
+          {/* Layer 1 - Slowest moving background */}
+          <div className="absolute inset-0 bg-gradient-to-br from-blue-600/10 via-purple-600/10 to-indigo-600/10"></div>
+          
+          {/* Layer 2 - Medium speed animated blobs */}
+          <div className="absolute inset-0">
+            <div className="absolute top-10 left-10 w-32 h-32 bg-gradient-to-br from-blue-400/30 to-cyan-400/30 rounded-full blur-2xl animate-pulse delay-0"></div>
+            <div className="absolute top-20 right-20 w-40 h-40 bg-gradient-to-br from-purple-400/30 to-pink-400/30 rounded-full blur-2xl animate-pulse delay-500"></div>
+            <div className="absolute bottom-20 left-1/4 w-36 h-36 bg-gradient-to-br from-indigo-400/30 to-blue-400/30 rounded-full blur-2xl animate-pulse delay-1000"></div>
+            <div className="absolute bottom-10 right-1/3 w-28 h-28 bg-gradient-to-br from-emerald-400/30 to-teal-400/30 rounded-full blur-2xl animate-pulse delay-1500"></div>
+          </div>
+          
+          {/* Layer 3 - Fastest moving particles */}
+          <div className="absolute inset-0">
+            <div className="absolute top-32 left-1/3 w-8 h-8 bg-blue-400/40 rounded-full blur-sm animate-bounce delay-200"></div>
+            <div className="absolute top-48 right-1/4 w-6 h-6 bg-purple-400/40 rounded-full blur-sm animate-bounce delay-700"></div>
+            <div className="absolute bottom-32 left-1/2 w-10 h-10 bg-indigo-400/40 rounded-full blur-sm animate-bounce delay-1200"></div>
+            <div className="absolute bottom-48 right-1/2 w-7 h-7 bg-pink-400/40 rounded-full blur-sm animate-bounce delay-300"></div>
+            <div className="absolute top-64 left-1/5 w-5 h-5 bg-cyan-400/40 rounded-full blur-sm animate-bounce delay-900"></div>
+            <div className="absolute bottom-64 right-1/5 w-9 h-9 bg-emerald-400/40 rounded-full blur-sm animate-bounce delay-600"></div>
+          </div>
+          
+          {/* Layer 4 - Floating geometric shapes */}
+          <div className="absolute inset-0">
+            <div className="absolute top-24 left-1/6 w-12 h-12 bg-gradient-to-br from-blue-300/20 to-purple-300/20 rounded-lg blur-lg rotate-12 animate-pulse delay-400"></div>
+            <div className="absolute top-56 right-1/6 w-16 h-16 bg-gradient-to-br from-purple-300/20 to-pink-300/20 rounded-xl blur-lg -rotate-12 animate-pulse delay-800"></div>
+            <div className="absolute bottom-40 left-2/3 w-14 h-14 bg-gradient-to-br from-indigo-300/20 to-cyan-300/20 rounded-lg blur-lg rotate-45 animate-pulse delay-1100"></div>
+          </div>
+          
+          {/* Layer 5 - Soft overlay gradient */}
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-white/10 to-transparent"></div>
         </div>
 
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-32">
-          <div className="text-center">
-            <Badge className="mb-6 bg-gradient-to-r from-blue-600 to-purple-600 text-white">
-              🚀 Track Your Career Journey
-            </Badge>
-            <h1 className="text-4xl sm:text-6xl lg:text-7xl font-bold mb-8">
-              <span className="block text-gray-900">Land Your</span>
-              <span className="block bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
-                Dream Job
-              </span>
-            </h1>
-            <p className="text-xl text-gray-600 mb-12 max-w-3xl mx-auto leading-relaxed">
-              The most comprehensive job application tracking system. Manage applications, 
-              analyze your progress, and accelerate your career with powerful insights and analytics.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/auth/signup">
-                <Button size="lg" className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-lg px-8 py-4 h-auto">
-                  Start Tracking Free
-                  <TrendingUp className="ml-2 h-5 w-5" />
-                </Button>
-              </Link>
-              <Link href="/auth/signin">
-                <Button size="lg" variant="outline" className="text-lg px-8 py-4 h-auto border-2 hover:bg-white/50">
-                  Sign In
-                  <Briefcase className="ml-2 h-5 w-5" />
-                </Button>
-              </Link>
-            </div>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+          <Badge className="mb-6 bg-white/80 text-blue-800 shadow-lg backdrop-blur-sm border-0">
+            🚀 Track Your Career Journey
+          </Badge>
+          <h1 className="text-4xl sm:text-6xl font-bold text-gray-900 mb-8">
+            <span className="block">Land Your</span>
+            <span className="block bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent drop-shadow-sm">
+              Dream Job
+            </span>
+          </h1>
+          <p className="text-xl text-gray-700 mb-12 max-w-3xl mx-auto backdrop-blur-sm bg-white/20 rounded-2xl p-6 shadow-lg">
+            The most comprehensive job application tracking system. Manage applications, 
+            analyze your progress, and accelerate your career with powerful insights.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link href="/auth/signup">
+              <Button size="lg" className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-lg px-8 py-4 shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105 backdrop-blur-sm">
+                Start Tracking Free
+                <TrendingUp className="ml-2 h-5 w-5" />
+              </Button>
+            </Link>
+            <Link href="/auth/signin">
+              <Button size="lg" variant="outline" className="text-lg px-8 py-4 border-2 hover:bg-white/60 shadow-lg hover:shadow-xl transition-all duration-300 backdrop-blur-sm bg-white/20">
+                Sign In
+                <Briefcase className="ml-2 h-5 w-5" />
+              </Button>
+            </Link>
           </div>
         </div>
       </section>
 
-      {/* Features Showcase */}
-      <section className="py-24 bg-white/50 backdrop-blur-sm">
+      {/* Features Section */}
+      <section className="py-20 bg-white/60 backdrop-blur-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
@@ -125,10 +158,9 @@ export default function HomePage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {/* Feature Cards */}
-            <Card className="group hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border-0 bg-gradient-to-br from-white to-blue-50/50">
-              <CardHeader className="pb-4">
-                <div className="bg-gradient-to-r from-blue-500 to-blue-600 w-12 h-12 rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+            <Card className="hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border-0 shadow-md bg-white/80 backdrop-blur-sm">
+              <CardHeader>
+                <div className="bg-gradient-to-br from-blue-500 to-blue-600 w-12 h-12 rounded-xl flex items-center justify-center mb-4 shadow-lg">
                   <Target className="h-6 w-6 text-white" />
                 </div>
                 <CardTitle className="text-xl">Smart Application Tracking</CardTitle>
@@ -140,9 +172,9 @@ export default function HomePage() {
               </CardContent>
             </Card>
 
-            <Card className="group hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border-0 bg-gradient-to-br from-white to-purple-50/50">
-              <CardHeader className="pb-4">
-                <div className="bg-gradient-to-r from-purple-500 to-purple-600 w-12 h-12 rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+            <Card className="hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border-0 shadow-md bg-white/80 backdrop-blur-sm">
+              <CardHeader>
+                <div className="bg-gradient-to-br from-purple-500 to-purple-600 w-12 h-12 rounded-xl flex items-center justify-center mb-4 shadow-lg">
                   <BarChart3 className="h-6 w-6 text-white" />
                 </div>
                 <CardTitle className="text-xl">Advanced Analytics</CardTitle>
@@ -154,9 +186,9 @@ export default function HomePage() {
               </CardContent>
             </Card>
 
-            <Card className="group hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border-0 bg-gradient-to-br from-white to-green-50/50">
-              <CardHeader className="pb-4">
-                <div className="bg-gradient-to-r from-green-500 to-green-600 w-12 h-12 rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+            <Card className="hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border-0 shadow-md bg-white/80 backdrop-blur-sm">
+              <CardHeader>
+                <div className="bg-gradient-to-br from-green-500 to-green-600 w-12 h-12 rounded-xl flex items-center justify-center mb-4 shadow-lg">
                   <Users className="h-6 w-6 text-white" />
                 </div>
                 <CardTitle className="text-xl">Community Insights</CardTitle>
@@ -168,9 +200,9 @@ export default function HomePage() {
               </CardContent>
             </Card>
 
-            <Card className="group hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border-0 bg-gradient-to-br from-white to-orange-50/50">
-              <CardHeader className="pb-4">
-                <div className="bg-gradient-to-r from-orange-500 to-orange-600 w-12 h-12 rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+            <Card className="hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border-0 shadow-md bg-white/80 backdrop-blur-sm">
+              <CardHeader>
+                <div className="bg-gradient-to-br from-orange-500 to-orange-600 w-12 h-12 rounded-xl flex items-center justify-center mb-4 shadow-lg">
                   <TrendingUp className="h-6 w-6 text-white" />
                 </div>
                 <CardTitle className="text-xl">Market Intelligence</CardTitle>
@@ -182,9 +214,9 @@ export default function HomePage() {
               </CardContent>
             </Card>
 
-            <Card className="group hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border-0 bg-gradient-to-br from-white to-red-50/50">
-              <CardHeader className="pb-4">
-                <div className="bg-gradient-to-r from-red-500 to-red-600 w-12 h-12 rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+            <Card className="hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border-0 shadow-md bg-white/80 backdrop-blur-sm">
+              <CardHeader>
+                <div className="bg-gradient-to-br from-red-500 to-red-600 w-12 h-12 rounded-xl flex items-center justify-center mb-4 shadow-lg">
                   <Shield className="h-6 w-6 text-white" />
                 </div>
                 <CardTitle className="text-xl">Secure & Private</CardTitle>
@@ -196,9 +228,9 @@ export default function HomePage() {
               </CardContent>
             </Card>
 
-            <Card className="group hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border-0 bg-gradient-to-br from-white to-indigo-50/50">
-              <CardHeader className="pb-4">
-                <div className="bg-gradient-to-r from-indigo-500 to-indigo-600 w-12 h-12 rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+            <Card className="hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border-0 shadow-md bg-white/80 backdrop-blur-sm">
+              <CardHeader>
+                <div className="bg-gradient-to-br from-indigo-500 to-indigo-600 w-12 h-12 rounded-xl flex items-center justify-center mb-4 shadow-lg">
                   <Smartphone className="h-6 w-6 text-white" />
                 </div>
                 <CardTitle className="text-xl">Mobile Optimized</CardTitle>
@@ -214,79 +246,69 @@ export default function HomePage() {
       </section>
 
       {/* Stats Section */}
-      <section className="py-24 bg-gradient-to-r from-blue-600 to-purple-600">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center text-white">
-            <h2 className="text-3xl sm:text-4xl font-bold mb-4">
-              Trusted by Job Seekers Worldwide
-            </h2>
-            <p className="text-xl mb-12 text-blue-100">
-              Join thousands of professionals who have accelerated their career journey
-            </p>
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-              <div className="text-center">
-                <div className="text-4xl font-bold mb-2">10,000+</div>
-                <div className="text-blue-200">Active Users</div>
-              </div>
-              <div className="text-center">
-                <div className="text-4xl font-bold mb-2">250,000+</div>
-                <div className="text-blue-200">Applications Tracked</div>
-              </div>
-              <div className="text-center">
-                <div className="text-4xl font-bold mb-2">85%</div>
-                <div className="text-blue-200">Success Rate</div>
-              </div>
-              <div className="text-center">
-                <div className="text-4xl font-bold mb-2">50+</div>
-                <div className="text-blue-200">Countries</div>
-              </div>
+      <section className="py-20 bg-gradient-to-r from-blue-600 to-purple-600 text-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h2 className="text-3xl sm:text-4xl font-bold mb-4">
+            Trusted by Job Seekers Worldwide
+          </h2>
+          <p className="text-xl mb-12 text-blue-100">
+            Join thousands of professionals who have accelerated their career journey
+          </p>
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div>
+              <div className="text-4xl font-bold mb-2">10,000+</div>
+              <div className="text-blue-200">Active Users</div>
+            </div>
+            <div>
+              <div className="text-4xl font-bold mb-2">250,000+</div>
+              <div className="text-blue-200">Applications Tracked</div>
+            </div>
+            <div>
+              <div className="text-4xl font-bold mb-2">85%</div>
+              <div className="text-blue-200">Success Rate</div>
+            </div>
+            <div>
+              <div className="text-4xl font-bold mb-2">50+</div>
+              <div className="text-blue-200">Countries</div>
             </div>
           </div>
         </div>
       </section>
 
       {/* CTA Section */}
-      <section className="py-24 bg-white">
+      <section className="py-20 bg-gray-50">
         <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
-          <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-1 rounded-2xl">
-            <div className="bg-white rounded-xl p-12">
-              <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
-                Ready to Transform Your Job Search?
-              </h2>
-              <p className="text-xl text-gray-600 mb-8">
-                Join thousands of professionals who have found their dream jobs with JobTracker Pro
-              </p>
-              <Link href="/auth/signup">
-                <Button size="lg" className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-lg px-8 py-4 h-auto">
-                  Start Your Free Trial
-                  <Zap className="ml-2 h-5 w-5" />
-                </Button>
-              </Link>
-              <p className="text-sm text-gray-500 mt-4">
-                No credit card required • Free forever plan available
-              </p>
-            </div>
-          </div>
+          <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
+            Ready to Transform Your Job Search?
+          </h2>
+          <p className="text-xl text-gray-600 mb-8">
+            Join thousands of professionals who have found their dream jobs with JobTracker Pro
+          </p>
+          <Link href="/auth/signup">
+            <Button size="lg" className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-lg px-8 py-4 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
+              Start Your Free Trial
+              <Zap className="ml-2 h-5 w-5" />
+            </Button>
+          </Link>
+          <p className="text-sm text-gray-500 mt-4">
+            No credit card required • Free forever plan available
+          </p>
         </div>
       </section>
 
       {/* Footer */}
       <footer className="bg-gray-900 text-white py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <div className="flex items-center justify-center space-x-2 mb-4">
-              <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-2 rounded-lg">
-                <Briefcase className="h-6 w-6 text-white" />
-              </div>
-              <span className="text-xl font-bold">JobTracker Pro</span>
-            </div>
-            <p className="text-gray-400 mb-4">
-              Empowering careers, one application at a time.
-            </p>
-            <p className="text-gray-500 text-sm">
-              © 2024 JobTracker Pro. Made with ❤️ by Mitchell Wills
-            </p>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <div className="flex items-center justify-center space-x-2 mb-4">
+            <Briefcase className="h-6 w-6 text-blue-400" />
+            <span className="text-xl font-bold">JobTracker Pro</span>
           </div>
+          <p className="text-gray-400 mb-4">
+            Empowering careers, one application at a time.
+          </p>
+          <p className="text-gray-500 text-sm">
+            © 2024 JobTracker Pro. Made with ❤️ by Mitchell Wills
+          </p>
         </div>
       </footer>
     </div>

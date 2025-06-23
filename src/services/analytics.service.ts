@@ -15,7 +15,7 @@ export interface AnalyticsData {
     id: string
     action: string
     description: string
-    createdAt: Date
+    timestamp: Date
   }>
 }
 
@@ -45,15 +45,6 @@ export class AnalyticsService {
     const offersReceived = applicationsByStatus.OFFER || 0
     const successRate = totalApplications > 0 ? (offersReceived / totalApplications) * 100 : 0
     const averageResponseTime = await this.getAverageResponseTime(userId)
-
-    // Update analytics cache
-    await this.updateAnalyticsCache(userId, {
-      totalApplications,
-      activeApplications,
-      offersReceived,
-      successRate,
-      averageResponseTime
-    })
 
     return {
       totalApplications,
@@ -177,14 +168,14 @@ export class AnalyticsService {
     const activities = await prisma.activityLog.findMany({
       where: { userId },
       orderBy: {
-        createdAt: 'desc'
+        timestamp: 'desc'
       },
       take: 10,
       select: {
         id: true,
         action: true,
         description: true,
-        createdAt: true
+        timestamp: true
       }
     })
 
@@ -218,51 +209,5 @@ export class AnalyticsService {
 
     // Return average response time in days
     return Math.round(totalResponseTime / applications.length / (1000 * 60 * 60 * 24))
-  }
-
-  private static async updateAnalyticsCache(userId: string, data: {
-    totalApplications: number
-    activeApplications: number
-    offersReceived: number
-    successRate: number
-    averageResponseTime: number
-  }) {
-    await prisma.analytics.upsert({
-      where: { userId },
-      update: {
-        ...data,
-        lastCalculated: new Date()
-      },
-      create: {
-        userId,
-        ...data,
-        lastCalculated: new Date()
-      }
-    })
-  }
-
-  static async getQuickStats(userId: string) {
-    const cached = await prisma.analytics.findUnique({
-      where: { userId }
-    })
-
-    // If cache is less than 1 hour old, return cached data
-    if (cached && cached.lastCalculated > new Date(Date.now() - 60 * 60 * 1000)) {
-      return {
-        totalApplications: cached.totalApplications,
-        activeApplications: cached.activeApplications,
-        offersReceived: cached.offersReceived,
-        successRate: cached.successRate
-      }
-    }
-
-    // Otherwise, calculate fresh data
-    const analytics = await this.getUserAnalytics(userId)
-    return {
-      totalApplications: analytics.totalApplications,
-      activeApplications: analytics.activeApplications,
-      offersReceived: analytics.offersReceived,
-      successRate: analytics.successRate
-    }
   }
 } 
