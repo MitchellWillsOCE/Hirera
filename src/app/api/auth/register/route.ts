@@ -65,6 +65,8 @@ export async function POST(request: NextRequest) {
     await prisma.analytics.create({
       data: {
         userId: user.id,
+        period: 'monthly',
+        date: new Date(),
       }
     })
 
