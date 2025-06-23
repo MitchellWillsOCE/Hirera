@@ -1,0 +1,219 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+// User Authentication Model
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  username      String    @unique
+  firstName     String?
+  lastName      String?
+  password      String
+  emailVerified DateTime?
+  image         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  // Relations
+  jobApplications JobApplication[]
+  templates       Template[]
+  sessions        Session[]
+  accounts        Account[]
+  
+  @@map("users")
+}
+
+// NextAuth.js required models
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@map("sessions")
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+  
+  @@unique([identifier, token])
+  @@map("verification_tokens")
+}
+
+// Job Application Microservice Models
+model JobApplication {
+  id            String   @id @default(cuid())
+  userId        String
+  jobTitle      String
+  company       String
+  location      String
+  jobPostUrl    String?
+  salaryMin     Int?
+  salaryMax     Int?
+  salaryCurrency String? @default("USD")
+  contactName   String?
+  contactEmail  String?
+  contactPhone  String?
+  notes         String?
+  status        JobStatus @default(APPLIED)
+  priority      Priority  @default(MEDIUM)
+  appliedDate   DateTime  @default(now())
+  lastUpdated   DateTime  @updatedAt
+  
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tags JobApplicationTag[]
+  activities ActivityLog[]
+  
+  @@map("job_applications")
+}
+
+model Tag {
+  id   String @id @default(cuid())
+  name String @unique
+  
+  // Relations
+  jobApplications JobApplicationTag[]
+  
+  @@map("tags")
+}
+
+model JobApplicationTag {
+  jobApplicationId String
+  tagId            String
+  
+  jobApplication JobApplication @relation(fields: [jobApplicationId], references: [id], onDelete: Cascade)
+  tag            Tag            @relation(fields: [tagId], references: [id], onDelete: Cascade)
+  
+  @@id([jobApplicationId, tagId])
+  @@map("job_application_tags")
+}
+
+// Activity Logging Microservice
+model ActivityLog {
+  id               String   @id @default(cuid())
+  userId           String
+  jobApplicationId String?
+  action           String
+  description      String?
+  metadata         String? // JSON string for additional data
+  createdAt        DateTime @default(now())
+  
+  // Relations
+  jobApplication JobApplication? @relation(fields: [jobApplicationId], references: [id], onDelete: Cascade)
+  
+  @@map("activity_logs")
+}
+
+// Template Management Microservice
+model Template {
+  id         String       @id @default(cuid())
+  userId     String
+  name       String
+  type       TemplateType
+  fileName   String
+  fileSize   Int
+  mimeType   String
+  fileData   String // Base64 encoded file data
+  uploadDate DateTime     @default(now())
+  
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@map("templates")
+}
+
+// Analytics Microservice Models
+model Analytics {
+  id                String   @id @default(cuid())
+  userId            String
+  totalApplications Int      @default(0)
+  activeApplications Int     @default(0)
+  offersReceived    Int      @default(0)
+  successRate       Float    @default(0.0)
+  averageResponseTime Float  @default(0.0)
+  lastCalculated    DateTime @default(now())
+  
+  @@unique([userId])
+  @@map("analytics")
+}
+
+// Notification Microservice
+model Notification {
+  id        String           @id @default(cuid())
+  userId    String
+  title     String
+  message   String
+  type      NotificationType @default(INFO)
+  read      Boolean          @default(false)
+  createdAt DateTime         @default(now())
+  
+  @@map("notifications")
+}
+
+// Enums
+enum JobStatus {
+  APPLIED
+  SCREENING
+  INTERVIEW
+  OFFER
+  REJECTED
+  WITHDRAWN
+}
+
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+enum TemplateType {
+  RESUME
+  COVER_LETTER
+  PORTFOLIO
+  OTHER
+}
+
+enum NotificationType {
+  INFO
+  SUCCESS
+  WARNING
+  ERROR
+}

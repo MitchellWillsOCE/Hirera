@@ -1,0 +1,63 @@
+import type { Metadata } from "next";
+import { Geist, Geist_Mono } from "next/font/google";
+import "./globals.css";
+import { SessionProvider } from "@/components/providers/session-provider";
+
+const geistSans = Geist({
+  variable: "--font-geist-sans",
+  subsets: ["latin"],
+});
+
+const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
+  subsets: ["latin"],
+});
+
+export const metadata: Metadata = {
+  title: "💼 JobTracker Pro - Manage Your Career Journey",
+  description: "A comprehensive job application tracking system to help you manage your job search efficiently. Track applications, analyze progress, and organize your career materials.",
+  keywords: ["job tracker", "career management", "job search", "application tracker"],
+  authors: [{ name: "JobTracker Pro Team" }],
+  creator: "JobTracker Pro",
+  openGraph: {
+    title: "💼 JobTracker Pro",
+    description: "Track and manage your job applications with ease",
+    type: "website",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
+  icons: {
+    icon: '/favicon.svg',
+    shortcut: '/favicon.svg',
+    apple: '/favicon.svg',
+  },
+};
+
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  return (
+    <html lang="en" className="scroll-smooth">
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800`}
+      >
+        <SessionProvider>
+          <div className="relative">
+            {/* Background Elements */}
+            <div className="fixed inset-0 bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))] pointer-events-none" />
+            <div className="fixed inset-0 bg-gradient-to-br from-blue-50/20 via-transparent to-purple-50/20 pointer-events-none" />
+            
+            {/* Main Content */}
+            <div className="relative z-10">
+              {children}
+            </div>
+          </div>
+        </SessionProvider>
+      </body>
+    </html>
+  );
+}
