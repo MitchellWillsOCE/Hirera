@@ -11,27 +11,33 @@ generator client {
 
 datasource db {
   provider = "sqlite"
-  url      = "file:./dev.db"
+  url      = env("DATABASE_URL")
 }
 
 // User Authentication Model
 model User {
   id            String    @id @default(cuid())
-  email         String    @unique
   username      String    @unique
+  email         String    @unique
+  password      String
   firstName     String?
   lastName      String?
-  password      String
+  country       String?   @default("US")
   emailVerified DateTime?
   image         String?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
+  isPublic      Boolean   @default(false)
 
   // Relations
-  jobApplications JobApplication[]
-  templates       Template[]
-  sessions        Session[]
   accounts        Account[]
+  sessions        Session[]
+  jobApplications JobApplication[]
+  activityLogs    ActivityLog[]
+  analytics       Analytics[]
+  notifications   Notification[]
+  goals           Goal[]
+  achievements    Achievement[]
 
   @@map("users")
 }
@@ -80,13 +86,12 @@ model VerificationToken {
 // Job Application Microservice Models
 model JobApplication {
   id             String    @id @default(cuid())
-  userId         String
   jobTitle       String
   company        String
   location       String
   jobPostUrl     String?
-  salaryMin      Int?
-  salaryMax      Int?
+  salaryMin      Float?
+  salaryMax      Float?
   salaryCurrency String?   @default("USD")
   contactName    String?
   contactEmail   String?
@@ -96,33 +101,33 @@ model JobApplication {
   priority       Priority  @default(MEDIUM)
   appliedDate    DateTime  @default(now())
   lastUpdated    DateTime  @updatedAt
+  userId         String
 
-  // Relations
-  user       User                @relation(fields: [userId], references: [id], onDelete: Cascade)
-  tags       JobApplicationTag[]
-  activities ActivityLog[]
+  user         User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tags         JobApplicationTag[]
+  activityLogs ActivityLog[]
 
   @@map("job_applications")
 }
 
 model Tag {
-  id   String @id @default(cuid())
-  name String @unique
-
-  // Relations
+  id              String              @id @default(cuid())
+  name            String              @unique
+  createdAt       DateTime            @default(now())
   jobApplications JobApplicationTag[]
 
   @@map("tags")
 }
 
 model JobApplicationTag {
+  id               String @id @default(cuid())
   jobApplicationId String
   tagId            String
 
   jobApplication JobApplication @relation(fields: [jobApplicationId], references: [id], onDelete: Cascade)
   tag            Tag            @relation(fields: [tagId], references: [id], onDelete: Cascade)
 
-  @@id([jobApplicationId, tagId])
+  @@unique([jobApplicationId, tagId])
   @@map("job_application_tags")
 }
 
@@ -130,48 +135,45 @@ model JobApplicationTag {
 model ActivityLog {
   id               String   @id @default(cuid())
   userId           String
-  jobApplicationId String?
+  jobApplicationId String
   action           String
-  description      String?
-  metadata         String? // JSON string for additional data
-  createdAt        DateTime @default(now())
+  description      String
+  timestamp        DateTime @default(now())
 
-  // Relations
-  jobApplication JobApplication? @relation(fields: [jobApplicationId], references: [id], onDelete: Cascade)
+  user           User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  jobApplication JobApplication @relation(fields: [jobApplicationId], references: [id], onDelete: Cascade)
 
   @@map("activity_logs")
 }
 
 // Template Management Microservice
 model Template {
-  id         String       @id @default(cuid())
-  userId     String
-  name       String
-  type       TemplateType
-  fileName   String
-  fileSize   Int
-  mimeType   String
-  fileData   String // Base64 encoded file data
-  uploadDate DateTime     @default(now())
-
-  // Relations
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id        String       @id @default(cuid())
+  name      String
+  content   String
+  type      TemplateType
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
 
   @@map("templates")
 }
 
 // Analytics Microservice Models
 model Analytics {
-  id                  String   @id @default(cuid())
-  userId              String
-  totalApplications   Int      @default(0)
-  activeApplications  Int      @default(0)
-  offersReceived      Int      @default(0)
-  successRate         Float    @default(0.0)
-  averageResponseTime Float    @default(0.0)
-  lastCalculated      DateTime @default(now())
+  id              String   @id @default(cuid())
+  userId          String
+  period          String // 'daily', 'weekly', 'monthly'
+  date            DateTime
+  totalApps       Int      @default(0)
+  responsesRate   Float    @default(0)
+  interviewRate   Float    @default(0)
+  offerRate       Float    @default(0)
+  avgResponseTime Int      @default(0)
+  createdAt       DateTime @default(now())
 
-  @@unique([userId])
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, period, date])
   @@map("analytics")
 }
 
@@ -181,9 +183,11 @@ model Notification {
   userId    String
   title     String
   message   String
-  type      NotificationType @default(INFO)
-  read      Boolean          @default(false)
+  type      NotificationType
+  isRead    Boolean          @default(false)
   createdAt DateTime         @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("notifications")
 }
@@ -212,8 +216,62 @@ enum TemplateType {
 }
 
 enum NotificationType {
-  INFO
-  SUCCESS
-  WARNING
-  ERROR
+  REMINDER
+  ACHIEVEMENT
+  GOAL_PROGRESS
+  SYSTEM
+}
+
+model Goal {
+  id        String     @id @default(cuid())
+  userId    String
+  type      GoalType
+  target    Int
+  period    GoalPeriod
+  startDate DateTime
+  endDate   DateTime
+  achieved  Int        @default(0)
+  isActive  Boolean    @default(true)
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Achievement {
+  id          String          @id @default(cuid())
+  userId      String
+  type        AchievementType
+  title       String
+  description String
+  unlockedAt  DateTime        @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+enum GoalType {
+  APPLICATIONS
+  INTERVIEWS
+  OFFERS
+  RESPONSES
+}
+
+enum GoalPeriod {
+  WEEKLY
+  MONTHLY
+  QUARTERLY
+  YEARLY
+}
+
+enum AchievementType {
+  FIRST_APPLICATION
+  FIRST_INTERVIEW
+  FIRST_OFFER
+  MILESTONE_10_APPS
+  MILESTONE_50_APPS
+  MILESTONE_100_APPS
+  STREAK_7_DAYS
+  STREAK_30_DAYS
+  PERFECT_WEEK
+  GOAL_ACHIEVER
 }

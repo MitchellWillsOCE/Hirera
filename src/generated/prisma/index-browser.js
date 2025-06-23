@@ -119,15 +119,17 @@ exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
 
 exports.Prisma.UserScalarFieldEnum = {
   id: 'id',
-  email: 'email',
   username: 'username',
+  email: 'email',
+  password: 'password',
   firstName: 'firstName',
   lastName: 'lastName',
-  password: 'password',
+  country: 'country',
   emailVerified: 'emailVerified',
   image: 'image',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  isPublic: 'isPublic'
 };
 
 exports.Prisma.AccountScalarFieldEnum = {
@@ -160,7 +162,6 @@ exports.Prisma.VerificationTokenScalarFieldEnum = {
 
 exports.Prisma.JobApplicationScalarFieldEnum = {
   id: 'id',
-  userId: 'userId',
   jobTitle: 'jobTitle',
   company: 'company',
   location: 'location',
@@ -175,15 +176,18 @@ exports.Prisma.JobApplicationScalarFieldEnum = {
   status: 'status',
   priority: 'priority',
   appliedDate: 'appliedDate',
-  lastUpdated: 'lastUpdated'
+  lastUpdated: 'lastUpdated',
+  userId: 'userId'
 };
 
 exports.Prisma.TagScalarFieldEnum = {
   id: 'id',
-  name: 'name'
+  name: 'name',
+  createdAt: 'createdAt'
 };
 
 exports.Prisma.JobApplicationTagScalarFieldEnum = {
+  id: 'id',
   jobApplicationId: 'jobApplicationId',
   tagId: 'tagId'
 };
@@ -194,31 +198,29 @@ exports.Prisma.ActivityLogScalarFieldEnum = {
   jobApplicationId: 'jobApplicationId',
   action: 'action',
   description: 'description',
-  metadata: 'metadata',
-  createdAt: 'createdAt'
+  timestamp: 'timestamp'
 };
 
 exports.Prisma.TemplateScalarFieldEnum = {
   id: 'id',
-  userId: 'userId',
   name: 'name',
+  content: 'content',
   type: 'type',
-  fileName: 'fileName',
-  fileSize: 'fileSize',
-  mimeType: 'mimeType',
-  fileData: 'fileData',
-  uploadDate: 'uploadDate'
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
 };
 
 exports.Prisma.AnalyticsScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
-  totalApplications: 'totalApplications',
-  activeApplications: 'activeApplications',
-  offersReceived: 'offersReceived',
-  successRate: 'successRate',
-  averageResponseTime: 'averageResponseTime',
-  lastCalculated: 'lastCalculated'
+  period: 'period',
+  date: 'date',
+  totalApps: 'totalApps',
+  responsesRate: 'responsesRate',
+  interviewRate: 'interviewRate',
+  offerRate: 'offerRate',
+  avgResponseTime: 'avgResponseTime',
+  createdAt: 'createdAt'
 };
 
 exports.Prisma.NotificationScalarFieldEnum = {
@@ -227,8 +229,31 @@ exports.Prisma.NotificationScalarFieldEnum = {
   title: 'title',
   message: 'message',
   type: 'type',
-  read: 'read',
+  isRead: 'isRead',
   createdAt: 'createdAt'
+};
+
+exports.Prisma.GoalScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  type: 'type',
+  target: 'target',
+  period: 'period',
+  startDate: 'startDate',
+  endDate: 'endDate',
+  achieved: 'achieved',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.AchievementScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  type: 'type',
+  title: 'title',
+  description: 'description',
+  unlockedAt: 'unlockedAt'
 };
 
 exports.Prisma.SortOrder = {
@@ -263,10 +288,37 @@ exports.TemplateType = exports.$Enums.TemplateType = {
 };
 
 exports.NotificationType = exports.$Enums.NotificationType = {
-  INFO: 'INFO',
-  SUCCESS: 'SUCCESS',
-  WARNING: 'WARNING',
-  ERROR: 'ERROR'
+  REMINDER: 'REMINDER',
+  ACHIEVEMENT: 'ACHIEVEMENT',
+  GOAL_PROGRESS: 'GOAL_PROGRESS',
+  SYSTEM: 'SYSTEM'
+};
+
+exports.GoalType = exports.$Enums.GoalType = {
+  APPLICATIONS: 'APPLICATIONS',
+  INTERVIEWS: 'INTERVIEWS',
+  OFFERS: 'OFFERS',
+  RESPONSES: 'RESPONSES'
+};
+
+exports.GoalPeriod = exports.$Enums.GoalPeriod = {
+  WEEKLY: 'WEEKLY',
+  MONTHLY: 'MONTHLY',
+  QUARTERLY: 'QUARTERLY',
+  YEARLY: 'YEARLY'
+};
+
+exports.AchievementType = exports.$Enums.AchievementType = {
+  FIRST_APPLICATION: 'FIRST_APPLICATION',
+  FIRST_INTERVIEW: 'FIRST_INTERVIEW',
+  FIRST_OFFER: 'FIRST_OFFER',
+  MILESTONE_10_APPS: 'MILESTONE_10_APPS',
+  MILESTONE_50_APPS: 'MILESTONE_50_APPS',
+  MILESTONE_100_APPS: 'MILESTONE_100_APPS',
+  STREAK_7_DAYS: 'STREAK_7_DAYS',
+  STREAK_30_DAYS: 'STREAK_30_DAYS',
+  PERFECT_WEEK: 'PERFECT_WEEK',
+  GOAL_ACHIEVER: 'GOAL_ACHIEVER'
 };
 
 exports.Prisma.ModelName = {
@@ -280,7 +332,9 @@ exports.Prisma.ModelName = {
   ActivityLog: 'ActivityLog',
   Template: 'Template',
   Analytics: 'Analytics',
-  Notification: 'Notification'
+  Notification: 'Notification',
+  Goal: 'Goal',
+  Achievement: 'Achievement'
 };
 
 /**

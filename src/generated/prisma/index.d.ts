@@ -68,6 +68,16 @@ export type Analytics = $Result.DefaultSelection<Prisma.$AnalyticsPayload>
  * 
  */
 export type Notification = $Result.DefaultSelection<Prisma.$NotificationPayload>
+/**
+ * Model Goal
+ * 
+ */
+export type Goal = $Result.DefaultSelection<Prisma.$GoalPayload>
+/**
+ * Model Achievement
+ * 
+ */
+export type Achievement = $Result.DefaultSelection<Prisma.$AchievementPayload>
 
 /**
  * Enums
@@ -105,13 +115,49 @@ export type TemplateType = (typeof TemplateType)[keyof typeof TemplateType]
 
 
 export const NotificationType: {
-  INFO: 'INFO',
-  SUCCESS: 'SUCCESS',
-  WARNING: 'WARNING',
-  ERROR: 'ERROR'
+  REMINDER: 'REMINDER',
+  ACHIEVEMENT: 'ACHIEVEMENT',
+  GOAL_PROGRESS: 'GOAL_PROGRESS',
+  SYSTEM: 'SYSTEM'
 };
 
 export type NotificationType = (typeof NotificationType)[keyof typeof NotificationType]
+
+
+export const GoalType: {
+  APPLICATIONS: 'APPLICATIONS',
+  INTERVIEWS: 'INTERVIEWS',
+  OFFERS: 'OFFERS',
+  RESPONSES: 'RESPONSES'
+};
+
+export type GoalType = (typeof GoalType)[keyof typeof GoalType]
+
+
+export const GoalPeriod: {
+  WEEKLY: 'WEEKLY',
+  MONTHLY: 'MONTHLY',
+  QUARTERLY: 'QUARTERLY',
+  YEARLY: 'YEARLY'
+};
+
+export type GoalPeriod = (typeof GoalPeriod)[keyof typeof GoalPeriod]
+
+
+export const AchievementType: {
+  FIRST_APPLICATION: 'FIRST_APPLICATION',
+  FIRST_INTERVIEW: 'FIRST_INTERVIEW',
+  FIRST_OFFER: 'FIRST_OFFER',
+  MILESTONE_10_APPS: 'MILESTONE_10_APPS',
+  MILESTONE_50_APPS: 'MILESTONE_50_APPS',
+  MILESTONE_100_APPS: 'MILESTONE_100_APPS',
+  STREAK_7_DAYS: 'STREAK_7_DAYS',
+  STREAK_30_DAYS: 'STREAK_30_DAYS',
+  PERFECT_WEEK: 'PERFECT_WEEK',
+  GOAL_ACHIEVER: 'GOAL_ACHIEVER'
+};
+
+export type AchievementType = (typeof AchievementType)[keyof typeof AchievementType]
 
 }
 
@@ -130,6 +176,18 @@ export const TemplateType: typeof $Enums.TemplateType
 export type NotificationType = $Enums.NotificationType
 
 export const NotificationType: typeof $Enums.NotificationType
+
+export type GoalType = $Enums.GoalType
+
+export const GoalType: typeof $Enums.GoalType
+
+export type GoalPeriod = $Enums.GoalPeriod
+
+export const GoalPeriod: typeof $Enums.GoalPeriod
+
+export type AchievementType = $Enums.AchievementType
+
+export const AchievementType: typeof $Enums.AchievementType
 
 /**
  * ##  Prisma Client ʲˢ
@@ -365,6 +423,26 @@ export class PrismaClient<
     * ```
     */
   get notification(): Prisma.NotificationDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.goal`: Exposes CRUD operations for the **Goal** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Goals
+    * const goals = await prisma.goal.findMany()
+    * ```
+    */
+  get goal(): Prisma.GoalDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.achievement`: Exposes CRUD operations for the **Achievement** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Achievements
+    * const achievements = await prisma.achievement.findMany()
+    * ```
+    */
+  get achievement(): Prisma.AchievementDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -815,7 +893,9 @@ export namespace Prisma {
     ActivityLog: 'ActivityLog',
     Template: 'Template',
     Analytics: 'Analytics',
-    Notification: 'Notification'
+    Notification: 'Notification',
+    Goal: 'Goal',
+    Achievement: 'Achievement'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -834,7 +914,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "account" | "session" | "verificationToken" | "jobApplication" | "tag" | "jobApplicationTag" | "activityLog" | "template" | "analytics" | "notification"
+      modelProps: "user" | "account" | "session" | "verificationToken" | "jobApplication" | "tag" | "jobApplicationTag" | "activityLog" | "template" | "analytics" | "notification" | "goal" | "achievement"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1652,6 +1732,154 @@ export namespace Prisma {
           }
         }
       }
+      Goal: {
+        payload: Prisma.$GoalPayload<ExtArgs>
+        fields: Prisma.GoalFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.GoalFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GoalPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.GoalFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GoalPayload>
+          }
+          findFirst: {
+            args: Prisma.GoalFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GoalPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.GoalFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GoalPayload>
+          }
+          findMany: {
+            args: Prisma.GoalFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GoalPayload>[]
+          }
+          create: {
+            args: Prisma.GoalCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GoalPayload>
+          }
+          createMany: {
+            args: Prisma.GoalCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.GoalCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GoalPayload>[]
+          }
+          delete: {
+            args: Prisma.GoalDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GoalPayload>
+          }
+          update: {
+            args: Prisma.GoalUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GoalPayload>
+          }
+          deleteMany: {
+            args: Prisma.GoalDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.GoalUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.GoalUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GoalPayload>[]
+          }
+          upsert: {
+            args: Prisma.GoalUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GoalPayload>
+          }
+          aggregate: {
+            args: Prisma.GoalAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateGoal>
+          }
+          groupBy: {
+            args: Prisma.GoalGroupByArgs<ExtArgs>
+            result: $Utils.Optional<GoalGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.GoalCountArgs<ExtArgs>
+            result: $Utils.Optional<GoalCountAggregateOutputType> | number
+          }
+        }
+      }
+      Achievement: {
+        payload: Prisma.$AchievementPayload<ExtArgs>
+        fields: Prisma.AchievementFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.AchievementFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AchievementPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.AchievementFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AchievementPayload>
+          }
+          findFirst: {
+            args: Prisma.AchievementFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AchievementPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.AchievementFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AchievementPayload>
+          }
+          findMany: {
+            args: Prisma.AchievementFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AchievementPayload>[]
+          }
+          create: {
+            args: Prisma.AchievementCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AchievementPayload>
+          }
+          createMany: {
+            args: Prisma.AchievementCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.AchievementCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AchievementPayload>[]
+          }
+          delete: {
+            args: Prisma.AchievementDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AchievementPayload>
+          }
+          update: {
+            args: Prisma.AchievementUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AchievementPayload>
+          }
+          deleteMany: {
+            args: Prisma.AchievementDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.AchievementUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.AchievementUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AchievementPayload>[]
+          }
+          upsert: {
+            args: Prisma.AchievementUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AchievementPayload>
+          }
+          aggregate: {
+            args: Prisma.AchievementAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateAchievement>
+          }
+          groupBy: {
+            args: Prisma.AchievementGroupByArgs<ExtArgs>
+            result: $Utils.Optional<AchievementGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.AchievementCountArgs<ExtArgs>
+            result: $Utils.Optional<AchievementCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -1747,6 +1975,8 @@ export namespace Prisma {
     template?: TemplateOmit
     analytics?: AnalyticsOmit
     notification?: NotificationOmit
+    goal?: GoalOmit
+    achievement?: AchievementOmit
   }
 
   /* Types for Logging */
@@ -1841,17 +2071,25 @@ export namespace Prisma {
    */
 
   export type UserCountOutputType = {
-    jobApplications: number
-    templates: number
-    sessions: number
     accounts: number
+    sessions: number
+    jobApplications: number
+    activityLogs: number
+    analytics: number
+    notifications: number
+    goals: number
+    achievements: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    jobApplications?: boolean | UserCountOutputTypeCountJobApplicationsArgs
-    templates?: boolean | UserCountOutputTypeCountTemplatesArgs
-    sessions?: boolean | UserCountOutputTypeCountSessionsArgs
     accounts?: boolean | UserCountOutputTypeCountAccountsArgs
+    sessions?: boolean | UserCountOutputTypeCountSessionsArgs
+    jobApplications?: boolean | UserCountOutputTypeCountJobApplicationsArgs
+    activityLogs?: boolean | UserCountOutputTypeCountActivityLogsArgs
+    analytics?: boolean | UserCountOutputTypeCountAnalyticsArgs
+    notifications?: boolean | UserCountOutputTypeCountNotificationsArgs
+    goals?: boolean | UserCountOutputTypeCountGoalsArgs
+    achievements?: boolean | UserCountOutputTypeCountAchievementsArgs
   }
 
   // Custom InputTypes
@@ -1868,15 +2106,8 @@ export namespace Prisma {
   /**
    * UserCountOutputType without action
    */
-  export type UserCountOutputTypeCountJobApplicationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: JobApplicationWhereInput
-  }
-
-  /**
-   * UserCountOutputType without action
-   */
-  export type UserCountOutputTypeCountTemplatesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: TemplateWhereInput
+  export type UserCountOutputTypeCountAccountsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: AccountWhereInput
   }
 
   /**
@@ -1889,8 +2120,43 @@ export namespace Prisma {
   /**
    * UserCountOutputType without action
    */
-  export type UserCountOutputTypeCountAccountsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: AccountWhereInput
+  export type UserCountOutputTypeCountJobApplicationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: JobApplicationWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountActivityLogsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ActivityLogWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountAnalyticsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: AnalyticsWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountNotificationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: NotificationWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountGoalsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: GoalWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountAchievementsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: AchievementWhereInput
   }
 
 
@@ -1900,12 +2166,12 @@ export namespace Prisma {
 
   export type JobApplicationCountOutputType = {
     tags: number
-    activities: number
+    activityLogs: number
   }
 
   export type JobApplicationCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     tags?: boolean | JobApplicationCountOutputTypeCountTagsArgs
-    activities?: boolean | JobApplicationCountOutputTypeCountActivitiesArgs
+    activityLogs?: boolean | JobApplicationCountOutputTypeCountActivityLogsArgs
   }
 
   // Custom InputTypes
@@ -1929,7 +2195,7 @@ export namespace Prisma {
   /**
    * JobApplicationCountOutputType without action
    */
-  export type JobApplicationCountOutputTypeCountActivitiesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type JobApplicationCountOutputTypeCountActivityLogsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: ActivityLogWhereInput
   }
 
@@ -1981,82 +2247,94 @@ export namespace Prisma {
 
   export type UserMinAggregateOutputType = {
     id: string | null
-    email: string | null
     username: string | null
+    email: string | null
+    password: string | null
     firstName: string | null
     lastName: string | null
-    password: string | null
+    country: string | null
     emailVerified: Date | null
     image: string | null
     createdAt: Date | null
     updatedAt: Date | null
+    isPublic: boolean | null
   }
 
   export type UserMaxAggregateOutputType = {
     id: string | null
-    email: string | null
     username: string | null
+    email: string | null
+    password: string | null
     firstName: string | null
     lastName: string | null
-    password: string | null
+    country: string | null
     emailVerified: Date | null
     image: string | null
     createdAt: Date | null
     updatedAt: Date | null
+    isPublic: boolean | null
   }
 
   export type UserCountAggregateOutputType = {
     id: number
-    email: number
     username: number
+    email: number
+    password: number
     firstName: number
     lastName: number
-    password: number
+    country: number
     emailVerified: number
     image: number
     createdAt: number
     updatedAt: number
+    isPublic: number
     _all: number
   }
 
 
   export type UserMinAggregateInputType = {
     id?: true
-    email?: true
     username?: true
+    email?: true
+    password?: true
     firstName?: true
     lastName?: true
-    password?: true
+    country?: true
     emailVerified?: true
     image?: true
     createdAt?: true
     updatedAt?: true
+    isPublic?: true
   }
 
   export type UserMaxAggregateInputType = {
     id?: true
-    email?: true
     username?: true
+    email?: true
+    password?: true
     firstName?: true
     lastName?: true
-    password?: true
+    country?: true
     emailVerified?: true
     image?: true
     createdAt?: true
     updatedAt?: true
+    isPublic?: true
   }
 
   export type UserCountAggregateInputType = {
     id?: true
-    email?: true
     username?: true
+    email?: true
+    password?: true
     firstName?: true
     lastName?: true
-    password?: true
+    country?: true
     emailVerified?: true
     image?: true
     createdAt?: true
     updatedAt?: true
+    isPublic?: true
     _all?: true
   }
 
@@ -2134,15 +2412,17 @@ export namespace Prisma {
 
   export type UserGroupByOutputType = {
     id: string
-    email: string
     username: string
+    email: string
+    password: string
     firstName: string | null
     lastName: string | null
-    password: string
+    country: string | null
     emailVerified: Date | null
     image: string | null
     createdAt: Date
     updatedAt: Date
+    isPublic: boolean
     _count: UserCountAggregateOutputType | null
     _min: UserMinAggregateOutputType | null
     _max: UserMaxAggregateOutputType | null
@@ -2164,67 +2444,83 @@ export namespace Prisma {
 
   export type UserSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
-    email?: boolean
     username?: boolean
+    email?: boolean
+    password?: boolean
     firstName?: boolean
     lastName?: boolean
-    password?: boolean
+    country?: boolean
     emailVerified?: boolean
     image?: boolean
     createdAt?: boolean
     updatedAt?: boolean
-    jobApplications?: boolean | User$jobApplicationsArgs<ExtArgs>
-    templates?: boolean | User$templatesArgs<ExtArgs>
-    sessions?: boolean | User$sessionsArgs<ExtArgs>
+    isPublic?: boolean
     accounts?: boolean | User$accountsArgs<ExtArgs>
+    sessions?: boolean | User$sessionsArgs<ExtArgs>
+    jobApplications?: boolean | User$jobApplicationsArgs<ExtArgs>
+    activityLogs?: boolean | User$activityLogsArgs<ExtArgs>
+    analytics?: boolean | User$analyticsArgs<ExtArgs>
+    notifications?: boolean | User$notificationsArgs<ExtArgs>
+    goals?: boolean | User$goalsArgs<ExtArgs>
+    achievements?: boolean | User$achievementsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
   export type UserSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
-    email?: boolean
     username?: boolean
+    email?: boolean
+    password?: boolean
     firstName?: boolean
     lastName?: boolean
-    password?: boolean
+    country?: boolean
     emailVerified?: boolean
     image?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    isPublic?: boolean
   }, ExtArgs["result"]["user"]>
 
   export type UserSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
-    email?: boolean
     username?: boolean
+    email?: boolean
+    password?: boolean
     firstName?: boolean
     lastName?: boolean
-    password?: boolean
+    country?: boolean
     emailVerified?: boolean
     image?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    isPublic?: boolean
   }, ExtArgs["result"]["user"]>
 
   export type UserSelectScalar = {
     id?: boolean
-    email?: boolean
     username?: boolean
+    email?: boolean
+    password?: boolean
     firstName?: boolean
     lastName?: boolean
-    password?: boolean
+    country?: boolean
     emailVerified?: boolean
     image?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    isPublic?: boolean
   }
 
-  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "email" | "username" | "firstName" | "lastName" | "password" | "emailVerified" | "image" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
+  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "username" | "email" | "password" | "firstName" | "lastName" | "country" | "emailVerified" | "image" | "createdAt" | "updatedAt" | "isPublic", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    jobApplications?: boolean | User$jobApplicationsArgs<ExtArgs>
-    templates?: boolean | User$templatesArgs<ExtArgs>
-    sessions?: boolean | User$sessionsArgs<ExtArgs>
     accounts?: boolean | User$accountsArgs<ExtArgs>
+    sessions?: boolean | User$sessionsArgs<ExtArgs>
+    jobApplications?: boolean | User$jobApplicationsArgs<ExtArgs>
+    activityLogs?: boolean | User$activityLogsArgs<ExtArgs>
+    analytics?: boolean | User$analyticsArgs<ExtArgs>
+    notifications?: boolean | User$notificationsArgs<ExtArgs>
+    goals?: boolean | User$goalsArgs<ExtArgs>
+    achievements?: boolean | User$achievementsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -2233,22 +2529,28 @@ export namespace Prisma {
   export type $UserPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "User"
     objects: {
-      jobApplications: Prisma.$JobApplicationPayload<ExtArgs>[]
-      templates: Prisma.$TemplatePayload<ExtArgs>[]
-      sessions: Prisma.$SessionPayload<ExtArgs>[]
       accounts: Prisma.$AccountPayload<ExtArgs>[]
+      sessions: Prisma.$SessionPayload<ExtArgs>[]
+      jobApplications: Prisma.$JobApplicationPayload<ExtArgs>[]
+      activityLogs: Prisma.$ActivityLogPayload<ExtArgs>[]
+      analytics: Prisma.$AnalyticsPayload<ExtArgs>[]
+      notifications: Prisma.$NotificationPayload<ExtArgs>[]
+      goals: Prisma.$GoalPayload<ExtArgs>[]
+      achievements: Prisma.$AchievementPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
-      email: string
       username: string
+      email: string
+      password: string
       firstName: string | null
       lastName: string | null
-      password: string
+      country: string | null
       emailVerified: Date | null
       image: string | null
       createdAt: Date
       updatedAt: Date
+      isPublic: boolean
     }, ExtArgs["result"]["user"]>
     composites: {}
   }
@@ -2643,10 +2945,14 @@ export namespace Prisma {
    */
   export interface Prisma__UserClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    jobApplications<T extends User$jobApplicationsArgs<ExtArgs> = {}>(args?: Subset<T, User$jobApplicationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$JobApplicationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    templates<T extends User$templatesArgs<ExtArgs> = {}>(args?: Subset<T, User$templatesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TemplatePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    sessions<T extends User$sessionsArgs<ExtArgs> = {}>(args?: Subset<T, User$sessionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     accounts<T extends User$accountsArgs<ExtArgs> = {}>(args?: Subset<T, User$accountsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AccountPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    sessions<T extends User$sessionsArgs<ExtArgs> = {}>(args?: Subset<T, User$sessionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    jobApplications<T extends User$jobApplicationsArgs<ExtArgs> = {}>(args?: Subset<T, User$jobApplicationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$JobApplicationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    activityLogs<T extends User$activityLogsArgs<ExtArgs> = {}>(args?: Subset<T, User$activityLogsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ActivityLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    analytics<T extends User$analyticsArgs<ExtArgs> = {}>(args?: Subset<T, User$analyticsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AnalyticsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    notifications<T extends User$notificationsArgs<ExtArgs> = {}>(args?: Subset<T, User$notificationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    goals<T extends User$goalsArgs<ExtArgs> = {}>(args?: Subset<T, User$goalsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$GoalPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    achievements<T extends User$achievementsArgs<ExtArgs> = {}>(args?: Subset<T, User$achievementsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AchievementPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2677,15 +2983,17 @@ export namespace Prisma {
    */
   interface UserFieldRefs {
     readonly id: FieldRef<"User", 'String'>
-    readonly email: FieldRef<"User", 'String'>
     readonly username: FieldRef<"User", 'String'>
+    readonly email: FieldRef<"User", 'String'>
+    readonly password: FieldRef<"User", 'String'>
     readonly firstName: FieldRef<"User", 'String'>
     readonly lastName: FieldRef<"User", 'String'>
-    readonly password: FieldRef<"User", 'String'>
+    readonly country: FieldRef<"User", 'String'>
     readonly emailVerified: FieldRef<"User", 'DateTime'>
     readonly image: FieldRef<"User", 'String'>
     readonly createdAt: FieldRef<"User", 'DateTime'>
     readonly updatedAt: FieldRef<"User", 'DateTime'>
+    readonly isPublic: FieldRef<"User", 'Boolean'>
   }
     
 
@@ -3072,51 +3380,27 @@ export namespace Prisma {
   }
 
   /**
-   * User.jobApplications
+   * User.accounts
    */
-  export type User$jobApplicationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type User$accountsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the JobApplication
+     * Select specific fields to fetch from the Account
      */
-    select?: JobApplicationSelect<ExtArgs> | null
+    select?: AccountSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the JobApplication
+     * Omit specific fields from the Account
      */
-    omit?: JobApplicationOmit<ExtArgs> | null
+    omit?: AccountOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: JobApplicationInclude<ExtArgs> | null
-    where?: JobApplicationWhereInput
-    orderBy?: JobApplicationOrderByWithRelationInput | JobApplicationOrderByWithRelationInput[]
-    cursor?: JobApplicationWhereUniqueInput
+    include?: AccountInclude<ExtArgs> | null
+    where?: AccountWhereInput
+    orderBy?: AccountOrderByWithRelationInput | AccountOrderByWithRelationInput[]
+    cursor?: AccountWhereUniqueInput
     take?: number
     skip?: number
-    distinct?: JobApplicationScalarFieldEnum | JobApplicationScalarFieldEnum[]
-  }
-
-  /**
-   * User.templates
-   */
-  export type User$templatesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Template
-     */
-    select?: TemplateSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Template
-     */
-    omit?: TemplateOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: TemplateInclude<ExtArgs> | null
-    where?: TemplateWhereInput
-    orderBy?: TemplateOrderByWithRelationInput | TemplateOrderByWithRelationInput[]
-    cursor?: TemplateWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: TemplateScalarFieldEnum | TemplateScalarFieldEnum[]
+    distinct?: AccountScalarFieldEnum | AccountScalarFieldEnum[]
   }
 
   /**
@@ -3144,27 +3428,147 @@ export namespace Prisma {
   }
 
   /**
-   * User.accounts
+   * User.jobApplications
    */
-  export type User$accountsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type User$jobApplicationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the Account
+     * Select specific fields to fetch from the JobApplication
      */
-    select?: AccountSelect<ExtArgs> | null
+    select?: JobApplicationSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the Account
+     * Omit specific fields from the JobApplication
      */
-    omit?: AccountOmit<ExtArgs> | null
+    omit?: JobApplicationOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: AccountInclude<ExtArgs> | null
-    where?: AccountWhereInput
-    orderBy?: AccountOrderByWithRelationInput | AccountOrderByWithRelationInput[]
-    cursor?: AccountWhereUniqueInput
+    include?: JobApplicationInclude<ExtArgs> | null
+    where?: JobApplicationWhereInput
+    orderBy?: JobApplicationOrderByWithRelationInput | JobApplicationOrderByWithRelationInput[]
+    cursor?: JobApplicationWhereUniqueInput
     take?: number
     skip?: number
-    distinct?: AccountScalarFieldEnum | AccountScalarFieldEnum[]
+    distinct?: JobApplicationScalarFieldEnum | JobApplicationScalarFieldEnum[]
+  }
+
+  /**
+   * User.activityLogs
+   */
+  export type User$activityLogsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ActivityLog
+     */
+    select?: ActivityLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ActivityLog
+     */
+    omit?: ActivityLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ActivityLogInclude<ExtArgs> | null
+    where?: ActivityLogWhereInput
+    orderBy?: ActivityLogOrderByWithRelationInput | ActivityLogOrderByWithRelationInput[]
+    cursor?: ActivityLogWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ActivityLogScalarFieldEnum | ActivityLogScalarFieldEnum[]
+  }
+
+  /**
+   * User.analytics
+   */
+  export type User$analyticsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Analytics
+     */
+    select?: AnalyticsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Analytics
+     */
+    omit?: AnalyticsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AnalyticsInclude<ExtArgs> | null
+    where?: AnalyticsWhereInput
+    orderBy?: AnalyticsOrderByWithRelationInput | AnalyticsOrderByWithRelationInput[]
+    cursor?: AnalyticsWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: AnalyticsScalarFieldEnum | AnalyticsScalarFieldEnum[]
+  }
+
+  /**
+   * User.notifications
+   */
+  export type User$notificationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Notification
+     */
+    select?: NotificationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Notification
+     */
+    omit?: NotificationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NotificationInclude<ExtArgs> | null
+    where?: NotificationWhereInput
+    orderBy?: NotificationOrderByWithRelationInput | NotificationOrderByWithRelationInput[]
+    cursor?: NotificationWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: NotificationScalarFieldEnum | NotificationScalarFieldEnum[]
+  }
+
+  /**
+   * User.goals
+   */
+  export type User$goalsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Goal
+     */
+    select?: GoalSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Goal
+     */
+    omit?: GoalOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: GoalInclude<ExtArgs> | null
+    where?: GoalWhereInput
+    orderBy?: GoalOrderByWithRelationInput | GoalOrderByWithRelationInput[]
+    cursor?: GoalWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: GoalScalarFieldEnum | GoalScalarFieldEnum[]
+  }
+
+  /**
+   * User.achievements
+   */
+  export type User$achievementsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Achievement
+     */
+    select?: AchievementSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Achievement
+     */
+    omit?: AchievementOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AchievementInclude<ExtArgs> | null
+    where?: AchievementWhereInput
+    orderBy?: AchievementOrderByWithRelationInput | AchievementOrderByWithRelationInput[]
+    cursor?: AchievementWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: AchievementScalarFieldEnum | AchievementScalarFieldEnum[]
   }
 
   /**
@@ -6401,7 +6805,6 @@ export namespace Prisma {
 
   export type JobApplicationMinAggregateOutputType = {
     id: string | null
-    userId: string | null
     jobTitle: string | null
     company: string | null
     location: string | null
@@ -6417,11 +6820,11 @@ export namespace Prisma {
     priority: $Enums.Priority | null
     appliedDate: Date | null
     lastUpdated: Date | null
+    userId: string | null
   }
 
   export type JobApplicationMaxAggregateOutputType = {
     id: string | null
-    userId: string | null
     jobTitle: string | null
     company: string | null
     location: string | null
@@ -6437,11 +6840,11 @@ export namespace Prisma {
     priority: $Enums.Priority | null
     appliedDate: Date | null
     lastUpdated: Date | null
+    userId: string | null
   }
 
   export type JobApplicationCountAggregateOutputType = {
     id: number
-    userId: number
     jobTitle: number
     company: number
     location: number
@@ -6457,6 +6860,7 @@ export namespace Prisma {
     priority: number
     appliedDate: number
     lastUpdated: number
+    userId: number
     _all: number
   }
 
@@ -6473,7 +6877,6 @@ export namespace Prisma {
 
   export type JobApplicationMinAggregateInputType = {
     id?: true
-    userId?: true
     jobTitle?: true
     company?: true
     location?: true
@@ -6489,11 +6892,11 @@ export namespace Prisma {
     priority?: true
     appliedDate?: true
     lastUpdated?: true
+    userId?: true
   }
 
   export type JobApplicationMaxAggregateInputType = {
     id?: true
-    userId?: true
     jobTitle?: true
     company?: true
     location?: true
@@ -6509,11 +6912,11 @@ export namespace Prisma {
     priority?: true
     appliedDate?: true
     lastUpdated?: true
+    userId?: true
   }
 
   export type JobApplicationCountAggregateInputType = {
     id?: true
-    userId?: true
     jobTitle?: true
     company?: true
     location?: true
@@ -6529,6 +6932,7 @@ export namespace Prisma {
     priority?: true
     appliedDate?: true
     lastUpdated?: true
+    userId?: true
     _all?: true
   }
 
@@ -6620,7 +7024,6 @@ export namespace Prisma {
 
   export type JobApplicationGroupByOutputType = {
     id: string
-    userId: string
     jobTitle: string
     company: string
     location: string
@@ -6636,6 +7039,7 @@ export namespace Prisma {
     priority: $Enums.Priority
     appliedDate: Date
     lastUpdated: Date
+    userId: string
     _count: JobApplicationCountAggregateOutputType | null
     _avg: JobApplicationAvgAggregateOutputType | null
     _sum: JobApplicationSumAggregateOutputType | null
@@ -6659,7 +7063,6 @@ export namespace Prisma {
 
   export type JobApplicationSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
-    userId?: boolean
     jobTitle?: boolean
     company?: boolean
     location?: boolean
@@ -6675,15 +7078,15 @@ export namespace Prisma {
     priority?: boolean
     appliedDate?: boolean
     lastUpdated?: boolean
+    userId?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
     tags?: boolean | JobApplication$tagsArgs<ExtArgs>
-    activities?: boolean | JobApplication$activitiesArgs<ExtArgs>
+    activityLogs?: boolean | JobApplication$activityLogsArgs<ExtArgs>
     _count?: boolean | JobApplicationCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["jobApplication"]>
 
   export type JobApplicationSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
-    userId?: boolean
     jobTitle?: boolean
     company?: boolean
     location?: boolean
@@ -6699,12 +7102,12 @@ export namespace Prisma {
     priority?: boolean
     appliedDate?: boolean
     lastUpdated?: boolean
+    userId?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["jobApplication"]>
 
   export type JobApplicationSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
-    userId?: boolean
     jobTitle?: boolean
     company?: boolean
     location?: boolean
@@ -6720,12 +7123,12 @@ export namespace Prisma {
     priority?: boolean
     appliedDate?: boolean
     lastUpdated?: boolean
+    userId?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["jobApplication"]>
 
   export type JobApplicationSelectScalar = {
     id?: boolean
-    userId?: boolean
     jobTitle?: boolean
     company?: boolean
     location?: boolean
@@ -6741,13 +7144,14 @@ export namespace Prisma {
     priority?: boolean
     appliedDate?: boolean
     lastUpdated?: boolean
+    userId?: boolean
   }
 
-  export type JobApplicationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "jobTitle" | "company" | "location" | "jobPostUrl" | "salaryMin" | "salaryMax" | "salaryCurrency" | "contactName" | "contactEmail" | "contactPhone" | "notes" | "status" | "priority" | "appliedDate" | "lastUpdated", ExtArgs["result"]["jobApplication"]>
+  export type JobApplicationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "jobTitle" | "company" | "location" | "jobPostUrl" | "salaryMin" | "salaryMax" | "salaryCurrency" | "contactName" | "contactEmail" | "contactPhone" | "notes" | "status" | "priority" | "appliedDate" | "lastUpdated" | "userId", ExtArgs["result"]["jobApplication"]>
   export type JobApplicationInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
     tags?: boolean | JobApplication$tagsArgs<ExtArgs>
-    activities?: boolean | JobApplication$activitiesArgs<ExtArgs>
+    activityLogs?: boolean | JobApplication$activityLogsArgs<ExtArgs>
     _count?: boolean | JobApplicationCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type JobApplicationIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -6762,11 +7166,10 @@ export namespace Prisma {
     objects: {
       user: Prisma.$UserPayload<ExtArgs>
       tags: Prisma.$JobApplicationTagPayload<ExtArgs>[]
-      activities: Prisma.$ActivityLogPayload<ExtArgs>[]
+      activityLogs: Prisma.$ActivityLogPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
-      userId: string
       jobTitle: string
       company: string
       location: string
@@ -6782,6 +7185,7 @@ export namespace Prisma {
       priority: $Enums.Priority
       appliedDate: Date
       lastUpdated: Date
+      userId: string
     }, ExtArgs["result"]["jobApplication"]>
     composites: {}
   }
@@ -7178,7 +7582,7 @@ export namespace Prisma {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     tags<T extends JobApplication$tagsArgs<ExtArgs> = {}>(args?: Subset<T, JobApplication$tagsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$JobApplicationTagPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    activities<T extends JobApplication$activitiesArgs<ExtArgs> = {}>(args?: Subset<T, JobApplication$activitiesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ActivityLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    activityLogs<T extends JobApplication$activityLogsArgs<ExtArgs> = {}>(args?: Subset<T, JobApplication$activityLogsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ActivityLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -7209,13 +7613,12 @@ export namespace Prisma {
    */
   interface JobApplicationFieldRefs {
     readonly id: FieldRef<"JobApplication", 'String'>
-    readonly userId: FieldRef<"JobApplication", 'String'>
     readonly jobTitle: FieldRef<"JobApplication", 'String'>
     readonly company: FieldRef<"JobApplication", 'String'>
     readonly location: FieldRef<"JobApplication", 'String'>
     readonly jobPostUrl: FieldRef<"JobApplication", 'String'>
-    readonly salaryMin: FieldRef<"JobApplication", 'Int'>
-    readonly salaryMax: FieldRef<"JobApplication", 'Int'>
+    readonly salaryMin: FieldRef<"JobApplication", 'Float'>
+    readonly salaryMax: FieldRef<"JobApplication", 'Float'>
     readonly salaryCurrency: FieldRef<"JobApplication", 'String'>
     readonly contactName: FieldRef<"JobApplication", 'String'>
     readonly contactEmail: FieldRef<"JobApplication", 'String'>
@@ -7225,6 +7628,7 @@ export namespace Prisma {
     readonly priority: FieldRef<"JobApplication", 'Priority'>
     readonly appliedDate: FieldRef<"JobApplication", 'DateTime'>
     readonly lastUpdated: FieldRef<"JobApplication", 'DateTime'>
+    readonly userId: FieldRef<"JobApplication", 'String'>
   }
     
 
@@ -7643,9 +8047,9 @@ export namespace Prisma {
   }
 
   /**
-   * JobApplication.activities
+   * JobApplication.activityLogs
    */
-  export type JobApplication$activitiesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type JobApplication$activityLogsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
      * Select specific fields to fetch from the ActivityLog
      */
@@ -7698,16 +8102,19 @@ export namespace Prisma {
   export type TagMinAggregateOutputType = {
     id: string | null
     name: string | null
+    createdAt: Date | null
   }
 
   export type TagMaxAggregateOutputType = {
     id: string | null
     name: string | null
+    createdAt: Date | null
   }
 
   export type TagCountAggregateOutputType = {
     id: number
     name: number
+    createdAt: number
     _all: number
   }
 
@@ -7715,16 +8122,19 @@ export namespace Prisma {
   export type TagMinAggregateInputType = {
     id?: true
     name?: true
+    createdAt?: true
   }
 
   export type TagMaxAggregateInputType = {
     id?: true
     name?: true
+    createdAt?: true
   }
 
   export type TagCountAggregateInputType = {
     id?: true
     name?: true
+    createdAt?: true
     _all?: true
   }
 
@@ -7803,6 +8213,7 @@ export namespace Prisma {
   export type TagGroupByOutputType = {
     id: string
     name: string
+    createdAt: Date
     _count: TagCountAggregateOutputType | null
     _min: TagMinAggregateOutputType | null
     _max: TagMaxAggregateOutputType | null
@@ -7825,6 +8236,7 @@ export namespace Prisma {
   export type TagSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     name?: boolean
+    createdAt?: boolean
     jobApplications?: boolean | Tag$jobApplicationsArgs<ExtArgs>
     _count?: boolean | TagCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["tag"]>
@@ -7832,19 +8244,22 @@ export namespace Prisma {
   export type TagSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     name?: boolean
+    createdAt?: boolean
   }, ExtArgs["result"]["tag"]>
 
   export type TagSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     name?: boolean
+    createdAt?: boolean
   }, ExtArgs["result"]["tag"]>
 
   export type TagSelectScalar = {
     id?: boolean
     name?: boolean
+    createdAt?: boolean
   }
 
-  export type TagOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name", ExtArgs["result"]["tag"]>
+  export type TagOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "createdAt", ExtArgs["result"]["tag"]>
   export type TagInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     jobApplications?: boolean | Tag$jobApplicationsArgs<ExtArgs>
     _count?: boolean | TagCountOutputTypeDefaultArgs<ExtArgs>
@@ -7860,6 +8275,7 @@ export namespace Prisma {
     scalars: $Extensions.GetPayloadResult<{
       id: string
       name: string
+      createdAt: Date
     }, ExtArgs["result"]["tag"]>
     composites: {}
   }
@@ -8286,6 +8702,7 @@ export namespace Prisma {
   interface TagFieldRefs {
     readonly id: FieldRef<"Tag", 'String'>
     readonly name: FieldRef<"Tag", 'String'>
+    readonly createdAt: FieldRef<"Tag", 'DateTime'>
   }
     
 
@@ -8725,16 +9142,19 @@ export namespace Prisma {
   }
 
   export type JobApplicationTagMinAggregateOutputType = {
+    id: string | null
     jobApplicationId: string | null
     tagId: string | null
   }
 
   export type JobApplicationTagMaxAggregateOutputType = {
+    id: string | null
     jobApplicationId: string | null
     tagId: string | null
   }
 
   export type JobApplicationTagCountAggregateOutputType = {
+    id: number
     jobApplicationId: number
     tagId: number
     _all: number
@@ -8742,16 +9162,19 @@ export namespace Prisma {
 
 
   export type JobApplicationTagMinAggregateInputType = {
+    id?: true
     jobApplicationId?: true
     tagId?: true
   }
 
   export type JobApplicationTagMaxAggregateInputType = {
+    id?: true
     jobApplicationId?: true
     tagId?: true
   }
 
   export type JobApplicationTagCountAggregateInputType = {
+    id?: true
     jobApplicationId?: true
     tagId?: true
     _all?: true
@@ -8830,6 +9253,7 @@ export namespace Prisma {
   }
 
   export type JobApplicationTagGroupByOutputType = {
+    id: string
     jobApplicationId: string
     tagId: string
     _count: JobApplicationTagCountAggregateOutputType | null
@@ -8852,6 +9276,7 @@ export namespace Prisma {
 
 
   export type JobApplicationTagSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
     jobApplicationId?: boolean
     tagId?: boolean
     jobApplication?: boolean | JobApplicationDefaultArgs<ExtArgs>
@@ -8859,6 +9284,7 @@ export namespace Prisma {
   }, ExtArgs["result"]["jobApplicationTag"]>
 
   export type JobApplicationTagSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
     jobApplicationId?: boolean
     tagId?: boolean
     jobApplication?: boolean | JobApplicationDefaultArgs<ExtArgs>
@@ -8866,6 +9292,7 @@ export namespace Prisma {
   }, ExtArgs["result"]["jobApplicationTag"]>
 
   export type JobApplicationTagSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
     jobApplicationId?: boolean
     tagId?: boolean
     jobApplication?: boolean | JobApplicationDefaultArgs<ExtArgs>
@@ -8873,11 +9300,12 @@ export namespace Prisma {
   }, ExtArgs["result"]["jobApplicationTag"]>
 
   export type JobApplicationTagSelectScalar = {
+    id?: boolean
     jobApplicationId?: boolean
     tagId?: boolean
   }
 
-  export type JobApplicationTagOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"jobApplicationId" | "tagId", ExtArgs["result"]["jobApplicationTag"]>
+  export type JobApplicationTagOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "jobApplicationId" | "tagId", ExtArgs["result"]["jobApplicationTag"]>
   export type JobApplicationTagInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     jobApplication?: boolean | JobApplicationDefaultArgs<ExtArgs>
     tag?: boolean | TagDefaultArgs<ExtArgs>
@@ -8898,6 +9326,7 @@ export namespace Prisma {
       tag: Prisma.$TagPayload<ExtArgs>
     }
     scalars: $Extensions.GetPayloadResult<{
+      id: string
       jobApplicationId: string
       tagId: string
     }, ExtArgs["result"]["jobApplicationTag"]>
@@ -8983,8 +9412,8 @@ export namespace Prisma {
      * // Get first 10 JobApplicationTags
      * const jobApplicationTags = await prisma.jobApplicationTag.findMany({ take: 10 })
      * 
-     * // Only select the `jobApplicationId`
-     * const jobApplicationTagWithJobApplicationIdOnly = await prisma.jobApplicationTag.findMany({ select: { jobApplicationId: true } })
+     * // Only select the `id`
+     * const jobApplicationTagWithIdOnly = await prisma.jobApplicationTag.findMany({ select: { id: true } })
      * 
      */
     findMany<T extends JobApplicationTagFindManyArgs>(args?: SelectSubset<T, JobApplicationTagFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$JobApplicationTagPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
@@ -9028,9 +9457,9 @@ export namespace Prisma {
      *   ]
      * })
      * 
-     * // Create many JobApplicationTags and only return the `jobApplicationId`
-     * const jobApplicationTagWithJobApplicationIdOnly = await prisma.jobApplicationTag.createManyAndReturn({
-     *   select: { jobApplicationId: true },
+     * // Create many JobApplicationTags and only return the `id`
+     * const jobApplicationTagWithIdOnly = await prisma.jobApplicationTag.createManyAndReturn({
+     *   select: { id: true },
      *   data: [
      *     // ... provide data here
      *   ]
@@ -9119,9 +9548,9 @@ export namespace Prisma {
      *   ]
      * })
      * 
-     * // Update zero or more JobApplicationTags and only return the `jobApplicationId`
-     * const jobApplicationTagWithJobApplicationIdOnly = await prisma.jobApplicationTag.updateManyAndReturn({
-     *   select: { jobApplicationId: true },
+     * // Update zero or more JobApplicationTags and only return the `id`
+     * const jobApplicationTagWithIdOnly = await prisma.jobApplicationTag.updateManyAndReturn({
+     *   select: { id: true },
      *   where: {
      *     // ... provide filter here
      *   },
@@ -9325,6 +9754,7 @@ export namespace Prisma {
    * Fields of the JobApplicationTag model
    */
   interface JobApplicationTagFieldRefs {
+    readonly id: FieldRef<"JobApplicationTag", 'String'>
     readonly jobApplicationId: FieldRef<"JobApplicationTag", 'String'>
     readonly tagId: FieldRef<"JobApplicationTag", 'String'>
   }
@@ -9755,8 +10185,7 @@ export namespace Prisma {
     jobApplicationId: string | null
     action: string | null
     description: string | null
-    metadata: string | null
-    createdAt: Date | null
+    timestamp: Date | null
   }
 
   export type ActivityLogMaxAggregateOutputType = {
@@ -9765,8 +10194,7 @@ export namespace Prisma {
     jobApplicationId: string | null
     action: string | null
     description: string | null
-    metadata: string | null
-    createdAt: Date | null
+    timestamp: Date | null
   }
 
   export type ActivityLogCountAggregateOutputType = {
@@ -9775,8 +10203,7 @@ export namespace Prisma {
     jobApplicationId: number
     action: number
     description: number
-    metadata: number
-    createdAt: number
+    timestamp: number
     _all: number
   }
 
@@ -9787,8 +10214,7 @@ export namespace Prisma {
     jobApplicationId?: true
     action?: true
     description?: true
-    metadata?: true
-    createdAt?: true
+    timestamp?: true
   }
 
   export type ActivityLogMaxAggregateInputType = {
@@ -9797,8 +10223,7 @@ export namespace Prisma {
     jobApplicationId?: true
     action?: true
     description?: true
-    metadata?: true
-    createdAt?: true
+    timestamp?: true
   }
 
   export type ActivityLogCountAggregateInputType = {
@@ -9807,8 +10232,7 @@ export namespace Prisma {
     jobApplicationId?: true
     action?: true
     description?: true
-    metadata?: true
-    createdAt?: true
+    timestamp?: true
     _all?: true
   }
 
@@ -9887,11 +10311,10 @@ export namespace Prisma {
   export type ActivityLogGroupByOutputType = {
     id: string
     userId: string
-    jobApplicationId: string | null
+    jobApplicationId: string
     action: string
-    description: string | null
-    metadata: string | null
-    createdAt: Date
+    description: string
+    timestamp: Date
     _count: ActivityLogCountAggregateOutputType | null
     _min: ActivityLogMinAggregateOutputType | null
     _max: ActivityLogMaxAggregateOutputType | null
@@ -9917,9 +10340,9 @@ export namespace Prisma {
     jobApplicationId?: boolean
     action?: boolean
     description?: boolean
-    metadata?: boolean
-    createdAt?: boolean
-    jobApplication?: boolean | ActivityLog$jobApplicationArgs<ExtArgs>
+    timestamp?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    jobApplication?: boolean | JobApplicationDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["activityLog"]>
 
   export type ActivityLogSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -9928,9 +10351,9 @@ export namespace Prisma {
     jobApplicationId?: boolean
     action?: boolean
     description?: boolean
-    metadata?: boolean
-    createdAt?: boolean
-    jobApplication?: boolean | ActivityLog$jobApplicationArgs<ExtArgs>
+    timestamp?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    jobApplication?: boolean | JobApplicationDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["activityLog"]>
 
   export type ActivityLogSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -9939,9 +10362,9 @@ export namespace Prisma {
     jobApplicationId?: boolean
     action?: boolean
     description?: boolean
-    metadata?: boolean
-    createdAt?: boolean
-    jobApplication?: boolean | ActivityLog$jobApplicationArgs<ExtArgs>
+    timestamp?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    jobApplication?: boolean | JobApplicationDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["activityLog"]>
 
   export type ActivityLogSelectScalar = {
@@ -9950,34 +10373,36 @@ export namespace Prisma {
     jobApplicationId?: boolean
     action?: boolean
     description?: boolean
-    metadata?: boolean
-    createdAt?: boolean
+    timestamp?: boolean
   }
 
-  export type ActivityLogOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "jobApplicationId" | "action" | "description" | "metadata" | "createdAt", ExtArgs["result"]["activityLog"]>
+  export type ActivityLogOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "jobApplicationId" | "action" | "description" | "timestamp", ExtArgs["result"]["activityLog"]>
   export type ActivityLogInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    jobApplication?: boolean | ActivityLog$jobApplicationArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    jobApplication?: boolean | JobApplicationDefaultArgs<ExtArgs>
   }
   export type ActivityLogIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    jobApplication?: boolean | ActivityLog$jobApplicationArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    jobApplication?: boolean | JobApplicationDefaultArgs<ExtArgs>
   }
   export type ActivityLogIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    jobApplication?: boolean | ActivityLog$jobApplicationArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    jobApplication?: boolean | JobApplicationDefaultArgs<ExtArgs>
   }
 
   export type $ActivityLogPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "ActivityLog"
     objects: {
-      jobApplication: Prisma.$JobApplicationPayload<ExtArgs> | null
+      user: Prisma.$UserPayload<ExtArgs>
+      jobApplication: Prisma.$JobApplicationPayload<ExtArgs>
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
       userId: string
-      jobApplicationId: string | null
+      jobApplicationId: string
       action: string
-      description: string | null
-      metadata: string | null
-      createdAt: Date
+      description: string
+      timestamp: Date
     }, ExtArgs["result"]["activityLog"]>
     composites: {}
   }
@@ -10372,7 +10797,8 @@ export namespace Prisma {
    */
   export interface Prisma__ActivityLogClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    jobApplication<T extends ActivityLog$jobApplicationArgs<ExtArgs> = {}>(args?: Subset<T, ActivityLog$jobApplicationArgs<ExtArgs>>): Prisma__JobApplicationClient<$Result.GetResult<Prisma.$JobApplicationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    jobApplication<T extends JobApplicationDefaultArgs<ExtArgs> = {}>(args?: Subset<T, JobApplicationDefaultArgs<ExtArgs>>): Prisma__JobApplicationClient<$Result.GetResult<Prisma.$JobApplicationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -10407,8 +10833,7 @@ export namespace Prisma {
     readonly jobApplicationId: FieldRef<"ActivityLog", 'String'>
     readonly action: FieldRef<"ActivityLog", 'String'>
     readonly description: FieldRef<"ActivityLog", 'String'>
-    readonly metadata: FieldRef<"ActivityLog", 'String'>
-    readonly createdAt: FieldRef<"ActivityLog", 'DateTime'>
+    readonly timestamp: FieldRef<"ActivityLog", 'DateTime'>
   }
     
 
@@ -10803,25 +11228,6 @@ export namespace Prisma {
   }
 
   /**
-   * ActivityLog.jobApplication
-   */
-  export type ActivityLog$jobApplicationArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the JobApplication
-     */
-    select?: JobApplicationSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the JobApplication
-     */
-    omit?: JobApplicationOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: JobApplicationInclude<ExtArgs> | null
-    where?: JobApplicationWhereInput
-  }
-
-  /**
    * ActivityLog without action
    */
   export type ActivityLogDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -10846,100 +11252,64 @@ export namespace Prisma {
 
   export type AggregateTemplate = {
     _count: TemplateCountAggregateOutputType | null
-    _avg: TemplateAvgAggregateOutputType | null
-    _sum: TemplateSumAggregateOutputType | null
     _min: TemplateMinAggregateOutputType | null
     _max: TemplateMaxAggregateOutputType | null
   }
 
-  export type TemplateAvgAggregateOutputType = {
-    fileSize: number | null
-  }
-
-  export type TemplateSumAggregateOutputType = {
-    fileSize: number | null
-  }
-
   export type TemplateMinAggregateOutputType = {
     id: string | null
-    userId: string | null
     name: string | null
+    content: string | null
     type: $Enums.TemplateType | null
-    fileName: string | null
-    fileSize: number | null
-    mimeType: string | null
-    fileData: string | null
-    uploadDate: Date | null
+    createdAt: Date | null
+    updatedAt: Date | null
   }
 
   export type TemplateMaxAggregateOutputType = {
     id: string | null
-    userId: string | null
     name: string | null
+    content: string | null
     type: $Enums.TemplateType | null
-    fileName: string | null
-    fileSize: number | null
-    mimeType: string | null
-    fileData: string | null
-    uploadDate: Date | null
+    createdAt: Date | null
+    updatedAt: Date | null
   }
 
   export type TemplateCountAggregateOutputType = {
     id: number
-    userId: number
     name: number
+    content: number
     type: number
-    fileName: number
-    fileSize: number
-    mimeType: number
-    fileData: number
-    uploadDate: number
+    createdAt: number
+    updatedAt: number
     _all: number
   }
 
 
-  export type TemplateAvgAggregateInputType = {
-    fileSize?: true
-  }
-
-  export type TemplateSumAggregateInputType = {
-    fileSize?: true
-  }
-
   export type TemplateMinAggregateInputType = {
     id?: true
-    userId?: true
     name?: true
+    content?: true
     type?: true
-    fileName?: true
-    fileSize?: true
-    mimeType?: true
-    fileData?: true
-    uploadDate?: true
+    createdAt?: true
+    updatedAt?: true
   }
 
   export type TemplateMaxAggregateInputType = {
     id?: true
-    userId?: true
     name?: true
+    content?: true
     type?: true
-    fileName?: true
-    fileSize?: true
-    mimeType?: true
-    fileData?: true
-    uploadDate?: true
+    createdAt?: true
+    updatedAt?: true
   }
 
   export type TemplateCountAggregateInputType = {
     id?: true
-    userId?: true
     name?: true
+    content?: true
     type?: true
-    fileName?: true
-    fileSize?: true
-    mimeType?: true
-    fileData?: true
-    uploadDate?: true
+    createdAt?: true
+    updatedAt?: true
     _all?: true
   }
 
@@ -10981,18 +11351,6 @@ export namespace Prisma {
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
-     * Select which fields to average
-    **/
-    _avg?: TemplateAvgAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to sum
-    **/
-    _sum?: TemplateSumAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
      * Select which fields to find the minimum value
     **/
     _min?: TemplateMinAggregateInputType
@@ -11023,25 +11381,18 @@ export namespace Prisma {
     take?: number
     skip?: number
     _count?: TemplateCountAggregateInputType | true
-    _avg?: TemplateAvgAggregateInputType
-    _sum?: TemplateSumAggregateInputType
     _min?: TemplateMinAggregateInputType
     _max?: TemplateMaxAggregateInputType
   }
 
   export type TemplateGroupByOutputType = {
     id: string
-    userId: string
     name: string
+    content: string
     type: $Enums.TemplateType
-    fileName: string
-    fileSize: number
-    mimeType: string
-    fileData: string
-    uploadDate: Date
+    createdAt: Date
+    updatedAt: Date
     _count: TemplateCountAggregateOutputType | null
-    _avg: TemplateAvgAggregateOutputType | null
-    _sum: TemplateSumAggregateOutputType | null
     _min: TemplateMinAggregateOutputType | null
     _max: TemplateMaxAggregateOutputType | null
   }
@@ -11062,81 +11413,52 @@ export namespace Prisma {
 
   export type TemplateSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
-    userId?: boolean
     name?: boolean
+    content?: boolean
     type?: boolean
-    fileName?: boolean
-    fileSize?: boolean
-    mimeType?: boolean
-    fileData?: boolean
-    uploadDate?: boolean
-    user?: boolean | UserDefaultArgs<ExtArgs>
+    createdAt?: boolean
+    updatedAt?: boolean
   }, ExtArgs["result"]["template"]>
 
   export type TemplateSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
-    userId?: boolean
     name?: boolean
+    content?: boolean
     type?: boolean
-    fileName?: boolean
-    fileSize?: boolean
-    mimeType?: boolean
-    fileData?: boolean
-    uploadDate?: boolean
-    user?: boolean | UserDefaultArgs<ExtArgs>
+    createdAt?: boolean
+    updatedAt?: boolean
   }, ExtArgs["result"]["template"]>
 
   export type TemplateSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
-    userId?: boolean
     name?: boolean
+    content?: boolean
     type?: boolean
-    fileName?: boolean
-    fileSize?: boolean
-    mimeType?: boolean
-    fileData?: boolean
-    uploadDate?: boolean
-    user?: boolean | UserDefaultArgs<ExtArgs>
+    createdAt?: boolean
+    updatedAt?: boolean
   }, ExtArgs["result"]["template"]>
 
   export type TemplateSelectScalar = {
     id?: boolean
-    userId?: boolean
     name?: boolean
+    content?: boolean
     type?: boolean
-    fileName?: boolean
-    fileSize?: boolean
-    mimeType?: boolean
-    fileData?: boolean
-    uploadDate?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
   }
 
-  export type TemplateOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "name" | "type" | "fileName" | "fileSize" | "mimeType" | "fileData" | "uploadDate", ExtArgs["result"]["template"]>
-  export type TemplateInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    user?: boolean | UserDefaultArgs<ExtArgs>
-  }
-  export type TemplateIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    user?: boolean | UserDefaultArgs<ExtArgs>
-  }
-  export type TemplateIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    user?: boolean | UserDefaultArgs<ExtArgs>
-  }
+  export type TemplateOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "content" | "type" | "createdAt" | "updatedAt", ExtArgs["result"]["template"]>
 
   export type $TemplatePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Template"
-    objects: {
-      user: Prisma.$UserPayload<ExtArgs>
-    }
+    objects: {}
     scalars: $Extensions.GetPayloadResult<{
       id: string
-      userId: string
       name: string
+      content: string
       type: $Enums.TemplateType
-      fileName: string
-      fileSize: number
-      mimeType: string
-      fileData: string
-      uploadDate: Date
+      createdAt: Date
+      updatedAt: Date
     }, ExtArgs["result"]["template"]>
     composites: {}
   }
@@ -11531,7 +11853,6 @@ export namespace Prisma {
    */
   export interface Prisma__TemplateClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -11562,14 +11883,11 @@ export namespace Prisma {
    */
   interface TemplateFieldRefs {
     readonly id: FieldRef<"Template", 'String'>
-    readonly userId: FieldRef<"Template", 'String'>
     readonly name: FieldRef<"Template", 'String'>
+    readonly content: FieldRef<"Template", 'String'>
     readonly type: FieldRef<"Template", 'TemplateType'>
-    readonly fileName: FieldRef<"Template", 'String'>
-    readonly fileSize: FieldRef<"Template", 'Int'>
-    readonly mimeType: FieldRef<"Template", 'String'>
-    readonly fileData: FieldRef<"Template", 'String'>
-    readonly uploadDate: FieldRef<"Template", 'DateTime'>
+    readonly createdAt: FieldRef<"Template", 'DateTime'>
+    readonly updatedAt: FieldRef<"Template", 'DateTime'>
   }
     
 
@@ -11586,10 +11904,6 @@ export namespace Prisma {
      * Omit specific fields from the Template
      */
     omit?: TemplateOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: TemplateInclude<ExtArgs> | null
     /**
      * Filter, which Template to fetch.
      */
@@ -11609,10 +11923,6 @@ export namespace Prisma {
      */
     omit?: TemplateOmit<ExtArgs> | null
     /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: TemplateInclude<ExtArgs> | null
-    /**
      * Filter, which Template to fetch.
      */
     where: TemplateWhereUniqueInput
@@ -11630,10 +11940,6 @@ export namespace Prisma {
      * Omit specific fields from the Template
      */
     omit?: TemplateOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: TemplateInclude<ExtArgs> | null
     /**
      * Filter, which Template to fetch.
      */
@@ -11683,10 +11989,6 @@ export namespace Prisma {
      */
     omit?: TemplateOmit<ExtArgs> | null
     /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: TemplateInclude<ExtArgs> | null
-    /**
      * Filter, which Template to fetch.
      */
     where?: TemplateWhereInput
@@ -11735,10 +12037,6 @@ export namespace Prisma {
      */
     omit?: TemplateOmit<ExtArgs> | null
     /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: TemplateInclude<ExtArgs> | null
-    /**
      * Filter, which Templates to fetch.
      */
     where?: TemplateWhereInput
@@ -11782,10 +12080,6 @@ export namespace Prisma {
      */
     omit?: TemplateOmit<ExtArgs> | null
     /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: TemplateInclude<ExtArgs> | null
-    /**
      * The data needed to create a Template.
      */
     data: XOR<TemplateCreateInput, TemplateUncheckedCreateInput>
@@ -11817,10 +12111,6 @@ export namespace Prisma {
      * The data used to create many Templates.
      */
     data: TemplateCreateManyInput | TemplateCreateManyInput[]
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: TemplateIncludeCreateManyAndReturn<ExtArgs> | null
   }
 
   /**
@@ -11835,10 +12125,6 @@ export namespace Prisma {
      * Omit specific fields from the Template
      */
     omit?: TemplateOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: TemplateInclude<ExtArgs> | null
     /**
      * The data needed to update a Template.
      */
@@ -11891,10 +12177,6 @@ export namespace Prisma {
      * Limit how many Templates to update.
      */
     limit?: number
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: TemplateIncludeUpdateManyAndReturn<ExtArgs> | null
   }
 
   /**
@@ -11909,10 +12191,6 @@ export namespace Prisma {
      * Omit specific fields from the Template
      */
     omit?: TemplateOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: TemplateInclude<ExtArgs> | null
     /**
      * The filter to search for the Template to update in case it exists.
      */
@@ -11939,10 +12217,6 @@ export namespace Prisma {
      * Omit specific fields from the Template
      */
     omit?: TemplateOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: TemplateInclude<ExtArgs> | null
     /**
      * Filter which Template to delete.
      */
@@ -11975,10 +12249,6 @@ export namespace Prisma {
      * Omit specific fields from the Template
      */
     omit?: TemplateOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: TemplateInclude<ExtArgs> | null
   }
 
 
@@ -11995,103 +12265,115 @@ export namespace Prisma {
   }
 
   export type AnalyticsAvgAggregateOutputType = {
-    totalApplications: number | null
-    activeApplications: number | null
-    offersReceived: number | null
-    successRate: number | null
-    averageResponseTime: number | null
+    totalApps: number | null
+    responsesRate: number | null
+    interviewRate: number | null
+    offerRate: number | null
+    avgResponseTime: number | null
   }
 
   export type AnalyticsSumAggregateOutputType = {
-    totalApplications: number | null
-    activeApplications: number | null
-    offersReceived: number | null
-    successRate: number | null
-    averageResponseTime: number | null
+    totalApps: number | null
+    responsesRate: number | null
+    interviewRate: number | null
+    offerRate: number | null
+    avgResponseTime: number | null
   }
 
   export type AnalyticsMinAggregateOutputType = {
     id: string | null
     userId: string | null
-    totalApplications: number | null
-    activeApplications: number | null
-    offersReceived: number | null
-    successRate: number | null
-    averageResponseTime: number | null
-    lastCalculated: Date | null
+    period: string | null
+    date: Date | null
+    totalApps: number | null
+    responsesRate: number | null
+    interviewRate: number | null
+    offerRate: number | null
+    avgResponseTime: number | null
+    createdAt: Date | null
   }
 
   export type AnalyticsMaxAggregateOutputType = {
     id: string | null
     userId: string | null
-    totalApplications: number | null
-    activeApplications: number | null
-    offersReceived: number | null
-    successRate: number | null
-    averageResponseTime: number | null
-    lastCalculated: Date | null
+    period: string | null
+    date: Date | null
+    totalApps: number | null
+    responsesRate: number | null
+    interviewRate: number | null
+    offerRate: number | null
+    avgResponseTime: number | null
+    createdAt: Date | null
   }
 
   export type AnalyticsCountAggregateOutputType = {
     id: number
     userId: number
-    totalApplications: number
-    activeApplications: number
-    offersReceived: number
-    successRate: number
-    averageResponseTime: number
-    lastCalculated: number
+    period: number
+    date: number
+    totalApps: number
+    responsesRate: number
+    interviewRate: number
+    offerRate: number
+    avgResponseTime: number
+    createdAt: number
     _all: number
   }
 
 
   export type AnalyticsAvgAggregateInputType = {
-    totalApplications?: true
-    activeApplications?: true
-    offersReceived?: true
-    successRate?: true
-    averageResponseTime?: true
+    totalApps?: true
+    responsesRate?: true
+    interviewRate?: true
+    offerRate?: true
+    avgResponseTime?: true
   }
 
   export type AnalyticsSumAggregateInputType = {
-    totalApplications?: true
-    activeApplications?: true
-    offersReceived?: true
-    successRate?: true
-    averageResponseTime?: true
+    totalApps?: true
+    responsesRate?: true
+    interviewRate?: true
+    offerRate?: true
+    avgResponseTime?: true
   }
 
   export type AnalyticsMinAggregateInputType = {
     id?: true
     userId?: true
-    totalApplications?: true
-    activeApplications?: true
-    offersReceived?: true
-    successRate?: true
-    averageResponseTime?: true
-    lastCalculated?: true
+    period?: true
+    date?: true
+    totalApps?: true
+    responsesRate?: true
+    interviewRate?: true
+    offerRate?: true
+    avgResponseTime?: true
+    createdAt?: true
   }
 
   export type AnalyticsMaxAggregateInputType = {
     id?: true
     userId?: true
-    totalApplications?: true
-    activeApplications?: true
-    offersReceived?: true
-    successRate?: true
-    averageResponseTime?: true
-    lastCalculated?: true
+    period?: true
+    date?: true
+    totalApps?: true
+    responsesRate?: true
+    interviewRate?: true
+    offerRate?: true
+    avgResponseTime?: true
+    createdAt?: true
   }
 
   export type AnalyticsCountAggregateInputType = {
     id?: true
     userId?: true
-    totalApplications?: true
-    activeApplications?: true
-    offersReceived?: true
-    successRate?: true
-    averageResponseTime?: true
-    lastCalculated?: true
+    period?: true
+    date?: true
+    totalApps?: true
+    responsesRate?: true
+    interviewRate?: true
+    offerRate?: true
+    avgResponseTime?: true
+    createdAt?: true
     _all?: true
   }
 
@@ -12184,12 +12466,14 @@ export namespace Prisma {
   export type AnalyticsGroupByOutputType = {
     id: string
     userId: string
-    totalApplications: number
-    activeApplications: number
-    offersReceived: number
-    successRate: number
-    averageResponseTime: number
-    lastCalculated: Date
+    period: string
+    date: Date
+    totalApps: number
+    responsesRate: number
+    interviewRate: number
+    offerRate: number
+    avgResponseTime: number
+    createdAt: Date
     _count: AnalyticsCountAggregateOutputType | null
     _avg: AnalyticsAvgAggregateOutputType | null
     _sum: AnalyticsSumAggregateOutputType | null
@@ -12214,61 +12498,85 @@ export namespace Prisma {
   export type AnalyticsSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     userId?: boolean
-    totalApplications?: boolean
-    activeApplications?: boolean
-    offersReceived?: boolean
-    successRate?: boolean
-    averageResponseTime?: boolean
-    lastCalculated?: boolean
+    period?: boolean
+    date?: boolean
+    totalApps?: boolean
+    responsesRate?: boolean
+    interviewRate?: boolean
+    offerRate?: boolean
+    avgResponseTime?: boolean
+    createdAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["analytics"]>
 
   export type AnalyticsSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     userId?: boolean
-    totalApplications?: boolean
-    activeApplications?: boolean
-    offersReceived?: boolean
-    successRate?: boolean
-    averageResponseTime?: boolean
-    lastCalculated?: boolean
+    period?: boolean
+    date?: boolean
+    totalApps?: boolean
+    responsesRate?: boolean
+    interviewRate?: boolean
+    offerRate?: boolean
+    avgResponseTime?: boolean
+    createdAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["analytics"]>
 
   export type AnalyticsSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     userId?: boolean
-    totalApplications?: boolean
-    activeApplications?: boolean
-    offersReceived?: boolean
-    successRate?: boolean
-    averageResponseTime?: boolean
-    lastCalculated?: boolean
+    period?: boolean
+    date?: boolean
+    totalApps?: boolean
+    responsesRate?: boolean
+    interviewRate?: boolean
+    offerRate?: boolean
+    avgResponseTime?: boolean
+    createdAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["analytics"]>
 
   export type AnalyticsSelectScalar = {
     id?: boolean
     userId?: boolean
-    totalApplications?: boolean
-    activeApplications?: boolean
-    offersReceived?: boolean
-    successRate?: boolean
-    averageResponseTime?: boolean
-    lastCalculated?: boolean
+    period?: boolean
+    date?: boolean
+    totalApps?: boolean
+    responsesRate?: boolean
+    interviewRate?: boolean
+    offerRate?: boolean
+    avgResponseTime?: boolean
+    createdAt?: boolean
   }
 
-  export type AnalyticsOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "totalApplications" | "activeApplications" | "offersReceived" | "successRate" | "averageResponseTime" | "lastCalculated", ExtArgs["result"]["analytics"]>
+  export type AnalyticsOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "period" | "date" | "totalApps" | "responsesRate" | "interviewRate" | "offerRate" | "avgResponseTime" | "createdAt", ExtArgs["result"]["analytics"]>
+  export type AnalyticsInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type AnalyticsIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type AnalyticsIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
 
   export type $AnalyticsPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Analytics"
-    objects: {}
+    objects: {
+      user: Prisma.$UserPayload<ExtArgs>
+    }
     scalars: $Extensions.GetPayloadResult<{
       id: string
       userId: string
-      totalApplications: number
-      activeApplications: number
-      offersReceived: number
-      successRate: number
-      averageResponseTime: number
-      lastCalculated: Date
+      period: string
+      date: Date
+      totalApps: number
+      responsesRate: number
+      interviewRate: number
+      offerRate: number
+      avgResponseTime: number
+      createdAt: Date
     }, ExtArgs["result"]["analytics"]>
     composites: {}
   }
@@ -12663,6 +12971,7 @@ export namespace Prisma {
    */
   export interface Prisma__AnalyticsClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -12694,12 +13003,14 @@ export namespace Prisma {
   interface AnalyticsFieldRefs {
     readonly id: FieldRef<"Analytics", 'String'>
     readonly userId: FieldRef<"Analytics", 'String'>
-    readonly totalApplications: FieldRef<"Analytics", 'Int'>
-    readonly activeApplications: FieldRef<"Analytics", 'Int'>
-    readonly offersReceived: FieldRef<"Analytics", 'Int'>
-    readonly successRate: FieldRef<"Analytics", 'Float'>
-    readonly averageResponseTime: FieldRef<"Analytics", 'Float'>
-    readonly lastCalculated: FieldRef<"Analytics", 'DateTime'>
+    readonly period: FieldRef<"Analytics", 'String'>
+    readonly date: FieldRef<"Analytics", 'DateTime'>
+    readonly totalApps: FieldRef<"Analytics", 'Int'>
+    readonly responsesRate: FieldRef<"Analytics", 'Float'>
+    readonly interviewRate: FieldRef<"Analytics", 'Float'>
+    readonly offerRate: FieldRef<"Analytics", 'Float'>
+    readonly avgResponseTime: FieldRef<"Analytics", 'Int'>
+    readonly createdAt: FieldRef<"Analytics", 'DateTime'>
   }
     
 
@@ -12716,6 +13027,10 @@ export namespace Prisma {
      * Omit specific fields from the Analytics
      */
     omit?: AnalyticsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AnalyticsInclude<ExtArgs> | null
     /**
      * Filter, which Analytics to fetch.
      */
@@ -12735,6 +13050,10 @@ export namespace Prisma {
      */
     omit?: AnalyticsOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AnalyticsInclude<ExtArgs> | null
+    /**
      * Filter, which Analytics to fetch.
      */
     where: AnalyticsWhereUniqueInput
@@ -12752,6 +13071,10 @@ export namespace Prisma {
      * Omit specific fields from the Analytics
      */
     omit?: AnalyticsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AnalyticsInclude<ExtArgs> | null
     /**
      * Filter, which Analytics to fetch.
      */
@@ -12801,6 +13124,10 @@ export namespace Prisma {
      */
     omit?: AnalyticsOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AnalyticsInclude<ExtArgs> | null
+    /**
      * Filter, which Analytics to fetch.
      */
     where?: AnalyticsWhereInput
@@ -12849,6 +13176,10 @@ export namespace Prisma {
      */
     omit?: AnalyticsOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AnalyticsInclude<ExtArgs> | null
+    /**
      * Filter, which Analytics to fetch.
      */
     where?: AnalyticsWhereInput
@@ -12892,6 +13223,10 @@ export namespace Prisma {
      */
     omit?: AnalyticsOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AnalyticsInclude<ExtArgs> | null
+    /**
      * The data needed to create a Analytics.
      */
     data: XOR<AnalyticsCreateInput, AnalyticsUncheckedCreateInput>
@@ -12923,6 +13258,10 @@ export namespace Prisma {
      * The data used to create many Analytics.
      */
     data: AnalyticsCreateManyInput | AnalyticsCreateManyInput[]
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AnalyticsIncludeCreateManyAndReturn<ExtArgs> | null
   }
 
   /**
@@ -12937,6 +13276,10 @@ export namespace Prisma {
      * Omit specific fields from the Analytics
      */
     omit?: AnalyticsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AnalyticsInclude<ExtArgs> | null
     /**
      * The data needed to update a Analytics.
      */
@@ -12989,6 +13332,10 @@ export namespace Prisma {
      * Limit how many Analytics to update.
      */
     limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AnalyticsIncludeUpdateManyAndReturn<ExtArgs> | null
   }
 
   /**
@@ -13003,6 +13350,10 @@ export namespace Prisma {
      * Omit specific fields from the Analytics
      */
     omit?: AnalyticsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AnalyticsInclude<ExtArgs> | null
     /**
      * The filter to search for the Analytics to update in case it exists.
      */
@@ -13029,6 +13380,10 @@ export namespace Prisma {
      * Omit specific fields from the Analytics
      */
     omit?: AnalyticsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AnalyticsInclude<ExtArgs> | null
     /**
      * Filter which Analytics to delete.
      */
@@ -13061,6 +13416,10 @@ export namespace Prisma {
      * Omit specific fields from the Analytics
      */
     omit?: AnalyticsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AnalyticsInclude<ExtArgs> | null
   }
 
 
@@ -13080,7 +13439,7 @@ export namespace Prisma {
     title: string | null
     message: string | null
     type: $Enums.NotificationType | null
-    read: boolean | null
+    isRead: boolean | null
     createdAt: Date | null
   }
 
@@ -13090,7 +13449,7 @@ export namespace Prisma {
     title: string | null
     message: string | null
     type: $Enums.NotificationType | null
-    read: boolean | null
+    isRead: boolean | null
     createdAt: Date | null
   }
 
@@ -13100,7 +13459,7 @@ export namespace Prisma {
     title: number
     message: number
     type: number
-    read: number
+    isRead: number
     createdAt: number
     _all: number
   }
@@ -13112,7 +13471,7 @@ export namespace Prisma {
     title?: true
     message?: true
     type?: true
-    read?: true
+    isRead?: true
     createdAt?: true
   }
 
@@ -13122,7 +13481,7 @@ export namespace Prisma {
     title?: true
     message?: true
     type?: true
-    read?: true
+    isRead?: true
     createdAt?: true
   }
 
@@ -13132,7 +13491,7 @@ export namespace Prisma {
     title?: true
     message?: true
     type?: true
-    read?: true
+    isRead?: true
     createdAt?: true
     _all?: true
   }
@@ -13215,7 +13574,7 @@ export namespace Prisma {
     title: string
     message: string
     type: $Enums.NotificationType
-    read: boolean
+    isRead: boolean
     createdAt: Date
     _count: NotificationCountAggregateOutputType | null
     _min: NotificationMinAggregateOutputType | null
@@ -13242,8 +13601,9 @@ export namespace Prisma {
     title?: boolean
     message?: boolean
     type?: boolean
-    read?: boolean
+    isRead?: boolean
     createdAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["notification"]>
 
   export type NotificationSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -13252,8 +13612,9 @@ export namespace Prisma {
     title?: boolean
     message?: boolean
     type?: boolean
-    read?: boolean
+    isRead?: boolean
     createdAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["notification"]>
 
   export type NotificationSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -13262,8 +13623,9 @@ export namespace Prisma {
     title?: boolean
     message?: boolean
     type?: boolean
-    read?: boolean
+    isRead?: boolean
     createdAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["notification"]>
 
   export type NotificationSelectScalar = {
@@ -13272,22 +13634,33 @@ export namespace Prisma {
     title?: boolean
     message?: boolean
     type?: boolean
-    read?: boolean
+    isRead?: boolean
     createdAt?: boolean
   }
 
-  export type NotificationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "title" | "message" | "type" | "read" | "createdAt", ExtArgs["result"]["notification"]>
+  export type NotificationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "title" | "message" | "type" | "isRead" | "createdAt", ExtArgs["result"]["notification"]>
+  export type NotificationInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type NotificationIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type NotificationIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
 
   export type $NotificationPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Notification"
-    objects: {}
+    objects: {
+      user: Prisma.$UserPayload<ExtArgs>
+    }
     scalars: $Extensions.GetPayloadResult<{
       id: string
       userId: string
       title: string
       message: string
       type: $Enums.NotificationType
-      read: boolean
+      isRead: boolean
       createdAt: Date
     }, ExtArgs["result"]["notification"]>
     composites: {}
@@ -13683,6 +14056,7 @@ export namespace Prisma {
    */
   export interface Prisma__NotificationClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -13717,7 +14091,7 @@ export namespace Prisma {
     readonly title: FieldRef<"Notification", 'String'>
     readonly message: FieldRef<"Notification", 'String'>
     readonly type: FieldRef<"Notification", 'NotificationType'>
-    readonly read: FieldRef<"Notification", 'Boolean'>
+    readonly isRead: FieldRef<"Notification", 'Boolean'>
     readonly createdAt: FieldRef<"Notification", 'DateTime'>
   }
     
@@ -13735,6 +14109,10 @@ export namespace Prisma {
      * Omit specific fields from the Notification
      */
     omit?: NotificationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NotificationInclude<ExtArgs> | null
     /**
      * Filter, which Notification to fetch.
      */
@@ -13754,6 +14132,10 @@ export namespace Prisma {
      */
     omit?: NotificationOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NotificationInclude<ExtArgs> | null
+    /**
      * Filter, which Notification to fetch.
      */
     where: NotificationWhereUniqueInput
@@ -13771,6 +14153,10 @@ export namespace Prisma {
      * Omit specific fields from the Notification
      */
     omit?: NotificationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NotificationInclude<ExtArgs> | null
     /**
      * Filter, which Notification to fetch.
      */
@@ -13820,6 +14206,10 @@ export namespace Prisma {
      */
     omit?: NotificationOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NotificationInclude<ExtArgs> | null
+    /**
      * Filter, which Notification to fetch.
      */
     where?: NotificationWhereInput
@@ -13868,6 +14258,10 @@ export namespace Prisma {
      */
     omit?: NotificationOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NotificationInclude<ExtArgs> | null
+    /**
      * Filter, which Notifications to fetch.
      */
     where?: NotificationWhereInput
@@ -13911,6 +14305,10 @@ export namespace Prisma {
      */
     omit?: NotificationOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NotificationInclude<ExtArgs> | null
+    /**
      * The data needed to create a Notification.
      */
     data: XOR<NotificationCreateInput, NotificationUncheckedCreateInput>
@@ -13942,6 +14340,10 @@ export namespace Prisma {
      * The data used to create many Notifications.
      */
     data: NotificationCreateManyInput | NotificationCreateManyInput[]
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NotificationIncludeCreateManyAndReturn<ExtArgs> | null
   }
 
   /**
@@ -13956,6 +14358,10 @@ export namespace Prisma {
      * Omit specific fields from the Notification
      */
     omit?: NotificationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NotificationInclude<ExtArgs> | null
     /**
      * The data needed to update a Notification.
      */
@@ -14008,6 +14414,10 @@ export namespace Prisma {
      * Limit how many Notifications to update.
      */
     limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NotificationIncludeUpdateManyAndReturn<ExtArgs> | null
   }
 
   /**
@@ -14022,6 +14432,10 @@ export namespace Prisma {
      * Omit specific fields from the Notification
      */
     omit?: NotificationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NotificationInclude<ExtArgs> | null
     /**
      * The filter to search for the Notification to update in case it exists.
      */
@@ -14048,6 +14462,10 @@ export namespace Prisma {
      * Omit specific fields from the Notification
      */
     omit?: NotificationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NotificationInclude<ExtArgs> | null
     /**
      * Filter which Notification to delete.
      */
@@ -14080,6 +14498,2251 @@ export namespace Prisma {
      * Omit specific fields from the Notification
      */
     omit?: NotificationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NotificationInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model Goal
+   */
+
+  export type AggregateGoal = {
+    _count: GoalCountAggregateOutputType | null
+    _avg: GoalAvgAggregateOutputType | null
+    _sum: GoalSumAggregateOutputType | null
+    _min: GoalMinAggregateOutputType | null
+    _max: GoalMaxAggregateOutputType | null
+  }
+
+  export type GoalAvgAggregateOutputType = {
+    target: number | null
+    achieved: number | null
+  }
+
+  export type GoalSumAggregateOutputType = {
+    target: number | null
+    achieved: number | null
+  }
+
+  export type GoalMinAggregateOutputType = {
+    id: string | null
+    userId: string | null
+    type: $Enums.GoalType | null
+    target: number | null
+    period: $Enums.GoalPeriod | null
+    startDate: Date | null
+    endDate: Date | null
+    achieved: number | null
+    isActive: boolean | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type GoalMaxAggregateOutputType = {
+    id: string | null
+    userId: string | null
+    type: $Enums.GoalType | null
+    target: number | null
+    period: $Enums.GoalPeriod | null
+    startDate: Date | null
+    endDate: Date | null
+    achieved: number | null
+    isActive: boolean | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type GoalCountAggregateOutputType = {
+    id: number
+    userId: number
+    type: number
+    target: number
+    period: number
+    startDate: number
+    endDate: number
+    achieved: number
+    isActive: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type GoalAvgAggregateInputType = {
+    target?: true
+    achieved?: true
+  }
+
+  export type GoalSumAggregateInputType = {
+    target?: true
+    achieved?: true
+  }
+
+  export type GoalMinAggregateInputType = {
+    id?: true
+    userId?: true
+    type?: true
+    target?: true
+    period?: true
+    startDate?: true
+    endDate?: true
+    achieved?: true
+    isActive?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type GoalMaxAggregateInputType = {
+    id?: true
+    userId?: true
+    type?: true
+    target?: true
+    period?: true
+    startDate?: true
+    endDate?: true
+    achieved?: true
+    isActive?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type GoalCountAggregateInputType = {
+    id?: true
+    userId?: true
+    type?: true
+    target?: true
+    period?: true
+    startDate?: true
+    endDate?: true
+    achieved?: true
+    isActive?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type GoalAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Goal to aggregate.
+     */
+    where?: GoalWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Goals to fetch.
+     */
+    orderBy?: GoalOrderByWithRelationInput | GoalOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: GoalWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Goals from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Goals.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned Goals
+    **/
+    _count?: true | GoalCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: GoalAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: GoalSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: GoalMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: GoalMaxAggregateInputType
+  }
+
+  export type GetGoalAggregateType<T extends GoalAggregateArgs> = {
+        [P in keyof T & keyof AggregateGoal]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateGoal[P]>
+      : GetScalarType<T[P], AggregateGoal[P]>
+  }
+
+
+
+
+  export type GoalGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: GoalWhereInput
+    orderBy?: GoalOrderByWithAggregationInput | GoalOrderByWithAggregationInput[]
+    by: GoalScalarFieldEnum[] | GoalScalarFieldEnum
+    having?: GoalScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: GoalCountAggregateInputType | true
+    _avg?: GoalAvgAggregateInputType
+    _sum?: GoalSumAggregateInputType
+    _min?: GoalMinAggregateInputType
+    _max?: GoalMaxAggregateInputType
+  }
+
+  export type GoalGroupByOutputType = {
+    id: string
+    userId: string
+    type: $Enums.GoalType
+    target: number
+    period: $Enums.GoalPeriod
+    startDate: Date
+    endDate: Date
+    achieved: number
+    isActive: boolean
+    createdAt: Date
+    updatedAt: Date
+    _count: GoalCountAggregateOutputType | null
+    _avg: GoalAvgAggregateOutputType | null
+    _sum: GoalSumAggregateOutputType | null
+    _min: GoalMinAggregateOutputType | null
+    _max: GoalMaxAggregateOutputType | null
+  }
+
+  type GetGoalGroupByPayload<T extends GoalGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<GoalGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof GoalGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], GoalGroupByOutputType[P]>
+            : GetScalarType<T[P], GoalGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type GoalSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    type?: boolean
+    target?: boolean
+    period?: boolean
+    startDate?: boolean
+    endDate?: boolean
+    achieved?: boolean
+    isActive?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["goal"]>
+
+  export type GoalSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    type?: boolean
+    target?: boolean
+    period?: boolean
+    startDate?: boolean
+    endDate?: boolean
+    achieved?: boolean
+    isActive?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["goal"]>
+
+  export type GoalSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    type?: boolean
+    target?: boolean
+    period?: boolean
+    startDate?: boolean
+    endDate?: boolean
+    achieved?: boolean
+    isActive?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["goal"]>
+
+  export type GoalSelectScalar = {
+    id?: boolean
+    userId?: boolean
+    type?: boolean
+    target?: boolean
+    period?: boolean
+    startDate?: boolean
+    endDate?: boolean
+    achieved?: boolean
+    isActive?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type GoalOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "type" | "target" | "period" | "startDate" | "endDate" | "achieved" | "isActive" | "createdAt" | "updatedAt", ExtArgs["result"]["goal"]>
+  export type GoalInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type GoalIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type GoalIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+
+  export type $GoalPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "Goal"
+    objects: {
+      user: Prisma.$UserPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      userId: string
+      type: $Enums.GoalType
+      target: number
+      period: $Enums.GoalPeriod
+      startDate: Date
+      endDate: Date
+      achieved: number
+      isActive: boolean
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["goal"]>
+    composites: {}
+  }
+
+  type GoalGetPayload<S extends boolean | null | undefined | GoalDefaultArgs> = $Result.GetResult<Prisma.$GoalPayload, S>
+
+  type GoalCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<GoalFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: GoalCountAggregateInputType | true
+    }
+
+  export interface GoalDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Goal'], meta: { name: 'Goal' } }
+    /**
+     * Find zero or one Goal that matches the filter.
+     * @param {GoalFindUniqueArgs} args - Arguments to find a Goal
+     * @example
+     * // Get one Goal
+     * const goal = await prisma.goal.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends GoalFindUniqueArgs>(args: SelectSubset<T, GoalFindUniqueArgs<ExtArgs>>): Prisma__GoalClient<$Result.GetResult<Prisma.$GoalPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Goal that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {GoalFindUniqueOrThrowArgs} args - Arguments to find a Goal
+     * @example
+     * // Get one Goal
+     * const goal = await prisma.goal.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends GoalFindUniqueOrThrowArgs>(args: SelectSubset<T, GoalFindUniqueOrThrowArgs<ExtArgs>>): Prisma__GoalClient<$Result.GetResult<Prisma.$GoalPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Goal that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GoalFindFirstArgs} args - Arguments to find a Goal
+     * @example
+     * // Get one Goal
+     * const goal = await prisma.goal.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends GoalFindFirstArgs>(args?: SelectSubset<T, GoalFindFirstArgs<ExtArgs>>): Prisma__GoalClient<$Result.GetResult<Prisma.$GoalPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Goal that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GoalFindFirstOrThrowArgs} args - Arguments to find a Goal
+     * @example
+     * // Get one Goal
+     * const goal = await prisma.goal.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends GoalFindFirstOrThrowArgs>(args?: SelectSubset<T, GoalFindFirstOrThrowArgs<ExtArgs>>): Prisma__GoalClient<$Result.GetResult<Prisma.$GoalPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Goals that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GoalFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Goals
+     * const goals = await prisma.goal.findMany()
+     * 
+     * // Get first 10 Goals
+     * const goals = await prisma.goal.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const goalWithIdOnly = await prisma.goal.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends GoalFindManyArgs>(args?: SelectSubset<T, GoalFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$GoalPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Goal.
+     * @param {GoalCreateArgs} args - Arguments to create a Goal.
+     * @example
+     * // Create one Goal
+     * const Goal = await prisma.goal.create({
+     *   data: {
+     *     // ... data to create a Goal
+     *   }
+     * })
+     * 
+     */
+    create<T extends GoalCreateArgs>(args: SelectSubset<T, GoalCreateArgs<ExtArgs>>): Prisma__GoalClient<$Result.GetResult<Prisma.$GoalPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Goals.
+     * @param {GoalCreateManyArgs} args - Arguments to create many Goals.
+     * @example
+     * // Create many Goals
+     * const goal = await prisma.goal.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends GoalCreateManyArgs>(args?: SelectSubset<T, GoalCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Goals and returns the data saved in the database.
+     * @param {GoalCreateManyAndReturnArgs} args - Arguments to create many Goals.
+     * @example
+     * // Create many Goals
+     * const goal = await prisma.goal.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Goals and only return the `id`
+     * const goalWithIdOnly = await prisma.goal.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends GoalCreateManyAndReturnArgs>(args?: SelectSubset<T, GoalCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$GoalPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Goal.
+     * @param {GoalDeleteArgs} args - Arguments to delete one Goal.
+     * @example
+     * // Delete one Goal
+     * const Goal = await prisma.goal.delete({
+     *   where: {
+     *     // ... filter to delete one Goal
+     *   }
+     * })
+     * 
+     */
+    delete<T extends GoalDeleteArgs>(args: SelectSubset<T, GoalDeleteArgs<ExtArgs>>): Prisma__GoalClient<$Result.GetResult<Prisma.$GoalPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Goal.
+     * @param {GoalUpdateArgs} args - Arguments to update one Goal.
+     * @example
+     * // Update one Goal
+     * const goal = await prisma.goal.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends GoalUpdateArgs>(args: SelectSubset<T, GoalUpdateArgs<ExtArgs>>): Prisma__GoalClient<$Result.GetResult<Prisma.$GoalPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Goals.
+     * @param {GoalDeleteManyArgs} args - Arguments to filter Goals to delete.
+     * @example
+     * // Delete a few Goals
+     * const { count } = await prisma.goal.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends GoalDeleteManyArgs>(args?: SelectSubset<T, GoalDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Goals.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GoalUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Goals
+     * const goal = await prisma.goal.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends GoalUpdateManyArgs>(args: SelectSubset<T, GoalUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Goals and returns the data updated in the database.
+     * @param {GoalUpdateManyAndReturnArgs} args - Arguments to update many Goals.
+     * @example
+     * // Update many Goals
+     * const goal = await prisma.goal.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Goals and only return the `id`
+     * const goalWithIdOnly = await prisma.goal.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends GoalUpdateManyAndReturnArgs>(args: SelectSubset<T, GoalUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$GoalPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Goal.
+     * @param {GoalUpsertArgs} args - Arguments to update or create a Goal.
+     * @example
+     * // Update or create a Goal
+     * const goal = await prisma.goal.upsert({
+     *   create: {
+     *     // ... data to create a Goal
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Goal we want to update
+     *   }
+     * })
+     */
+    upsert<T extends GoalUpsertArgs>(args: SelectSubset<T, GoalUpsertArgs<ExtArgs>>): Prisma__GoalClient<$Result.GetResult<Prisma.$GoalPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Goals.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GoalCountArgs} args - Arguments to filter Goals to count.
+     * @example
+     * // Count the number of Goals
+     * const count = await prisma.goal.count({
+     *   where: {
+     *     // ... the filter for the Goals we want to count
+     *   }
+     * })
+    **/
+    count<T extends GoalCountArgs>(
+      args?: Subset<T, GoalCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], GoalCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Goal.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GoalAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends GoalAggregateArgs>(args: Subset<T, GoalAggregateArgs>): Prisma.PrismaPromise<GetGoalAggregateType<T>>
+
+    /**
+     * Group by Goal.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GoalGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends GoalGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: GoalGroupByArgs['orderBy'] }
+        : { orderBy?: GoalGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, GoalGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetGoalGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the Goal model
+   */
+  readonly fields: GoalFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for Goal.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__GoalClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the Goal model
+   */
+  interface GoalFieldRefs {
+    readonly id: FieldRef<"Goal", 'String'>
+    readonly userId: FieldRef<"Goal", 'String'>
+    readonly type: FieldRef<"Goal", 'GoalType'>
+    readonly target: FieldRef<"Goal", 'Int'>
+    readonly period: FieldRef<"Goal", 'GoalPeriod'>
+    readonly startDate: FieldRef<"Goal", 'DateTime'>
+    readonly endDate: FieldRef<"Goal", 'DateTime'>
+    readonly achieved: FieldRef<"Goal", 'Int'>
+    readonly isActive: FieldRef<"Goal", 'Boolean'>
+    readonly createdAt: FieldRef<"Goal", 'DateTime'>
+    readonly updatedAt: FieldRef<"Goal", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * Goal findUnique
+   */
+  export type GoalFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Goal
+     */
+    select?: GoalSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Goal
+     */
+    omit?: GoalOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: GoalInclude<ExtArgs> | null
+    /**
+     * Filter, which Goal to fetch.
+     */
+    where: GoalWhereUniqueInput
+  }
+
+  /**
+   * Goal findUniqueOrThrow
+   */
+  export type GoalFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Goal
+     */
+    select?: GoalSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Goal
+     */
+    omit?: GoalOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: GoalInclude<ExtArgs> | null
+    /**
+     * Filter, which Goal to fetch.
+     */
+    where: GoalWhereUniqueInput
+  }
+
+  /**
+   * Goal findFirst
+   */
+  export type GoalFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Goal
+     */
+    select?: GoalSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Goal
+     */
+    omit?: GoalOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: GoalInclude<ExtArgs> | null
+    /**
+     * Filter, which Goal to fetch.
+     */
+    where?: GoalWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Goals to fetch.
+     */
+    orderBy?: GoalOrderByWithRelationInput | GoalOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Goals.
+     */
+    cursor?: GoalWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Goals from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Goals.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Goals.
+     */
+    distinct?: GoalScalarFieldEnum | GoalScalarFieldEnum[]
+  }
+
+  /**
+   * Goal findFirstOrThrow
+   */
+  export type GoalFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Goal
+     */
+    select?: GoalSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Goal
+     */
+    omit?: GoalOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: GoalInclude<ExtArgs> | null
+    /**
+     * Filter, which Goal to fetch.
+     */
+    where?: GoalWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Goals to fetch.
+     */
+    orderBy?: GoalOrderByWithRelationInput | GoalOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Goals.
+     */
+    cursor?: GoalWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Goals from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Goals.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Goals.
+     */
+    distinct?: GoalScalarFieldEnum | GoalScalarFieldEnum[]
+  }
+
+  /**
+   * Goal findMany
+   */
+  export type GoalFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Goal
+     */
+    select?: GoalSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Goal
+     */
+    omit?: GoalOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: GoalInclude<ExtArgs> | null
+    /**
+     * Filter, which Goals to fetch.
+     */
+    where?: GoalWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Goals to fetch.
+     */
+    orderBy?: GoalOrderByWithRelationInput | GoalOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing Goals.
+     */
+    cursor?: GoalWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Goals from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Goals.
+     */
+    skip?: number
+    distinct?: GoalScalarFieldEnum | GoalScalarFieldEnum[]
+  }
+
+  /**
+   * Goal create
+   */
+  export type GoalCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Goal
+     */
+    select?: GoalSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Goal
+     */
+    omit?: GoalOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: GoalInclude<ExtArgs> | null
+    /**
+     * The data needed to create a Goal.
+     */
+    data: XOR<GoalCreateInput, GoalUncheckedCreateInput>
+  }
+
+  /**
+   * Goal createMany
+   */
+  export type GoalCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many Goals.
+     */
+    data: GoalCreateManyInput | GoalCreateManyInput[]
+  }
+
+  /**
+   * Goal createManyAndReturn
+   */
+  export type GoalCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Goal
+     */
+    select?: GoalSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Goal
+     */
+    omit?: GoalOmit<ExtArgs> | null
+    /**
+     * The data used to create many Goals.
+     */
+    data: GoalCreateManyInput | GoalCreateManyInput[]
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: GoalIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Goal update
+   */
+  export type GoalUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Goal
+     */
+    select?: GoalSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Goal
+     */
+    omit?: GoalOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: GoalInclude<ExtArgs> | null
+    /**
+     * The data needed to update a Goal.
+     */
+    data: XOR<GoalUpdateInput, GoalUncheckedUpdateInput>
+    /**
+     * Choose, which Goal to update.
+     */
+    where: GoalWhereUniqueInput
+  }
+
+  /**
+   * Goal updateMany
+   */
+  export type GoalUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update Goals.
+     */
+    data: XOR<GoalUpdateManyMutationInput, GoalUncheckedUpdateManyInput>
+    /**
+     * Filter which Goals to update
+     */
+    where?: GoalWhereInput
+    /**
+     * Limit how many Goals to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * Goal updateManyAndReturn
+   */
+  export type GoalUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Goal
+     */
+    select?: GoalSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Goal
+     */
+    omit?: GoalOmit<ExtArgs> | null
+    /**
+     * The data used to update Goals.
+     */
+    data: XOR<GoalUpdateManyMutationInput, GoalUncheckedUpdateManyInput>
+    /**
+     * Filter which Goals to update
+     */
+    where?: GoalWhereInput
+    /**
+     * Limit how many Goals to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: GoalIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Goal upsert
+   */
+  export type GoalUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Goal
+     */
+    select?: GoalSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Goal
+     */
+    omit?: GoalOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: GoalInclude<ExtArgs> | null
+    /**
+     * The filter to search for the Goal to update in case it exists.
+     */
+    where: GoalWhereUniqueInput
+    /**
+     * In case the Goal found by the `where` argument doesn't exist, create a new Goal with this data.
+     */
+    create: XOR<GoalCreateInput, GoalUncheckedCreateInput>
+    /**
+     * In case the Goal was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<GoalUpdateInput, GoalUncheckedUpdateInput>
+  }
+
+  /**
+   * Goal delete
+   */
+  export type GoalDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Goal
+     */
+    select?: GoalSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Goal
+     */
+    omit?: GoalOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: GoalInclude<ExtArgs> | null
+    /**
+     * Filter which Goal to delete.
+     */
+    where: GoalWhereUniqueInput
+  }
+
+  /**
+   * Goal deleteMany
+   */
+  export type GoalDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Goals to delete
+     */
+    where?: GoalWhereInput
+    /**
+     * Limit how many Goals to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * Goal without action
+   */
+  export type GoalDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Goal
+     */
+    select?: GoalSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Goal
+     */
+    omit?: GoalOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: GoalInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model Achievement
+   */
+
+  export type AggregateAchievement = {
+    _count: AchievementCountAggregateOutputType | null
+    _min: AchievementMinAggregateOutputType | null
+    _max: AchievementMaxAggregateOutputType | null
+  }
+
+  export type AchievementMinAggregateOutputType = {
+    id: string | null
+    userId: string | null
+    type: $Enums.AchievementType | null
+    title: string | null
+    description: string | null
+    unlockedAt: Date | null
+  }
+
+  export type AchievementMaxAggregateOutputType = {
+    id: string | null
+    userId: string | null
+    type: $Enums.AchievementType | null
+    title: string | null
+    description: string | null
+    unlockedAt: Date | null
+  }
+
+  export type AchievementCountAggregateOutputType = {
+    id: number
+    userId: number
+    type: number
+    title: number
+    description: number
+    unlockedAt: number
+    _all: number
+  }
+
+
+  export type AchievementMinAggregateInputType = {
+    id?: true
+    userId?: true
+    type?: true
+    title?: true
+    description?: true
+    unlockedAt?: true
+  }
+
+  export type AchievementMaxAggregateInputType = {
+    id?: true
+    userId?: true
+    type?: true
+    title?: true
+    description?: true
+    unlockedAt?: true
+  }
+
+  export type AchievementCountAggregateInputType = {
+    id?: true
+    userId?: true
+    type?: true
+    title?: true
+    description?: true
+    unlockedAt?: true
+    _all?: true
+  }
+
+  export type AchievementAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Achievement to aggregate.
+     */
+    where?: AchievementWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Achievements to fetch.
+     */
+    orderBy?: AchievementOrderByWithRelationInput | AchievementOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: AchievementWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Achievements from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Achievements.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned Achievements
+    **/
+    _count?: true | AchievementCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: AchievementMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: AchievementMaxAggregateInputType
+  }
+
+  export type GetAchievementAggregateType<T extends AchievementAggregateArgs> = {
+        [P in keyof T & keyof AggregateAchievement]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateAchievement[P]>
+      : GetScalarType<T[P], AggregateAchievement[P]>
+  }
+
+
+
+
+  export type AchievementGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: AchievementWhereInput
+    orderBy?: AchievementOrderByWithAggregationInput | AchievementOrderByWithAggregationInput[]
+    by: AchievementScalarFieldEnum[] | AchievementScalarFieldEnum
+    having?: AchievementScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: AchievementCountAggregateInputType | true
+    _min?: AchievementMinAggregateInputType
+    _max?: AchievementMaxAggregateInputType
+  }
+
+  export type AchievementGroupByOutputType = {
+    id: string
+    userId: string
+    type: $Enums.AchievementType
+    title: string
+    description: string
+    unlockedAt: Date
+    _count: AchievementCountAggregateOutputType | null
+    _min: AchievementMinAggregateOutputType | null
+    _max: AchievementMaxAggregateOutputType | null
+  }
+
+  type GetAchievementGroupByPayload<T extends AchievementGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<AchievementGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof AchievementGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], AchievementGroupByOutputType[P]>
+            : GetScalarType<T[P], AchievementGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type AchievementSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    type?: boolean
+    title?: boolean
+    description?: boolean
+    unlockedAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["achievement"]>
+
+  export type AchievementSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    type?: boolean
+    title?: boolean
+    description?: boolean
+    unlockedAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["achievement"]>
+
+  export type AchievementSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    type?: boolean
+    title?: boolean
+    description?: boolean
+    unlockedAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["achievement"]>
+
+  export type AchievementSelectScalar = {
+    id?: boolean
+    userId?: boolean
+    type?: boolean
+    title?: boolean
+    description?: boolean
+    unlockedAt?: boolean
+  }
+
+  export type AchievementOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "type" | "title" | "description" | "unlockedAt", ExtArgs["result"]["achievement"]>
+  export type AchievementInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type AchievementIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type AchievementIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+
+  export type $AchievementPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "Achievement"
+    objects: {
+      user: Prisma.$UserPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      userId: string
+      type: $Enums.AchievementType
+      title: string
+      description: string
+      unlockedAt: Date
+    }, ExtArgs["result"]["achievement"]>
+    composites: {}
+  }
+
+  type AchievementGetPayload<S extends boolean | null | undefined | AchievementDefaultArgs> = $Result.GetResult<Prisma.$AchievementPayload, S>
+
+  type AchievementCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<AchievementFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: AchievementCountAggregateInputType | true
+    }
+
+  export interface AchievementDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Achievement'], meta: { name: 'Achievement' } }
+    /**
+     * Find zero or one Achievement that matches the filter.
+     * @param {AchievementFindUniqueArgs} args - Arguments to find a Achievement
+     * @example
+     * // Get one Achievement
+     * const achievement = await prisma.achievement.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends AchievementFindUniqueArgs>(args: SelectSubset<T, AchievementFindUniqueArgs<ExtArgs>>): Prisma__AchievementClient<$Result.GetResult<Prisma.$AchievementPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Achievement that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {AchievementFindUniqueOrThrowArgs} args - Arguments to find a Achievement
+     * @example
+     * // Get one Achievement
+     * const achievement = await prisma.achievement.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends AchievementFindUniqueOrThrowArgs>(args: SelectSubset<T, AchievementFindUniqueOrThrowArgs<ExtArgs>>): Prisma__AchievementClient<$Result.GetResult<Prisma.$AchievementPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Achievement that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AchievementFindFirstArgs} args - Arguments to find a Achievement
+     * @example
+     * // Get one Achievement
+     * const achievement = await prisma.achievement.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends AchievementFindFirstArgs>(args?: SelectSubset<T, AchievementFindFirstArgs<ExtArgs>>): Prisma__AchievementClient<$Result.GetResult<Prisma.$AchievementPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Achievement that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AchievementFindFirstOrThrowArgs} args - Arguments to find a Achievement
+     * @example
+     * // Get one Achievement
+     * const achievement = await prisma.achievement.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends AchievementFindFirstOrThrowArgs>(args?: SelectSubset<T, AchievementFindFirstOrThrowArgs<ExtArgs>>): Prisma__AchievementClient<$Result.GetResult<Prisma.$AchievementPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Achievements that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AchievementFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Achievements
+     * const achievements = await prisma.achievement.findMany()
+     * 
+     * // Get first 10 Achievements
+     * const achievements = await prisma.achievement.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const achievementWithIdOnly = await prisma.achievement.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends AchievementFindManyArgs>(args?: SelectSubset<T, AchievementFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AchievementPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Achievement.
+     * @param {AchievementCreateArgs} args - Arguments to create a Achievement.
+     * @example
+     * // Create one Achievement
+     * const Achievement = await prisma.achievement.create({
+     *   data: {
+     *     // ... data to create a Achievement
+     *   }
+     * })
+     * 
+     */
+    create<T extends AchievementCreateArgs>(args: SelectSubset<T, AchievementCreateArgs<ExtArgs>>): Prisma__AchievementClient<$Result.GetResult<Prisma.$AchievementPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Achievements.
+     * @param {AchievementCreateManyArgs} args - Arguments to create many Achievements.
+     * @example
+     * // Create many Achievements
+     * const achievement = await prisma.achievement.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends AchievementCreateManyArgs>(args?: SelectSubset<T, AchievementCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Achievements and returns the data saved in the database.
+     * @param {AchievementCreateManyAndReturnArgs} args - Arguments to create many Achievements.
+     * @example
+     * // Create many Achievements
+     * const achievement = await prisma.achievement.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Achievements and only return the `id`
+     * const achievementWithIdOnly = await prisma.achievement.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends AchievementCreateManyAndReturnArgs>(args?: SelectSubset<T, AchievementCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AchievementPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Achievement.
+     * @param {AchievementDeleteArgs} args - Arguments to delete one Achievement.
+     * @example
+     * // Delete one Achievement
+     * const Achievement = await prisma.achievement.delete({
+     *   where: {
+     *     // ... filter to delete one Achievement
+     *   }
+     * })
+     * 
+     */
+    delete<T extends AchievementDeleteArgs>(args: SelectSubset<T, AchievementDeleteArgs<ExtArgs>>): Prisma__AchievementClient<$Result.GetResult<Prisma.$AchievementPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Achievement.
+     * @param {AchievementUpdateArgs} args - Arguments to update one Achievement.
+     * @example
+     * // Update one Achievement
+     * const achievement = await prisma.achievement.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends AchievementUpdateArgs>(args: SelectSubset<T, AchievementUpdateArgs<ExtArgs>>): Prisma__AchievementClient<$Result.GetResult<Prisma.$AchievementPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Achievements.
+     * @param {AchievementDeleteManyArgs} args - Arguments to filter Achievements to delete.
+     * @example
+     * // Delete a few Achievements
+     * const { count } = await prisma.achievement.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends AchievementDeleteManyArgs>(args?: SelectSubset<T, AchievementDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Achievements.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AchievementUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Achievements
+     * const achievement = await prisma.achievement.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends AchievementUpdateManyArgs>(args: SelectSubset<T, AchievementUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Achievements and returns the data updated in the database.
+     * @param {AchievementUpdateManyAndReturnArgs} args - Arguments to update many Achievements.
+     * @example
+     * // Update many Achievements
+     * const achievement = await prisma.achievement.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Achievements and only return the `id`
+     * const achievementWithIdOnly = await prisma.achievement.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends AchievementUpdateManyAndReturnArgs>(args: SelectSubset<T, AchievementUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AchievementPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Achievement.
+     * @param {AchievementUpsertArgs} args - Arguments to update or create a Achievement.
+     * @example
+     * // Update or create a Achievement
+     * const achievement = await prisma.achievement.upsert({
+     *   create: {
+     *     // ... data to create a Achievement
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Achievement we want to update
+     *   }
+     * })
+     */
+    upsert<T extends AchievementUpsertArgs>(args: SelectSubset<T, AchievementUpsertArgs<ExtArgs>>): Prisma__AchievementClient<$Result.GetResult<Prisma.$AchievementPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Achievements.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AchievementCountArgs} args - Arguments to filter Achievements to count.
+     * @example
+     * // Count the number of Achievements
+     * const count = await prisma.achievement.count({
+     *   where: {
+     *     // ... the filter for the Achievements we want to count
+     *   }
+     * })
+    **/
+    count<T extends AchievementCountArgs>(
+      args?: Subset<T, AchievementCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], AchievementCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Achievement.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AchievementAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends AchievementAggregateArgs>(args: Subset<T, AchievementAggregateArgs>): Prisma.PrismaPromise<GetAchievementAggregateType<T>>
+
+    /**
+     * Group by Achievement.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AchievementGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends AchievementGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: AchievementGroupByArgs['orderBy'] }
+        : { orderBy?: AchievementGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, AchievementGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetAchievementGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the Achievement model
+   */
+  readonly fields: AchievementFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for Achievement.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__AchievementClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the Achievement model
+   */
+  interface AchievementFieldRefs {
+    readonly id: FieldRef<"Achievement", 'String'>
+    readonly userId: FieldRef<"Achievement", 'String'>
+    readonly type: FieldRef<"Achievement", 'AchievementType'>
+    readonly title: FieldRef<"Achievement", 'String'>
+    readonly description: FieldRef<"Achievement", 'String'>
+    readonly unlockedAt: FieldRef<"Achievement", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * Achievement findUnique
+   */
+  export type AchievementFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Achievement
+     */
+    select?: AchievementSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Achievement
+     */
+    omit?: AchievementOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AchievementInclude<ExtArgs> | null
+    /**
+     * Filter, which Achievement to fetch.
+     */
+    where: AchievementWhereUniqueInput
+  }
+
+  /**
+   * Achievement findUniqueOrThrow
+   */
+  export type AchievementFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Achievement
+     */
+    select?: AchievementSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Achievement
+     */
+    omit?: AchievementOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AchievementInclude<ExtArgs> | null
+    /**
+     * Filter, which Achievement to fetch.
+     */
+    where: AchievementWhereUniqueInput
+  }
+
+  /**
+   * Achievement findFirst
+   */
+  export type AchievementFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Achievement
+     */
+    select?: AchievementSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Achievement
+     */
+    omit?: AchievementOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AchievementInclude<ExtArgs> | null
+    /**
+     * Filter, which Achievement to fetch.
+     */
+    where?: AchievementWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Achievements to fetch.
+     */
+    orderBy?: AchievementOrderByWithRelationInput | AchievementOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Achievements.
+     */
+    cursor?: AchievementWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Achievements from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Achievements.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Achievements.
+     */
+    distinct?: AchievementScalarFieldEnum | AchievementScalarFieldEnum[]
+  }
+
+  /**
+   * Achievement findFirstOrThrow
+   */
+  export type AchievementFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Achievement
+     */
+    select?: AchievementSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Achievement
+     */
+    omit?: AchievementOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AchievementInclude<ExtArgs> | null
+    /**
+     * Filter, which Achievement to fetch.
+     */
+    where?: AchievementWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Achievements to fetch.
+     */
+    orderBy?: AchievementOrderByWithRelationInput | AchievementOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Achievements.
+     */
+    cursor?: AchievementWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Achievements from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Achievements.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Achievements.
+     */
+    distinct?: AchievementScalarFieldEnum | AchievementScalarFieldEnum[]
+  }
+
+  /**
+   * Achievement findMany
+   */
+  export type AchievementFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Achievement
+     */
+    select?: AchievementSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Achievement
+     */
+    omit?: AchievementOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AchievementInclude<ExtArgs> | null
+    /**
+     * Filter, which Achievements to fetch.
+     */
+    where?: AchievementWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Achievements to fetch.
+     */
+    orderBy?: AchievementOrderByWithRelationInput | AchievementOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing Achievements.
+     */
+    cursor?: AchievementWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Achievements from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Achievements.
+     */
+    skip?: number
+    distinct?: AchievementScalarFieldEnum | AchievementScalarFieldEnum[]
+  }
+
+  /**
+   * Achievement create
+   */
+  export type AchievementCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Achievement
+     */
+    select?: AchievementSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Achievement
+     */
+    omit?: AchievementOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AchievementInclude<ExtArgs> | null
+    /**
+     * The data needed to create a Achievement.
+     */
+    data: XOR<AchievementCreateInput, AchievementUncheckedCreateInput>
+  }
+
+  /**
+   * Achievement createMany
+   */
+  export type AchievementCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many Achievements.
+     */
+    data: AchievementCreateManyInput | AchievementCreateManyInput[]
+  }
+
+  /**
+   * Achievement createManyAndReturn
+   */
+  export type AchievementCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Achievement
+     */
+    select?: AchievementSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Achievement
+     */
+    omit?: AchievementOmit<ExtArgs> | null
+    /**
+     * The data used to create many Achievements.
+     */
+    data: AchievementCreateManyInput | AchievementCreateManyInput[]
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AchievementIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Achievement update
+   */
+  export type AchievementUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Achievement
+     */
+    select?: AchievementSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Achievement
+     */
+    omit?: AchievementOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AchievementInclude<ExtArgs> | null
+    /**
+     * The data needed to update a Achievement.
+     */
+    data: XOR<AchievementUpdateInput, AchievementUncheckedUpdateInput>
+    /**
+     * Choose, which Achievement to update.
+     */
+    where: AchievementWhereUniqueInput
+  }
+
+  /**
+   * Achievement updateMany
+   */
+  export type AchievementUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update Achievements.
+     */
+    data: XOR<AchievementUpdateManyMutationInput, AchievementUncheckedUpdateManyInput>
+    /**
+     * Filter which Achievements to update
+     */
+    where?: AchievementWhereInput
+    /**
+     * Limit how many Achievements to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * Achievement updateManyAndReturn
+   */
+  export type AchievementUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Achievement
+     */
+    select?: AchievementSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Achievement
+     */
+    omit?: AchievementOmit<ExtArgs> | null
+    /**
+     * The data used to update Achievements.
+     */
+    data: XOR<AchievementUpdateManyMutationInput, AchievementUncheckedUpdateManyInput>
+    /**
+     * Filter which Achievements to update
+     */
+    where?: AchievementWhereInput
+    /**
+     * Limit how many Achievements to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AchievementIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Achievement upsert
+   */
+  export type AchievementUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Achievement
+     */
+    select?: AchievementSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Achievement
+     */
+    omit?: AchievementOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AchievementInclude<ExtArgs> | null
+    /**
+     * The filter to search for the Achievement to update in case it exists.
+     */
+    where: AchievementWhereUniqueInput
+    /**
+     * In case the Achievement found by the `where` argument doesn't exist, create a new Achievement with this data.
+     */
+    create: XOR<AchievementCreateInput, AchievementUncheckedCreateInput>
+    /**
+     * In case the Achievement was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<AchievementUpdateInput, AchievementUncheckedUpdateInput>
+  }
+
+  /**
+   * Achievement delete
+   */
+  export type AchievementDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Achievement
+     */
+    select?: AchievementSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Achievement
+     */
+    omit?: AchievementOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AchievementInclude<ExtArgs> | null
+    /**
+     * Filter which Achievement to delete.
+     */
+    where: AchievementWhereUniqueInput
+  }
+
+  /**
+   * Achievement deleteMany
+   */
+  export type AchievementDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Achievements to delete
+     */
+    where?: AchievementWhereInput
+    /**
+     * Limit how many Achievements to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * Achievement without action
+   */
+  export type AchievementDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Achievement
+     */
+    select?: AchievementSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Achievement
+     */
+    omit?: AchievementOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AchievementInclude<ExtArgs> | null
   }
 
 
@@ -14096,15 +16759,17 @@ export namespace Prisma {
 
   export const UserScalarFieldEnum: {
     id: 'id',
-    email: 'email',
     username: 'username',
+    email: 'email',
+    password: 'password',
     firstName: 'firstName',
     lastName: 'lastName',
-    password: 'password',
+    country: 'country',
     emailVerified: 'emailVerified',
     image: 'image',
     createdAt: 'createdAt',
-    updatedAt: 'updatedAt'
+    updatedAt: 'updatedAt',
+    isPublic: 'isPublic'
   };
 
   export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
@@ -14149,7 +16814,6 @@ export namespace Prisma {
 
   export const JobApplicationScalarFieldEnum: {
     id: 'id',
-    userId: 'userId',
     jobTitle: 'jobTitle',
     company: 'company',
     location: 'location',
@@ -14164,7 +16828,8 @@ export namespace Prisma {
     status: 'status',
     priority: 'priority',
     appliedDate: 'appliedDate',
-    lastUpdated: 'lastUpdated'
+    lastUpdated: 'lastUpdated',
+    userId: 'userId'
   };
 
   export type JobApplicationScalarFieldEnum = (typeof JobApplicationScalarFieldEnum)[keyof typeof JobApplicationScalarFieldEnum]
@@ -14172,13 +16837,15 @@ export namespace Prisma {
 
   export const TagScalarFieldEnum: {
     id: 'id',
-    name: 'name'
+    name: 'name',
+    createdAt: 'createdAt'
   };
 
   export type TagScalarFieldEnum = (typeof TagScalarFieldEnum)[keyof typeof TagScalarFieldEnum]
 
 
   export const JobApplicationTagScalarFieldEnum: {
+    id: 'id',
     jobApplicationId: 'jobApplicationId',
     tagId: 'tagId'
   };
@@ -14192,8 +16859,7 @@ export namespace Prisma {
     jobApplicationId: 'jobApplicationId',
     action: 'action',
     description: 'description',
-    metadata: 'metadata',
-    createdAt: 'createdAt'
+    timestamp: 'timestamp'
   };
 
   export type ActivityLogScalarFieldEnum = (typeof ActivityLogScalarFieldEnum)[keyof typeof ActivityLogScalarFieldEnum]
@@ -14201,14 +16867,11 @@ export namespace Prisma {
 
   export const TemplateScalarFieldEnum: {
     id: 'id',
-    userId: 'userId',
     name: 'name',
+    content: 'content',
     type: 'type',
-    fileName: 'fileName',
-    fileSize: 'fileSize',
-    mimeType: 'mimeType',
-    fileData: 'fileData',
-    uploadDate: 'uploadDate'
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
   };
 
   export type TemplateScalarFieldEnum = (typeof TemplateScalarFieldEnum)[keyof typeof TemplateScalarFieldEnum]
@@ -14217,12 +16880,14 @@ export namespace Prisma {
   export const AnalyticsScalarFieldEnum: {
     id: 'id',
     userId: 'userId',
-    totalApplications: 'totalApplications',
-    activeApplications: 'activeApplications',
-    offersReceived: 'offersReceived',
-    successRate: 'successRate',
-    averageResponseTime: 'averageResponseTime',
-    lastCalculated: 'lastCalculated'
+    period: 'period',
+    date: 'date',
+    totalApps: 'totalApps',
+    responsesRate: 'responsesRate',
+    interviewRate: 'interviewRate',
+    offerRate: 'offerRate',
+    avgResponseTime: 'avgResponseTime',
+    createdAt: 'createdAt'
   };
 
   export type AnalyticsScalarFieldEnum = (typeof AnalyticsScalarFieldEnum)[keyof typeof AnalyticsScalarFieldEnum]
@@ -14234,11 +16899,40 @@ export namespace Prisma {
     title: 'title',
     message: 'message',
     type: 'type',
-    read: 'read',
+    isRead: 'isRead',
     createdAt: 'createdAt'
   };
 
   export type NotificationScalarFieldEnum = (typeof NotificationScalarFieldEnum)[keyof typeof NotificationScalarFieldEnum]
+
+
+  export const GoalScalarFieldEnum: {
+    id: 'id',
+    userId: 'userId',
+    type: 'type',
+    target: 'target',
+    period: 'period',
+    startDate: 'startDate',
+    endDate: 'endDate',
+    achieved: 'achieved',
+    isActive: 'isActive',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type GoalScalarFieldEnum = (typeof GoalScalarFieldEnum)[keyof typeof GoalScalarFieldEnum]
+
+
+  export const AchievementScalarFieldEnum: {
+    id: 'id',
+    userId: 'userId',
+    type: 'type',
+    title: 'title',
+    description: 'description',
+    unlockedAt: 'unlockedAt'
+  };
+
+  export type AchievementScalarFieldEnum = (typeof AchievementScalarFieldEnum)[keyof typeof AchievementScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -14277,9 +16971,23 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'Boolean'
+   */
+  export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
+    
+
+
+  /**
    * Reference to a field of type 'Int'
    */
   export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
+    
+
+
+  /**
+   * Reference to a field of type 'Float'
+   */
+  export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
     
 
 
@@ -14305,13 +17013,6 @@ export namespace Prisma {
 
 
   /**
-   * Reference to a field of type 'Float'
-   */
-  export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
-    
-
-
-  /**
    * Reference to a field of type 'NotificationType'
    */
   export type EnumNotificationTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'NotificationType'>
@@ -14319,9 +17020,23 @@ export namespace Prisma {
 
 
   /**
-   * Reference to a field of type 'Boolean'
+   * Reference to a field of type 'GoalType'
    */
-  export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
+  export type EnumGoalTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'GoalType'>
+    
+
+
+  /**
+   * Reference to a field of type 'GoalPeriod'
+   */
+  export type EnumGoalPeriodFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'GoalPeriod'>
+    
+
+
+  /**
+   * Reference to a field of type 'AchievementType'
+   */
+  export type EnumAchievementTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AchievementType'>
     
   /**
    * Deep Input Types
@@ -14333,69 +17048,89 @@ export namespace Prisma {
     OR?: UserWhereInput[]
     NOT?: UserWhereInput | UserWhereInput[]
     id?: StringFilter<"User"> | string
-    email?: StringFilter<"User"> | string
     username?: StringFilter<"User"> | string
+    email?: StringFilter<"User"> | string
+    password?: StringFilter<"User"> | string
     firstName?: StringNullableFilter<"User"> | string | null
     lastName?: StringNullableFilter<"User"> | string | null
-    password?: StringFilter<"User"> | string
+    country?: StringNullableFilter<"User"> | string | null
     emailVerified?: DateTimeNullableFilter<"User"> | Date | string | null
     image?: StringNullableFilter<"User"> | string | null
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
-    jobApplications?: JobApplicationListRelationFilter
-    templates?: TemplateListRelationFilter
-    sessions?: SessionListRelationFilter
+    isPublic?: BoolFilter<"User"> | boolean
     accounts?: AccountListRelationFilter
+    sessions?: SessionListRelationFilter
+    jobApplications?: JobApplicationListRelationFilter
+    activityLogs?: ActivityLogListRelationFilter
+    analytics?: AnalyticsListRelationFilter
+    notifications?: NotificationListRelationFilter
+    goals?: GoalListRelationFilter
+    achievements?: AchievementListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
     id?: SortOrder
-    email?: SortOrder
     username?: SortOrder
+    email?: SortOrder
+    password?: SortOrder
     firstName?: SortOrderInput | SortOrder
     lastName?: SortOrderInput | SortOrder
-    password?: SortOrder
+    country?: SortOrderInput | SortOrder
     emailVerified?: SortOrderInput | SortOrder
     image?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-    jobApplications?: JobApplicationOrderByRelationAggregateInput
-    templates?: TemplateOrderByRelationAggregateInput
-    sessions?: SessionOrderByRelationAggregateInput
+    isPublic?: SortOrder
     accounts?: AccountOrderByRelationAggregateInput
+    sessions?: SessionOrderByRelationAggregateInput
+    jobApplications?: JobApplicationOrderByRelationAggregateInput
+    activityLogs?: ActivityLogOrderByRelationAggregateInput
+    analytics?: AnalyticsOrderByRelationAggregateInput
+    notifications?: NotificationOrderByRelationAggregateInput
+    goals?: GoalOrderByRelationAggregateInput
+    achievements?: AchievementOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
     id?: string
-    email?: string
     username?: string
+    email?: string
     AND?: UserWhereInput | UserWhereInput[]
     OR?: UserWhereInput[]
     NOT?: UserWhereInput | UserWhereInput[]
+    password?: StringFilter<"User"> | string
     firstName?: StringNullableFilter<"User"> | string | null
     lastName?: StringNullableFilter<"User"> | string | null
-    password?: StringFilter<"User"> | string
+    country?: StringNullableFilter<"User"> | string | null
     emailVerified?: DateTimeNullableFilter<"User"> | Date | string | null
     image?: StringNullableFilter<"User"> | string | null
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
-    jobApplications?: JobApplicationListRelationFilter
-    templates?: TemplateListRelationFilter
-    sessions?: SessionListRelationFilter
+    isPublic?: BoolFilter<"User"> | boolean
     accounts?: AccountListRelationFilter
-  }, "id" | "email" | "username">
+    sessions?: SessionListRelationFilter
+    jobApplications?: JobApplicationListRelationFilter
+    activityLogs?: ActivityLogListRelationFilter
+    analytics?: AnalyticsListRelationFilter
+    notifications?: NotificationListRelationFilter
+    goals?: GoalListRelationFilter
+    achievements?: AchievementListRelationFilter
+  }, "id" | "username" | "email">
 
   export type UserOrderByWithAggregationInput = {
     id?: SortOrder
-    email?: SortOrder
     username?: SortOrder
+    email?: SortOrder
+    password?: SortOrder
     firstName?: SortOrderInput | SortOrder
     lastName?: SortOrderInput | SortOrder
-    password?: SortOrder
+    country?: SortOrderInput | SortOrder
     emailVerified?: SortOrderInput | SortOrder
     image?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    isPublic?: SortOrder
     _count?: UserCountOrderByAggregateInput
     _max?: UserMaxOrderByAggregateInput
     _min?: UserMinOrderByAggregateInput
@@ -14406,15 +17141,17 @@ export namespace Prisma {
     OR?: UserScalarWhereWithAggregatesInput[]
     NOT?: UserScalarWhereWithAggregatesInput | UserScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"User"> | string
-    email?: StringWithAggregatesFilter<"User"> | string
     username?: StringWithAggregatesFilter<"User"> | string
+    email?: StringWithAggregatesFilter<"User"> | string
+    password?: StringWithAggregatesFilter<"User"> | string
     firstName?: StringNullableWithAggregatesFilter<"User"> | string | null
     lastName?: StringNullableWithAggregatesFilter<"User"> | string | null
-    password?: StringWithAggregatesFilter<"User"> | string
+    country?: StringNullableWithAggregatesFilter<"User"> | string | null
     emailVerified?: DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
     image?: StringNullableWithAggregatesFilter<"User"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
+    isPublic?: BoolWithAggregatesFilter<"User"> | boolean
   }
 
   export type AccountWhereInput = {
@@ -14608,13 +17345,12 @@ export namespace Prisma {
     OR?: JobApplicationWhereInput[]
     NOT?: JobApplicationWhereInput | JobApplicationWhereInput[]
     id?: StringFilter<"JobApplication"> | string
-    userId?: StringFilter<"JobApplication"> | string
     jobTitle?: StringFilter<"JobApplication"> | string
     company?: StringFilter<"JobApplication"> | string
     location?: StringFilter<"JobApplication"> | string
     jobPostUrl?: StringNullableFilter<"JobApplication"> | string | null
-    salaryMin?: IntNullableFilter<"JobApplication"> | number | null
-    salaryMax?: IntNullableFilter<"JobApplication"> | number | null
+    salaryMin?: FloatNullableFilter<"JobApplication"> | number | null
+    salaryMax?: FloatNullableFilter<"JobApplication"> | number | null
     salaryCurrency?: StringNullableFilter<"JobApplication"> | string | null
     contactName?: StringNullableFilter<"JobApplication"> | string | null
     contactEmail?: StringNullableFilter<"JobApplication"> | string | null
@@ -14624,14 +17360,14 @@ export namespace Prisma {
     priority?: EnumPriorityFilter<"JobApplication"> | $Enums.Priority
     appliedDate?: DateTimeFilter<"JobApplication"> | Date | string
     lastUpdated?: DateTimeFilter<"JobApplication"> | Date | string
+    userId?: StringFilter<"JobApplication"> | string
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
     tags?: JobApplicationTagListRelationFilter
-    activities?: ActivityLogListRelationFilter
+    activityLogs?: ActivityLogListRelationFilter
   }
 
   export type JobApplicationOrderByWithRelationInput = {
     id?: SortOrder
-    userId?: SortOrder
     jobTitle?: SortOrder
     company?: SortOrder
     location?: SortOrder
@@ -14647,9 +17383,10 @@ export namespace Prisma {
     priority?: SortOrder
     appliedDate?: SortOrder
     lastUpdated?: SortOrder
+    userId?: SortOrder
     user?: UserOrderByWithRelationInput
     tags?: JobApplicationTagOrderByRelationAggregateInput
-    activities?: ActivityLogOrderByRelationAggregateInput
+    activityLogs?: ActivityLogOrderByRelationAggregateInput
   }
 
   export type JobApplicationWhereUniqueInput = Prisma.AtLeast<{
@@ -14657,13 +17394,12 @@ export namespace Prisma {
     AND?: JobApplicationWhereInput | JobApplicationWhereInput[]
     OR?: JobApplicationWhereInput[]
     NOT?: JobApplicationWhereInput | JobApplicationWhereInput[]
-    userId?: StringFilter<"JobApplication"> | string
     jobTitle?: StringFilter<"JobApplication"> | string
     company?: StringFilter<"JobApplication"> | string
     location?: StringFilter<"JobApplication"> | string
     jobPostUrl?: StringNullableFilter<"JobApplication"> | string | null
-    salaryMin?: IntNullableFilter<"JobApplication"> | number | null
-    salaryMax?: IntNullableFilter<"JobApplication"> | number | null
+    salaryMin?: FloatNullableFilter<"JobApplication"> | number | null
+    salaryMax?: FloatNullableFilter<"JobApplication"> | number | null
     salaryCurrency?: StringNullableFilter<"JobApplication"> | string | null
     contactName?: StringNullableFilter<"JobApplication"> | string | null
     contactEmail?: StringNullableFilter<"JobApplication"> | string | null
@@ -14673,14 +17409,14 @@ export namespace Prisma {
     priority?: EnumPriorityFilter<"JobApplication"> | $Enums.Priority
     appliedDate?: DateTimeFilter<"JobApplication"> | Date | string
     lastUpdated?: DateTimeFilter<"JobApplication"> | Date | string
+    userId?: StringFilter<"JobApplication"> | string
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
     tags?: JobApplicationTagListRelationFilter
-    activities?: ActivityLogListRelationFilter
+    activityLogs?: ActivityLogListRelationFilter
   }, "id">
 
   export type JobApplicationOrderByWithAggregationInput = {
     id?: SortOrder
-    userId?: SortOrder
     jobTitle?: SortOrder
     company?: SortOrder
     location?: SortOrder
@@ -14696,6 +17432,7 @@ export namespace Prisma {
     priority?: SortOrder
     appliedDate?: SortOrder
     lastUpdated?: SortOrder
+    userId?: SortOrder
     _count?: JobApplicationCountOrderByAggregateInput
     _avg?: JobApplicationAvgOrderByAggregateInput
     _max?: JobApplicationMaxOrderByAggregateInput
@@ -14708,13 +17445,12 @@ export namespace Prisma {
     OR?: JobApplicationScalarWhereWithAggregatesInput[]
     NOT?: JobApplicationScalarWhereWithAggregatesInput | JobApplicationScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"JobApplication"> | string
-    userId?: StringWithAggregatesFilter<"JobApplication"> | string
     jobTitle?: StringWithAggregatesFilter<"JobApplication"> | string
     company?: StringWithAggregatesFilter<"JobApplication"> | string
     location?: StringWithAggregatesFilter<"JobApplication"> | string
     jobPostUrl?: StringNullableWithAggregatesFilter<"JobApplication"> | string | null
-    salaryMin?: IntNullableWithAggregatesFilter<"JobApplication"> | number | null
-    salaryMax?: IntNullableWithAggregatesFilter<"JobApplication"> | number | null
+    salaryMin?: FloatNullableWithAggregatesFilter<"JobApplication"> | number | null
+    salaryMax?: FloatNullableWithAggregatesFilter<"JobApplication"> | number | null
     salaryCurrency?: StringNullableWithAggregatesFilter<"JobApplication"> | string | null
     contactName?: StringNullableWithAggregatesFilter<"JobApplication"> | string | null
     contactEmail?: StringNullableWithAggregatesFilter<"JobApplication"> | string | null
@@ -14724,6 +17460,7 @@ export namespace Prisma {
     priority?: EnumPriorityWithAggregatesFilter<"JobApplication"> | $Enums.Priority
     appliedDate?: DateTimeWithAggregatesFilter<"JobApplication"> | Date | string
     lastUpdated?: DateTimeWithAggregatesFilter<"JobApplication"> | Date | string
+    userId?: StringWithAggregatesFilter<"JobApplication"> | string
   }
 
   export type TagWhereInput = {
@@ -14732,12 +17469,14 @@ export namespace Prisma {
     NOT?: TagWhereInput | TagWhereInput[]
     id?: StringFilter<"Tag"> | string
     name?: StringFilter<"Tag"> | string
+    createdAt?: DateTimeFilter<"Tag"> | Date | string
     jobApplications?: JobApplicationTagListRelationFilter
   }
 
   export type TagOrderByWithRelationInput = {
     id?: SortOrder
     name?: SortOrder
+    createdAt?: SortOrder
     jobApplications?: JobApplicationTagOrderByRelationAggregateInput
   }
 
@@ -14747,12 +17486,14 @@ export namespace Prisma {
     AND?: TagWhereInput | TagWhereInput[]
     OR?: TagWhereInput[]
     NOT?: TagWhereInput | TagWhereInput[]
+    createdAt?: DateTimeFilter<"Tag"> | Date | string
     jobApplications?: JobApplicationTagListRelationFilter
   }, "id" | "name">
 
   export type TagOrderByWithAggregationInput = {
     id?: SortOrder
     name?: SortOrder
+    createdAt?: SortOrder
     _count?: TagCountOrderByAggregateInput
     _max?: TagMaxOrderByAggregateInput
     _min?: TagMinOrderByAggregateInput
@@ -14764,12 +17505,14 @@ export namespace Prisma {
     NOT?: TagScalarWhereWithAggregatesInput | TagScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"Tag"> | string
     name?: StringWithAggregatesFilter<"Tag"> | string
+    createdAt?: DateTimeWithAggregatesFilter<"Tag"> | Date | string
   }
 
   export type JobApplicationTagWhereInput = {
     AND?: JobApplicationTagWhereInput | JobApplicationTagWhereInput[]
     OR?: JobApplicationTagWhereInput[]
     NOT?: JobApplicationTagWhereInput | JobApplicationTagWhereInput[]
+    id?: StringFilter<"JobApplicationTag"> | string
     jobApplicationId?: StringFilter<"JobApplicationTag"> | string
     tagId?: StringFilter<"JobApplicationTag"> | string
     jobApplication?: XOR<JobApplicationScalarRelationFilter, JobApplicationWhereInput>
@@ -14777,6 +17520,7 @@ export namespace Prisma {
   }
 
   export type JobApplicationTagOrderByWithRelationInput = {
+    id?: SortOrder
     jobApplicationId?: SortOrder
     tagId?: SortOrder
     jobApplication?: JobApplicationOrderByWithRelationInput
@@ -14784,6 +17528,7 @@ export namespace Prisma {
   }
 
   export type JobApplicationTagWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
     jobApplicationId_tagId?: JobApplicationTagJobApplicationIdTagIdCompoundUniqueInput
     AND?: JobApplicationTagWhereInput | JobApplicationTagWhereInput[]
     OR?: JobApplicationTagWhereInput[]
@@ -14792,9 +17537,10 @@ export namespace Prisma {
     tagId?: StringFilter<"JobApplicationTag"> | string
     jobApplication?: XOR<JobApplicationScalarRelationFilter, JobApplicationWhereInput>
     tag?: XOR<TagScalarRelationFilter, TagWhereInput>
-  }, "jobApplicationId_tagId">
+  }, "id" | "jobApplicationId_tagId">
 
   export type JobApplicationTagOrderByWithAggregationInput = {
+    id?: SortOrder
     jobApplicationId?: SortOrder
     tagId?: SortOrder
     _count?: JobApplicationTagCountOrderByAggregateInput
@@ -14806,6 +17552,7 @@ export namespace Prisma {
     AND?: JobApplicationTagScalarWhereWithAggregatesInput | JobApplicationTagScalarWhereWithAggregatesInput[]
     OR?: JobApplicationTagScalarWhereWithAggregatesInput[]
     NOT?: JobApplicationTagScalarWhereWithAggregatesInput | JobApplicationTagScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"JobApplicationTag"> | string
     jobApplicationId?: StringWithAggregatesFilter<"JobApplicationTag"> | string
     tagId?: StringWithAggregatesFilter<"JobApplicationTag"> | string
   }
@@ -14816,22 +17563,22 @@ export namespace Prisma {
     NOT?: ActivityLogWhereInput | ActivityLogWhereInput[]
     id?: StringFilter<"ActivityLog"> | string
     userId?: StringFilter<"ActivityLog"> | string
-    jobApplicationId?: StringNullableFilter<"ActivityLog"> | string | null
+    jobApplicationId?: StringFilter<"ActivityLog"> | string
     action?: StringFilter<"ActivityLog"> | string
-    description?: StringNullableFilter<"ActivityLog"> | string | null
-    metadata?: StringNullableFilter<"ActivityLog"> | string | null
-    createdAt?: DateTimeFilter<"ActivityLog"> | Date | string
-    jobApplication?: XOR<JobApplicationNullableScalarRelationFilter, JobApplicationWhereInput> | null
+    description?: StringFilter<"ActivityLog"> | string
+    timestamp?: DateTimeFilter<"ActivityLog"> | Date | string
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+    jobApplication?: XOR<JobApplicationScalarRelationFilter, JobApplicationWhereInput>
   }
 
   export type ActivityLogOrderByWithRelationInput = {
     id?: SortOrder
     userId?: SortOrder
-    jobApplicationId?: SortOrderInput | SortOrder
+    jobApplicationId?: SortOrder
     action?: SortOrder
-    description?: SortOrderInput | SortOrder
-    metadata?: SortOrderInput | SortOrder
-    createdAt?: SortOrder
+    description?: SortOrder
+    timestamp?: SortOrder
+    user?: UserOrderByWithRelationInput
     jobApplication?: JobApplicationOrderByWithRelationInput
   }
 
@@ -14841,22 +17588,21 @@ export namespace Prisma {
     OR?: ActivityLogWhereInput[]
     NOT?: ActivityLogWhereInput | ActivityLogWhereInput[]
     userId?: StringFilter<"ActivityLog"> | string
-    jobApplicationId?: StringNullableFilter<"ActivityLog"> | string | null
+    jobApplicationId?: StringFilter<"ActivityLog"> | string
     action?: StringFilter<"ActivityLog"> | string
-    description?: StringNullableFilter<"ActivityLog"> | string | null
-    metadata?: StringNullableFilter<"ActivityLog"> | string | null
-    createdAt?: DateTimeFilter<"ActivityLog"> | Date | string
-    jobApplication?: XOR<JobApplicationNullableScalarRelationFilter, JobApplicationWhereInput> | null
+    description?: StringFilter<"ActivityLog"> | string
+    timestamp?: DateTimeFilter<"ActivityLog"> | Date | string
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+    jobApplication?: XOR<JobApplicationScalarRelationFilter, JobApplicationWhereInput>
   }, "id">
 
   export type ActivityLogOrderByWithAggregationInput = {
     id?: SortOrder
     userId?: SortOrder
-    jobApplicationId?: SortOrderInput | SortOrder
+    jobApplicationId?: SortOrder
     action?: SortOrder
-    description?: SortOrderInput | SortOrder
-    metadata?: SortOrderInput | SortOrder
-    createdAt?: SortOrder
+    description?: SortOrder
+    timestamp?: SortOrder
     _count?: ActivityLogCountOrderByAggregateInput
     _max?: ActivityLogMaxOrderByAggregateInput
     _min?: ActivityLogMinOrderByAggregateInput
@@ -14868,11 +17614,10 @@ export namespace Prisma {
     NOT?: ActivityLogScalarWhereWithAggregatesInput | ActivityLogScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"ActivityLog"> | string
     userId?: StringWithAggregatesFilter<"ActivityLog"> | string
-    jobApplicationId?: StringNullableWithAggregatesFilter<"ActivityLog"> | string | null
+    jobApplicationId?: StringWithAggregatesFilter<"ActivityLog"> | string
     action?: StringWithAggregatesFilter<"ActivityLog"> | string
-    description?: StringNullableWithAggregatesFilter<"ActivityLog"> | string | null
-    metadata?: StringNullableWithAggregatesFilter<"ActivityLog"> | string | null
-    createdAt?: DateTimeWithAggregatesFilter<"ActivityLog"> | Date | string
+    description?: StringWithAggregatesFilter<"ActivityLog"> | string
+    timestamp?: DateTimeWithAggregatesFilter<"ActivityLog"> | Date | string
   }
 
   export type TemplateWhereInput = {
@@ -14880,28 +17625,20 @@ export namespace Prisma {
     OR?: TemplateWhereInput[]
     NOT?: TemplateWhereInput | TemplateWhereInput[]
     id?: StringFilter<"Template"> | string
-    userId?: StringFilter<"Template"> | string
     name?: StringFilter<"Template"> | string
+    content?: StringFilter<"Template"> | string
     type?: EnumTemplateTypeFilter<"Template"> | $Enums.TemplateType
-    fileName?: StringFilter<"Template"> | string
-    fileSize?: IntFilter<"Template"> | number
-    mimeType?: StringFilter<"Template"> | string
-    fileData?: StringFilter<"Template"> | string
-    uploadDate?: DateTimeFilter<"Template"> | Date | string
-    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+    createdAt?: DateTimeFilter<"Template"> | Date | string
+    updatedAt?: DateTimeFilter<"Template"> | Date | string
   }
 
   export type TemplateOrderByWithRelationInput = {
     id?: SortOrder
-    userId?: SortOrder
     name?: SortOrder
+    content?: SortOrder
     type?: SortOrder
-    fileName?: SortOrder
-    fileSize?: SortOrder
-    mimeType?: SortOrder
-    fileData?: SortOrder
-    uploadDate?: SortOrder
-    user?: UserOrderByWithRelationInput
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
   }
 
   export type TemplateWhereUniqueInput = Prisma.AtLeast<{
@@ -14909,32 +17646,23 @@ export namespace Prisma {
     AND?: TemplateWhereInput | TemplateWhereInput[]
     OR?: TemplateWhereInput[]
     NOT?: TemplateWhereInput | TemplateWhereInput[]
-    userId?: StringFilter<"Template"> | string
     name?: StringFilter<"Template"> | string
+    content?: StringFilter<"Template"> | string
     type?: EnumTemplateTypeFilter<"Template"> | $Enums.TemplateType
-    fileName?: StringFilter<"Template"> | string
-    fileSize?: IntFilter<"Template"> | number
-    mimeType?: StringFilter<"Template"> | string
-    fileData?: StringFilter<"Template"> | string
-    uploadDate?: DateTimeFilter<"Template"> | Date | string
-    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+    createdAt?: DateTimeFilter<"Template"> | Date | string
+    updatedAt?: DateTimeFilter<"Template"> | Date | string
   }, "id">
 
   export type TemplateOrderByWithAggregationInput = {
     id?: SortOrder
-    userId?: SortOrder
     name?: SortOrder
+    content?: SortOrder
     type?: SortOrder
-    fileName?: SortOrder
-    fileSize?: SortOrder
-    mimeType?: SortOrder
-    fileData?: SortOrder
-    uploadDate?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
     _count?: TemplateCountOrderByAggregateInput
-    _avg?: TemplateAvgOrderByAggregateInput
     _max?: TemplateMaxOrderByAggregateInput
     _min?: TemplateMinOrderByAggregateInput
-    _sum?: TemplateSumOrderByAggregateInput
   }
 
   export type TemplateScalarWhereWithAggregatesInput = {
@@ -14942,14 +17670,11 @@ export namespace Prisma {
     OR?: TemplateScalarWhereWithAggregatesInput[]
     NOT?: TemplateScalarWhereWithAggregatesInput | TemplateScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"Template"> | string
-    userId?: StringWithAggregatesFilter<"Template"> | string
     name?: StringWithAggregatesFilter<"Template"> | string
+    content?: StringWithAggregatesFilter<"Template"> | string
     type?: EnumTemplateTypeWithAggregatesFilter<"Template"> | $Enums.TemplateType
-    fileName?: StringWithAggregatesFilter<"Template"> | string
-    fileSize?: IntWithAggregatesFilter<"Template"> | number
-    mimeType?: StringWithAggregatesFilter<"Template"> | string
-    fileData?: StringWithAggregatesFilter<"Template"> | string
-    uploadDate?: DateTimeWithAggregatesFilter<"Template"> | Date | string
+    createdAt?: DateTimeWithAggregatesFilter<"Template"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"Template"> | Date | string
   }
 
   export type AnalyticsWhereInput = {
@@ -14958,48 +17683,60 @@ export namespace Prisma {
     NOT?: AnalyticsWhereInput | AnalyticsWhereInput[]
     id?: StringFilter<"Analytics"> | string
     userId?: StringFilter<"Analytics"> | string
-    totalApplications?: IntFilter<"Analytics"> | number
-    activeApplications?: IntFilter<"Analytics"> | number
-    offersReceived?: IntFilter<"Analytics"> | number
-    successRate?: FloatFilter<"Analytics"> | number
-    averageResponseTime?: FloatFilter<"Analytics"> | number
-    lastCalculated?: DateTimeFilter<"Analytics"> | Date | string
+    period?: StringFilter<"Analytics"> | string
+    date?: DateTimeFilter<"Analytics"> | Date | string
+    totalApps?: IntFilter<"Analytics"> | number
+    responsesRate?: FloatFilter<"Analytics"> | number
+    interviewRate?: FloatFilter<"Analytics"> | number
+    offerRate?: FloatFilter<"Analytics"> | number
+    avgResponseTime?: IntFilter<"Analytics"> | number
+    createdAt?: DateTimeFilter<"Analytics"> | Date | string
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
   }
 
   export type AnalyticsOrderByWithRelationInput = {
     id?: SortOrder
     userId?: SortOrder
-    totalApplications?: SortOrder
-    activeApplications?: SortOrder
-    offersReceived?: SortOrder
-    successRate?: SortOrder
-    averageResponseTime?: SortOrder
-    lastCalculated?: SortOrder
+    period?: SortOrder
+    date?: SortOrder
+    totalApps?: SortOrder
+    responsesRate?: SortOrder
+    interviewRate?: SortOrder
+    offerRate?: SortOrder
+    avgResponseTime?: SortOrder
+    createdAt?: SortOrder
+    user?: UserOrderByWithRelationInput
   }
 
   export type AnalyticsWhereUniqueInput = Prisma.AtLeast<{
     id?: string
-    userId?: string
+    userId_period_date?: AnalyticsUserIdPeriodDateCompoundUniqueInput
     AND?: AnalyticsWhereInput | AnalyticsWhereInput[]
     OR?: AnalyticsWhereInput[]
     NOT?: AnalyticsWhereInput | AnalyticsWhereInput[]
-    totalApplications?: IntFilter<"Analytics"> | number
-    activeApplications?: IntFilter<"Analytics"> | number
-    offersReceived?: IntFilter<"Analytics"> | number
-    successRate?: FloatFilter<"Analytics"> | number
-    averageResponseTime?: FloatFilter<"Analytics"> | number
-    lastCalculated?: DateTimeFilter<"Analytics"> | Date | string
-  }, "id" | "userId">
+    userId?: StringFilter<"Analytics"> | string
+    period?: StringFilter<"Analytics"> | string
+    date?: DateTimeFilter<"Analytics"> | Date | string
+    totalApps?: IntFilter<"Analytics"> | number
+    responsesRate?: FloatFilter<"Analytics"> | number
+    interviewRate?: FloatFilter<"Analytics"> | number
+    offerRate?: FloatFilter<"Analytics"> | number
+    avgResponseTime?: IntFilter<"Analytics"> | number
+    createdAt?: DateTimeFilter<"Analytics"> | Date | string
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }, "id" | "userId_period_date">
 
   export type AnalyticsOrderByWithAggregationInput = {
     id?: SortOrder
     userId?: SortOrder
-    totalApplications?: SortOrder
-    activeApplications?: SortOrder
-    offersReceived?: SortOrder
-    successRate?: SortOrder
-    averageResponseTime?: SortOrder
-    lastCalculated?: SortOrder
+    period?: SortOrder
+    date?: SortOrder
+    totalApps?: SortOrder
+    responsesRate?: SortOrder
+    interviewRate?: SortOrder
+    offerRate?: SortOrder
+    avgResponseTime?: SortOrder
+    createdAt?: SortOrder
     _count?: AnalyticsCountOrderByAggregateInput
     _avg?: AnalyticsAvgOrderByAggregateInput
     _max?: AnalyticsMaxOrderByAggregateInput
@@ -15013,12 +17750,14 @@ export namespace Prisma {
     NOT?: AnalyticsScalarWhereWithAggregatesInput | AnalyticsScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"Analytics"> | string
     userId?: StringWithAggregatesFilter<"Analytics"> | string
-    totalApplications?: IntWithAggregatesFilter<"Analytics"> | number
-    activeApplications?: IntWithAggregatesFilter<"Analytics"> | number
-    offersReceived?: IntWithAggregatesFilter<"Analytics"> | number
-    successRate?: FloatWithAggregatesFilter<"Analytics"> | number
-    averageResponseTime?: FloatWithAggregatesFilter<"Analytics"> | number
-    lastCalculated?: DateTimeWithAggregatesFilter<"Analytics"> | Date | string
+    period?: StringWithAggregatesFilter<"Analytics"> | string
+    date?: DateTimeWithAggregatesFilter<"Analytics"> | Date | string
+    totalApps?: IntWithAggregatesFilter<"Analytics"> | number
+    responsesRate?: FloatWithAggregatesFilter<"Analytics"> | number
+    interviewRate?: FloatWithAggregatesFilter<"Analytics"> | number
+    offerRate?: FloatWithAggregatesFilter<"Analytics"> | number
+    avgResponseTime?: IntWithAggregatesFilter<"Analytics"> | number
+    createdAt?: DateTimeWithAggregatesFilter<"Analytics"> | Date | string
   }
 
   export type NotificationWhereInput = {
@@ -15030,8 +17769,9 @@ export namespace Prisma {
     title?: StringFilter<"Notification"> | string
     message?: StringFilter<"Notification"> | string
     type?: EnumNotificationTypeFilter<"Notification"> | $Enums.NotificationType
-    read?: BoolFilter<"Notification"> | boolean
+    isRead?: BoolFilter<"Notification"> | boolean
     createdAt?: DateTimeFilter<"Notification"> | Date | string
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
   }
 
   export type NotificationOrderByWithRelationInput = {
@@ -15040,8 +17780,9 @@ export namespace Prisma {
     title?: SortOrder
     message?: SortOrder
     type?: SortOrder
-    read?: SortOrder
+    isRead?: SortOrder
     createdAt?: SortOrder
+    user?: UserOrderByWithRelationInput
   }
 
   export type NotificationWhereUniqueInput = Prisma.AtLeast<{
@@ -15053,8 +17794,9 @@ export namespace Prisma {
     title?: StringFilter<"Notification"> | string
     message?: StringFilter<"Notification"> | string
     type?: EnumNotificationTypeFilter<"Notification"> | $Enums.NotificationType
-    read?: BoolFilter<"Notification"> | boolean
+    isRead?: BoolFilter<"Notification"> | boolean
     createdAt?: DateTimeFilter<"Notification"> | Date | string
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
   }, "id">
 
   export type NotificationOrderByWithAggregationInput = {
@@ -15063,7 +17805,7 @@ export namespace Prisma {
     title?: SortOrder
     message?: SortOrder
     type?: SortOrder
-    read?: SortOrder
+    isRead?: SortOrder
     createdAt?: SortOrder
     _count?: NotificationCountOrderByAggregateInput
     _max?: NotificationMaxOrderByAggregateInput
@@ -15079,115 +17821,292 @@ export namespace Prisma {
     title?: StringWithAggregatesFilter<"Notification"> | string
     message?: StringWithAggregatesFilter<"Notification"> | string
     type?: EnumNotificationTypeWithAggregatesFilter<"Notification"> | $Enums.NotificationType
-    read?: BoolWithAggregatesFilter<"Notification"> | boolean
+    isRead?: BoolWithAggregatesFilter<"Notification"> | boolean
     createdAt?: DateTimeWithAggregatesFilter<"Notification"> | Date | string
+  }
+
+  export type GoalWhereInput = {
+    AND?: GoalWhereInput | GoalWhereInput[]
+    OR?: GoalWhereInput[]
+    NOT?: GoalWhereInput | GoalWhereInput[]
+    id?: StringFilter<"Goal"> | string
+    userId?: StringFilter<"Goal"> | string
+    type?: EnumGoalTypeFilter<"Goal"> | $Enums.GoalType
+    target?: IntFilter<"Goal"> | number
+    period?: EnumGoalPeriodFilter<"Goal"> | $Enums.GoalPeriod
+    startDate?: DateTimeFilter<"Goal"> | Date | string
+    endDate?: DateTimeFilter<"Goal"> | Date | string
+    achieved?: IntFilter<"Goal"> | number
+    isActive?: BoolFilter<"Goal"> | boolean
+    createdAt?: DateTimeFilter<"Goal"> | Date | string
+    updatedAt?: DateTimeFilter<"Goal"> | Date | string
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }
+
+  export type GoalOrderByWithRelationInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    type?: SortOrder
+    target?: SortOrder
+    period?: SortOrder
+    startDate?: SortOrder
+    endDate?: SortOrder
+    achieved?: SortOrder
+    isActive?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    user?: UserOrderByWithRelationInput
+  }
+
+  export type GoalWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: GoalWhereInput | GoalWhereInput[]
+    OR?: GoalWhereInput[]
+    NOT?: GoalWhereInput | GoalWhereInput[]
+    userId?: StringFilter<"Goal"> | string
+    type?: EnumGoalTypeFilter<"Goal"> | $Enums.GoalType
+    target?: IntFilter<"Goal"> | number
+    period?: EnumGoalPeriodFilter<"Goal"> | $Enums.GoalPeriod
+    startDate?: DateTimeFilter<"Goal"> | Date | string
+    endDate?: DateTimeFilter<"Goal"> | Date | string
+    achieved?: IntFilter<"Goal"> | number
+    isActive?: BoolFilter<"Goal"> | boolean
+    createdAt?: DateTimeFilter<"Goal"> | Date | string
+    updatedAt?: DateTimeFilter<"Goal"> | Date | string
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }, "id">
+
+  export type GoalOrderByWithAggregationInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    type?: SortOrder
+    target?: SortOrder
+    period?: SortOrder
+    startDate?: SortOrder
+    endDate?: SortOrder
+    achieved?: SortOrder
+    isActive?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: GoalCountOrderByAggregateInput
+    _avg?: GoalAvgOrderByAggregateInput
+    _max?: GoalMaxOrderByAggregateInput
+    _min?: GoalMinOrderByAggregateInput
+    _sum?: GoalSumOrderByAggregateInput
+  }
+
+  export type GoalScalarWhereWithAggregatesInput = {
+    AND?: GoalScalarWhereWithAggregatesInput | GoalScalarWhereWithAggregatesInput[]
+    OR?: GoalScalarWhereWithAggregatesInput[]
+    NOT?: GoalScalarWhereWithAggregatesInput | GoalScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"Goal"> | string
+    userId?: StringWithAggregatesFilter<"Goal"> | string
+    type?: EnumGoalTypeWithAggregatesFilter<"Goal"> | $Enums.GoalType
+    target?: IntWithAggregatesFilter<"Goal"> | number
+    period?: EnumGoalPeriodWithAggregatesFilter<"Goal"> | $Enums.GoalPeriod
+    startDate?: DateTimeWithAggregatesFilter<"Goal"> | Date | string
+    endDate?: DateTimeWithAggregatesFilter<"Goal"> | Date | string
+    achieved?: IntWithAggregatesFilter<"Goal"> | number
+    isActive?: BoolWithAggregatesFilter<"Goal"> | boolean
+    createdAt?: DateTimeWithAggregatesFilter<"Goal"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"Goal"> | Date | string
+  }
+
+  export type AchievementWhereInput = {
+    AND?: AchievementWhereInput | AchievementWhereInput[]
+    OR?: AchievementWhereInput[]
+    NOT?: AchievementWhereInput | AchievementWhereInput[]
+    id?: StringFilter<"Achievement"> | string
+    userId?: StringFilter<"Achievement"> | string
+    type?: EnumAchievementTypeFilter<"Achievement"> | $Enums.AchievementType
+    title?: StringFilter<"Achievement"> | string
+    description?: StringFilter<"Achievement"> | string
+    unlockedAt?: DateTimeFilter<"Achievement"> | Date | string
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }
+
+  export type AchievementOrderByWithRelationInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    type?: SortOrder
+    title?: SortOrder
+    description?: SortOrder
+    unlockedAt?: SortOrder
+    user?: UserOrderByWithRelationInput
+  }
+
+  export type AchievementWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: AchievementWhereInput | AchievementWhereInput[]
+    OR?: AchievementWhereInput[]
+    NOT?: AchievementWhereInput | AchievementWhereInput[]
+    userId?: StringFilter<"Achievement"> | string
+    type?: EnumAchievementTypeFilter<"Achievement"> | $Enums.AchievementType
+    title?: StringFilter<"Achievement"> | string
+    description?: StringFilter<"Achievement"> | string
+    unlockedAt?: DateTimeFilter<"Achievement"> | Date | string
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }, "id">
+
+  export type AchievementOrderByWithAggregationInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    type?: SortOrder
+    title?: SortOrder
+    description?: SortOrder
+    unlockedAt?: SortOrder
+    _count?: AchievementCountOrderByAggregateInput
+    _max?: AchievementMaxOrderByAggregateInput
+    _min?: AchievementMinOrderByAggregateInput
+  }
+
+  export type AchievementScalarWhereWithAggregatesInput = {
+    AND?: AchievementScalarWhereWithAggregatesInput | AchievementScalarWhereWithAggregatesInput[]
+    OR?: AchievementScalarWhereWithAggregatesInput[]
+    NOT?: AchievementScalarWhereWithAggregatesInput | AchievementScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"Achievement"> | string
+    userId?: StringWithAggregatesFilter<"Achievement"> | string
+    type?: EnumAchievementTypeWithAggregatesFilter<"Achievement"> | $Enums.AchievementType
+    title?: StringWithAggregatesFilter<"Achievement"> | string
+    description?: StringWithAggregatesFilter<"Achievement"> | string
+    unlockedAt?: DateTimeWithAggregatesFilter<"Achievement"> | Date | string
   }
 
   export type UserCreateInput = {
     id?: string
-    email: string
     username: string
+    email: string
+    password: string
     firstName?: string | null
     lastName?: string | null
-    password: string
+    country?: string | null
     emailVerified?: Date | string | null
     image?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    jobApplications?: JobApplicationCreateNestedManyWithoutUserInput
-    templates?: TemplateCreateNestedManyWithoutUserInput
-    sessions?: SessionCreateNestedManyWithoutUserInput
+    isPublic?: boolean
     accounts?: AccountCreateNestedManyWithoutUserInput
+    sessions?: SessionCreateNestedManyWithoutUserInput
+    jobApplications?: JobApplicationCreateNestedManyWithoutUserInput
+    activityLogs?: ActivityLogCreateNestedManyWithoutUserInput
+    analytics?: AnalyticsCreateNestedManyWithoutUserInput
+    notifications?: NotificationCreateNestedManyWithoutUserInput
+    goals?: GoalCreateNestedManyWithoutUserInput
+    achievements?: AchievementCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateInput = {
     id?: string
-    email: string
     username: string
+    email: string
+    password: string
     firstName?: string | null
     lastName?: string | null
-    password: string
+    country?: string | null
     emailVerified?: Date | string | null
     image?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    jobApplications?: JobApplicationUncheckedCreateNestedManyWithoutUserInput
-    templates?: TemplateUncheckedCreateNestedManyWithoutUserInput
-    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    isPublic?: boolean
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
+    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    jobApplications?: JobApplicationUncheckedCreateNestedManyWithoutUserInput
+    activityLogs?: ActivityLogUncheckedCreateNestedManyWithoutUserInput
+    analytics?: AnalyticsUncheckedCreateNestedManyWithoutUserInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    goals?: GoalUncheckedCreateNestedManyWithoutUserInput
+    achievements?: AchievementUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
     username?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
     firstName?: NullableStringFieldUpdateOperationsInput | string | null
     lastName?: NullableStringFieldUpdateOperationsInput | string | null
-    password?: StringFieldUpdateOperationsInput | string
+    country?: NullableStringFieldUpdateOperationsInput | string | null
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     image?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    jobApplications?: JobApplicationUpdateManyWithoutUserNestedInput
-    templates?: TemplateUpdateManyWithoutUserNestedInput
-    sessions?: SessionUpdateManyWithoutUserNestedInput
+    isPublic?: BoolFieldUpdateOperationsInput | boolean
     accounts?: AccountUpdateManyWithoutUserNestedInput
+    sessions?: SessionUpdateManyWithoutUserNestedInput
+    jobApplications?: JobApplicationUpdateManyWithoutUserNestedInput
+    activityLogs?: ActivityLogUpdateManyWithoutUserNestedInput
+    analytics?: AnalyticsUpdateManyWithoutUserNestedInput
+    notifications?: NotificationUpdateManyWithoutUserNestedInput
+    goals?: GoalUpdateManyWithoutUserNestedInput
+    achievements?: AchievementUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
     username?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
     firstName?: NullableStringFieldUpdateOperationsInput | string | null
     lastName?: NullableStringFieldUpdateOperationsInput | string | null
-    password?: StringFieldUpdateOperationsInput | string
+    country?: NullableStringFieldUpdateOperationsInput | string | null
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     image?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    jobApplications?: JobApplicationUncheckedUpdateManyWithoutUserNestedInput
-    templates?: TemplateUncheckedUpdateManyWithoutUserNestedInput
-    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    isPublic?: BoolFieldUpdateOperationsInput | boolean
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
+    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    jobApplications?: JobApplicationUncheckedUpdateManyWithoutUserNestedInput
+    activityLogs?: ActivityLogUncheckedUpdateManyWithoutUserNestedInput
+    analytics?: AnalyticsUncheckedUpdateManyWithoutUserNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    goals?: GoalUncheckedUpdateManyWithoutUserNestedInput
+    achievements?: AchievementUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateManyInput = {
     id?: string
-    email: string
     username: string
+    email: string
+    password: string
     firstName?: string | null
     lastName?: string | null
-    password: string
+    country?: string | null
     emailVerified?: Date | string | null
     image?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    isPublic?: boolean
   }
 
   export type UserUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
     username?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
     firstName?: NullableStringFieldUpdateOperationsInput | string | null
     lastName?: NullableStringFieldUpdateOperationsInput | string | null
-    password?: StringFieldUpdateOperationsInput | string
+    country?: NullableStringFieldUpdateOperationsInput | string | null
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     image?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    isPublic?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type UserUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
     username?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
     firstName?: NullableStringFieldUpdateOperationsInput | string | null
     lastName?: NullableStringFieldUpdateOperationsInput | string | null
-    password?: StringFieldUpdateOperationsInput | string
+    country?: NullableStringFieldUpdateOperationsInput | string | null
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     image?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    isPublic?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type AccountCreateInput = {
@@ -15403,12 +18322,11 @@ export namespace Prisma {
     lastUpdated?: Date | string
     user: UserCreateNestedOneWithoutJobApplicationsInput
     tags?: JobApplicationTagCreateNestedManyWithoutJobApplicationInput
-    activities?: ActivityLogCreateNestedManyWithoutJobApplicationInput
+    activityLogs?: ActivityLogCreateNestedManyWithoutJobApplicationInput
   }
 
   export type JobApplicationUncheckedCreateInput = {
     id?: string
-    userId: string
     jobTitle: string
     company: string
     location: string
@@ -15424,8 +18342,9 @@ export namespace Prisma {
     priority?: $Enums.Priority
     appliedDate?: Date | string
     lastUpdated?: Date | string
+    userId: string
     tags?: JobApplicationTagUncheckedCreateNestedManyWithoutJobApplicationInput
-    activities?: ActivityLogUncheckedCreateNestedManyWithoutJobApplicationInput
+    activityLogs?: ActivityLogUncheckedCreateNestedManyWithoutJobApplicationInput
   }
 
   export type JobApplicationUpdateInput = {
@@ -15434,8 +18353,8 @@ export namespace Prisma {
     company?: StringFieldUpdateOperationsInput | string
     location?: StringFieldUpdateOperationsInput | string
     jobPostUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    salaryMin?: NullableIntFieldUpdateOperationsInput | number | null
-    salaryMax?: NullableIntFieldUpdateOperationsInput | number | null
+    salaryMin?: NullableFloatFieldUpdateOperationsInput | number | null
+    salaryMax?: NullableFloatFieldUpdateOperationsInput | number | null
     salaryCurrency?: NullableStringFieldUpdateOperationsInput | string | null
     contactName?: NullableStringFieldUpdateOperationsInput | string | null
     contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
@@ -15447,18 +18366,17 @@ export namespace Prisma {
     lastUpdated?: DateTimeFieldUpdateOperationsInput | Date | string
     user?: UserUpdateOneRequiredWithoutJobApplicationsNestedInput
     tags?: JobApplicationTagUpdateManyWithoutJobApplicationNestedInput
-    activities?: ActivityLogUpdateManyWithoutJobApplicationNestedInput
+    activityLogs?: ActivityLogUpdateManyWithoutJobApplicationNestedInput
   }
 
   export type JobApplicationUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
-    userId?: StringFieldUpdateOperationsInput | string
     jobTitle?: StringFieldUpdateOperationsInput | string
     company?: StringFieldUpdateOperationsInput | string
     location?: StringFieldUpdateOperationsInput | string
     jobPostUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    salaryMin?: NullableIntFieldUpdateOperationsInput | number | null
-    salaryMax?: NullableIntFieldUpdateOperationsInput | number | null
+    salaryMin?: NullableFloatFieldUpdateOperationsInput | number | null
+    salaryMax?: NullableFloatFieldUpdateOperationsInput | number | null
     salaryCurrency?: NullableStringFieldUpdateOperationsInput | string | null
     contactName?: NullableStringFieldUpdateOperationsInput | string | null
     contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
@@ -15468,13 +18386,13 @@ export namespace Prisma {
     priority?: EnumPriorityFieldUpdateOperationsInput | $Enums.Priority
     appliedDate?: DateTimeFieldUpdateOperationsInput | Date | string
     lastUpdated?: DateTimeFieldUpdateOperationsInput | Date | string
+    userId?: StringFieldUpdateOperationsInput | string
     tags?: JobApplicationTagUncheckedUpdateManyWithoutJobApplicationNestedInput
-    activities?: ActivityLogUncheckedUpdateManyWithoutJobApplicationNestedInput
+    activityLogs?: ActivityLogUncheckedUpdateManyWithoutJobApplicationNestedInput
   }
 
   export type JobApplicationCreateManyInput = {
     id?: string
-    userId: string
     jobTitle: string
     company: string
     location: string
@@ -15490,6 +18408,7 @@ export namespace Prisma {
     priority?: $Enums.Priority
     appliedDate?: Date | string
     lastUpdated?: Date | string
+    userId: string
   }
 
   export type JobApplicationUpdateManyMutationInput = {
@@ -15498,8 +18417,8 @@ export namespace Prisma {
     company?: StringFieldUpdateOperationsInput | string
     location?: StringFieldUpdateOperationsInput | string
     jobPostUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    salaryMin?: NullableIntFieldUpdateOperationsInput | number | null
-    salaryMax?: NullableIntFieldUpdateOperationsInput | number | null
+    salaryMin?: NullableFloatFieldUpdateOperationsInput | number | null
+    salaryMax?: NullableFloatFieldUpdateOperationsInput | number | null
     salaryCurrency?: NullableStringFieldUpdateOperationsInput | string | null
     contactName?: NullableStringFieldUpdateOperationsInput | string | null
     contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
@@ -15513,13 +18432,12 @@ export namespace Prisma {
 
   export type JobApplicationUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
-    userId?: StringFieldUpdateOperationsInput | string
     jobTitle?: StringFieldUpdateOperationsInput | string
     company?: StringFieldUpdateOperationsInput | string
     location?: StringFieldUpdateOperationsInput | string
     jobPostUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    salaryMin?: NullableIntFieldUpdateOperationsInput | number | null
-    salaryMax?: NullableIntFieldUpdateOperationsInput | number | null
+    salaryMin?: NullableFloatFieldUpdateOperationsInput | number | null
+    salaryMax?: NullableFloatFieldUpdateOperationsInput | number | null
     salaryCurrency?: NullableStringFieldUpdateOperationsInput | string | null
     contactName?: NullableStringFieldUpdateOperationsInput | string | null
     contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
@@ -15529,318 +18447,317 @@ export namespace Prisma {
     priority?: EnumPriorityFieldUpdateOperationsInput | $Enums.Priority
     appliedDate?: DateTimeFieldUpdateOperationsInput | Date | string
     lastUpdated?: DateTimeFieldUpdateOperationsInput | Date | string
+    userId?: StringFieldUpdateOperationsInput | string
   }
 
   export type TagCreateInput = {
     id?: string
     name: string
+    createdAt?: Date | string
     jobApplications?: JobApplicationTagCreateNestedManyWithoutTagInput
   }
 
   export type TagUncheckedCreateInput = {
     id?: string
     name: string
+    createdAt?: Date | string
     jobApplications?: JobApplicationTagUncheckedCreateNestedManyWithoutTagInput
   }
 
   export type TagUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     jobApplications?: JobApplicationTagUpdateManyWithoutTagNestedInput
   }
 
   export type TagUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     jobApplications?: JobApplicationTagUncheckedUpdateManyWithoutTagNestedInput
   }
 
   export type TagCreateManyInput = {
     id?: string
     name: string
+    createdAt?: Date | string
   }
 
   export type TagUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type TagUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type JobApplicationTagCreateInput = {
+    id?: string
     jobApplication: JobApplicationCreateNestedOneWithoutTagsInput
     tag: TagCreateNestedOneWithoutJobApplicationsInput
   }
 
   export type JobApplicationTagUncheckedCreateInput = {
+    id?: string
     jobApplicationId: string
     tagId: string
   }
 
   export type JobApplicationTagUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
     jobApplication?: JobApplicationUpdateOneRequiredWithoutTagsNestedInput
     tag?: TagUpdateOneRequiredWithoutJobApplicationsNestedInput
   }
 
   export type JobApplicationTagUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
     jobApplicationId?: StringFieldUpdateOperationsInput | string
     tagId?: StringFieldUpdateOperationsInput | string
   }
 
   export type JobApplicationTagCreateManyInput = {
+    id?: string
     jobApplicationId: string
     tagId: string
   }
 
   export type JobApplicationTagUpdateManyMutationInput = {
-
+    id?: StringFieldUpdateOperationsInput | string
   }
 
   export type JobApplicationTagUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
     jobApplicationId?: StringFieldUpdateOperationsInput | string
     tagId?: StringFieldUpdateOperationsInput | string
   }
 
   export type ActivityLogCreateInput = {
     id?: string
-    userId: string
     action: string
-    description?: string | null
-    metadata?: string | null
-    createdAt?: Date | string
-    jobApplication?: JobApplicationCreateNestedOneWithoutActivitiesInput
+    description: string
+    timestamp?: Date | string
+    user: UserCreateNestedOneWithoutActivityLogsInput
+    jobApplication: JobApplicationCreateNestedOneWithoutActivityLogsInput
   }
 
   export type ActivityLogUncheckedCreateInput = {
     id?: string
     userId: string
-    jobApplicationId?: string | null
+    jobApplicationId: string
     action: string
-    description?: string | null
-    metadata?: string | null
-    createdAt?: Date | string
+    description: string
+    timestamp?: Date | string
   }
 
   export type ActivityLogUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
-    userId?: StringFieldUpdateOperationsInput | string
     action?: StringFieldUpdateOperationsInput | string
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    metadata?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    jobApplication?: JobApplicationUpdateOneWithoutActivitiesNestedInput
+    description?: StringFieldUpdateOperationsInput | string
+    timestamp?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutActivityLogsNestedInput
+    jobApplication?: JobApplicationUpdateOneRequiredWithoutActivityLogsNestedInput
   }
 
   export type ActivityLogUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
-    jobApplicationId?: NullableStringFieldUpdateOperationsInput | string | null
+    jobApplicationId?: StringFieldUpdateOperationsInput | string
     action?: StringFieldUpdateOperationsInput | string
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    metadata?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    description?: StringFieldUpdateOperationsInput | string
+    timestamp?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type ActivityLogCreateManyInput = {
     id?: string
     userId: string
-    jobApplicationId?: string | null
+    jobApplicationId: string
     action: string
-    description?: string | null
-    metadata?: string | null
-    createdAt?: Date | string
+    description: string
+    timestamp?: Date | string
   }
 
   export type ActivityLogUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
-    userId?: StringFieldUpdateOperationsInput | string
     action?: StringFieldUpdateOperationsInput | string
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    metadata?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    description?: StringFieldUpdateOperationsInput | string
+    timestamp?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type ActivityLogUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
-    jobApplicationId?: NullableStringFieldUpdateOperationsInput | string | null
+    jobApplicationId?: StringFieldUpdateOperationsInput | string
     action?: StringFieldUpdateOperationsInput | string
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    metadata?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    description?: StringFieldUpdateOperationsInput | string
+    timestamp?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type TemplateCreateInput = {
     id?: string
     name: string
+    content: string
     type: $Enums.TemplateType
-    fileName: string
-    fileSize: number
-    mimeType: string
-    fileData: string
-    uploadDate?: Date | string
-    user: UserCreateNestedOneWithoutTemplatesInput
+    createdAt?: Date | string
+    updatedAt?: Date | string
   }
 
   export type TemplateUncheckedCreateInput = {
     id?: string
-    userId: string
     name: string
+    content: string
     type: $Enums.TemplateType
-    fileName: string
-    fileSize: number
-    mimeType: string
-    fileData: string
-    uploadDate?: Date | string
+    createdAt?: Date | string
+    updatedAt?: Date | string
   }
 
   export type TemplateUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
     type?: EnumTemplateTypeFieldUpdateOperationsInput | $Enums.TemplateType
-    fileName?: StringFieldUpdateOperationsInput | string
-    fileSize?: IntFieldUpdateOperationsInput | number
-    mimeType?: StringFieldUpdateOperationsInput | string
-    fileData?: StringFieldUpdateOperationsInput | string
-    uploadDate?: DateTimeFieldUpdateOperationsInput | Date | string
-    user?: UserUpdateOneRequiredWithoutTemplatesNestedInput
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type TemplateUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
-    userId?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
     type?: EnumTemplateTypeFieldUpdateOperationsInput | $Enums.TemplateType
-    fileName?: StringFieldUpdateOperationsInput | string
-    fileSize?: IntFieldUpdateOperationsInput | number
-    mimeType?: StringFieldUpdateOperationsInput | string
-    fileData?: StringFieldUpdateOperationsInput | string
-    uploadDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type TemplateCreateManyInput = {
     id?: string
-    userId: string
     name: string
+    content: string
     type: $Enums.TemplateType
-    fileName: string
-    fileSize: number
-    mimeType: string
-    fileData: string
-    uploadDate?: Date | string
+    createdAt?: Date | string
+    updatedAt?: Date | string
   }
 
   export type TemplateUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
     type?: EnumTemplateTypeFieldUpdateOperationsInput | $Enums.TemplateType
-    fileName?: StringFieldUpdateOperationsInput | string
-    fileSize?: IntFieldUpdateOperationsInput | number
-    mimeType?: StringFieldUpdateOperationsInput | string
-    fileData?: StringFieldUpdateOperationsInput | string
-    uploadDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type TemplateUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
-    userId?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
     type?: EnumTemplateTypeFieldUpdateOperationsInput | $Enums.TemplateType
-    fileName?: StringFieldUpdateOperationsInput | string
-    fileSize?: IntFieldUpdateOperationsInput | number
-    mimeType?: StringFieldUpdateOperationsInput | string
-    fileData?: StringFieldUpdateOperationsInput | string
-    uploadDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type AnalyticsCreateInput = {
     id?: string
-    userId: string
-    totalApplications?: number
-    activeApplications?: number
-    offersReceived?: number
-    successRate?: number
-    averageResponseTime?: number
-    lastCalculated?: Date | string
+    period: string
+    date: Date | string
+    totalApps?: number
+    responsesRate?: number
+    interviewRate?: number
+    offerRate?: number
+    avgResponseTime?: number
+    createdAt?: Date | string
+    user: UserCreateNestedOneWithoutAnalyticsInput
   }
 
   export type AnalyticsUncheckedCreateInput = {
     id?: string
     userId: string
-    totalApplications?: number
-    activeApplications?: number
-    offersReceived?: number
-    successRate?: number
-    averageResponseTime?: number
-    lastCalculated?: Date | string
+    period: string
+    date: Date | string
+    totalApps?: number
+    responsesRate?: number
+    interviewRate?: number
+    offerRate?: number
+    avgResponseTime?: number
+    createdAt?: Date | string
   }
 
   export type AnalyticsUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
-    userId?: StringFieldUpdateOperationsInput | string
-    totalApplications?: IntFieldUpdateOperationsInput | number
-    activeApplications?: IntFieldUpdateOperationsInput | number
-    offersReceived?: IntFieldUpdateOperationsInput | number
-    successRate?: FloatFieldUpdateOperationsInput | number
-    averageResponseTime?: FloatFieldUpdateOperationsInput | number
-    lastCalculated?: DateTimeFieldUpdateOperationsInput | Date | string
+    period?: StringFieldUpdateOperationsInput | string
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    totalApps?: IntFieldUpdateOperationsInput | number
+    responsesRate?: FloatFieldUpdateOperationsInput | number
+    interviewRate?: FloatFieldUpdateOperationsInput | number
+    offerRate?: FloatFieldUpdateOperationsInput | number
+    avgResponseTime?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutAnalyticsNestedInput
   }
 
   export type AnalyticsUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
-    totalApplications?: IntFieldUpdateOperationsInput | number
-    activeApplications?: IntFieldUpdateOperationsInput | number
-    offersReceived?: IntFieldUpdateOperationsInput | number
-    successRate?: FloatFieldUpdateOperationsInput | number
-    averageResponseTime?: FloatFieldUpdateOperationsInput | number
-    lastCalculated?: DateTimeFieldUpdateOperationsInput | Date | string
+    period?: StringFieldUpdateOperationsInput | string
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    totalApps?: IntFieldUpdateOperationsInput | number
+    responsesRate?: FloatFieldUpdateOperationsInput | number
+    interviewRate?: FloatFieldUpdateOperationsInput | number
+    offerRate?: FloatFieldUpdateOperationsInput | number
+    avgResponseTime?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type AnalyticsCreateManyInput = {
     id?: string
     userId: string
-    totalApplications?: number
-    activeApplications?: number
-    offersReceived?: number
-    successRate?: number
-    averageResponseTime?: number
-    lastCalculated?: Date | string
+    period: string
+    date: Date | string
+    totalApps?: number
+    responsesRate?: number
+    interviewRate?: number
+    offerRate?: number
+    avgResponseTime?: number
+    createdAt?: Date | string
   }
 
   export type AnalyticsUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
-    userId?: StringFieldUpdateOperationsInput | string
-    totalApplications?: IntFieldUpdateOperationsInput | number
-    activeApplications?: IntFieldUpdateOperationsInput | number
-    offersReceived?: IntFieldUpdateOperationsInput | number
-    successRate?: FloatFieldUpdateOperationsInput | number
-    averageResponseTime?: FloatFieldUpdateOperationsInput | number
-    lastCalculated?: DateTimeFieldUpdateOperationsInput | Date | string
+    period?: StringFieldUpdateOperationsInput | string
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    totalApps?: IntFieldUpdateOperationsInput | number
+    responsesRate?: FloatFieldUpdateOperationsInput | number
+    interviewRate?: FloatFieldUpdateOperationsInput | number
+    offerRate?: FloatFieldUpdateOperationsInput | number
+    avgResponseTime?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type AnalyticsUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
-    totalApplications?: IntFieldUpdateOperationsInput | number
-    activeApplications?: IntFieldUpdateOperationsInput | number
-    offersReceived?: IntFieldUpdateOperationsInput | number
-    successRate?: FloatFieldUpdateOperationsInput | number
-    averageResponseTime?: FloatFieldUpdateOperationsInput | number
-    lastCalculated?: DateTimeFieldUpdateOperationsInput | Date | string
+    period?: StringFieldUpdateOperationsInput | string
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    totalApps?: IntFieldUpdateOperationsInput | number
+    responsesRate?: FloatFieldUpdateOperationsInput | number
+    interviewRate?: FloatFieldUpdateOperationsInput | number
+    offerRate?: FloatFieldUpdateOperationsInput | number
+    avgResponseTime?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type NotificationCreateInput = {
     id?: string
-    userId: string
     title: string
     message: string
-    type?: $Enums.NotificationType
-    read?: boolean
+    type: $Enums.NotificationType
+    isRead?: boolean
     createdAt?: Date | string
+    user: UserCreateNestedOneWithoutNotificationsInput
   }
 
   export type NotificationUncheckedCreateInput = {
@@ -15848,19 +18765,19 @@ export namespace Prisma {
     userId: string
     title: string
     message: string
-    type?: $Enums.NotificationType
-    read?: boolean
+    type: $Enums.NotificationType
+    isRead?: boolean
     createdAt?: Date | string
   }
 
   export type NotificationUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
-    userId?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     message?: StringFieldUpdateOperationsInput | string
     type?: EnumNotificationTypeFieldUpdateOperationsInput | $Enums.NotificationType
-    read?: BoolFieldUpdateOperationsInput | boolean
+    isRead?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutNotificationsNestedInput
   }
 
   export type NotificationUncheckedUpdateInput = {
@@ -15869,7 +18786,7 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     message?: StringFieldUpdateOperationsInput | string
     type?: EnumNotificationTypeFieldUpdateOperationsInput | $Enums.NotificationType
-    read?: BoolFieldUpdateOperationsInput | boolean
+    isRead?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -15878,18 +18795,17 @@ export namespace Prisma {
     userId: string
     title: string
     message: string
-    type?: $Enums.NotificationType
-    read?: boolean
+    type: $Enums.NotificationType
+    isRead?: boolean
     createdAt?: Date | string
   }
 
   export type NotificationUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
-    userId?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     message?: StringFieldUpdateOperationsInput | string
     type?: EnumNotificationTypeFieldUpdateOperationsInput | $Enums.NotificationType
-    read?: BoolFieldUpdateOperationsInput | boolean
+    isRead?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -15899,8 +18815,167 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     message?: StringFieldUpdateOperationsInput | string
     type?: EnumNotificationTypeFieldUpdateOperationsInput | $Enums.NotificationType
-    read?: BoolFieldUpdateOperationsInput | boolean
+    isRead?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type GoalCreateInput = {
+    id?: string
+    type: $Enums.GoalType
+    target: number
+    period: $Enums.GoalPeriod
+    startDate: Date | string
+    endDate: Date | string
+    achieved?: number
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    user: UserCreateNestedOneWithoutGoalsInput
+  }
+
+  export type GoalUncheckedCreateInput = {
+    id?: string
+    userId: string
+    type: $Enums.GoalType
+    target: number
+    period: $Enums.GoalPeriod
+    startDate: Date | string
+    endDate: Date | string
+    achieved?: number
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type GoalUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: EnumGoalTypeFieldUpdateOperationsInput | $Enums.GoalType
+    target?: IntFieldUpdateOperationsInput | number
+    period?: EnumGoalPeriodFieldUpdateOperationsInput | $Enums.GoalPeriod
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    endDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    achieved?: IntFieldUpdateOperationsInput | number
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutGoalsNestedInput
+  }
+
+  export type GoalUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    type?: EnumGoalTypeFieldUpdateOperationsInput | $Enums.GoalType
+    target?: IntFieldUpdateOperationsInput | number
+    period?: EnumGoalPeriodFieldUpdateOperationsInput | $Enums.GoalPeriod
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    endDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    achieved?: IntFieldUpdateOperationsInput | number
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type GoalCreateManyInput = {
+    id?: string
+    userId: string
+    type: $Enums.GoalType
+    target: number
+    period: $Enums.GoalPeriod
+    startDate: Date | string
+    endDate: Date | string
+    achieved?: number
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type GoalUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: EnumGoalTypeFieldUpdateOperationsInput | $Enums.GoalType
+    target?: IntFieldUpdateOperationsInput | number
+    period?: EnumGoalPeriodFieldUpdateOperationsInput | $Enums.GoalPeriod
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    endDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    achieved?: IntFieldUpdateOperationsInput | number
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type GoalUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    type?: EnumGoalTypeFieldUpdateOperationsInput | $Enums.GoalType
+    target?: IntFieldUpdateOperationsInput | number
+    period?: EnumGoalPeriodFieldUpdateOperationsInput | $Enums.GoalPeriod
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    endDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    achieved?: IntFieldUpdateOperationsInput | number
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AchievementCreateInput = {
+    id?: string
+    type: $Enums.AchievementType
+    title: string
+    description: string
+    unlockedAt?: Date | string
+    user: UserCreateNestedOneWithoutAchievementsInput
+  }
+
+  export type AchievementUncheckedCreateInput = {
+    id?: string
+    userId: string
+    type: $Enums.AchievementType
+    title: string
+    description: string
+    unlockedAt?: Date | string
+  }
+
+  export type AchievementUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: EnumAchievementTypeFieldUpdateOperationsInput | $Enums.AchievementType
+    title?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    unlockedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutAchievementsNestedInput
+  }
+
+  export type AchievementUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    type?: EnumAchievementTypeFieldUpdateOperationsInput | $Enums.AchievementType
+    title?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    unlockedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AchievementCreateManyInput = {
+    id?: string
+    userId: string
+    type: $Enums.AchievementType
+    title: string
+    description: string
+    unlockedAt?: Date | string
+  }
+
+  export type AchievementUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: EnumAchievementTypeFieldUpdateOperationsInput | $Enums.AchievementType
+    title?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    unlockedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AchievementUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    type?: EnumAchievementTypeFieldUpdateOperationsInput | $Enums.AchievementType
+    title?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    unlockedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type StringFilter<$PrismaModel = never> = {
@@ -15953,22 +19028,9 @@ export namespace Prisma {
     not?: NestedDateTimeFilter<$PrismaModel> | Date | string
   }
 
-  export type JobApplicationListRelationFilter = {
-    every?: JobApplicationWhereInput
-    some?: JobApplicationWhereInput
-    none?: JobApplicationWhereInput
-  }
-
-  export type TemplateListRelationFilter = {
-    every?: TemplateWhereInput
-    some?: TemplateWhereInput
-    none?: TemplateWhereInput
-  }
-
-  export type SessionListRelationFilter = {
-    every?: SessionWhereInput
-    some?: SessionWhereInput
-    none?: SessionWhereInput
+  export type BoolFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolFilter<$PrismaModel> | boolean
   }
 
   export type AccountListRelationFilter = {
@@ -15977,16 +19039,54 @@ export namespace Prisma {
     none?: AccountWhereInput
   }
 
+  export type SessionListRelationFilter = {
+    every?: SessionWhereInput
+    some?: SessionWhereInput
+    none?: SessionWhereInput
+  }
+
+  export type JobApplicationListRelationFilter = {
+    every?: JobApplicationWhereInput
+    some?: JobApplicationWhereInput
+    none?: JobApplicationWhereInput
+  }
+
+  export type ActivityLogListRelationFilter = {
+    every?: ActivityLogWhereInput
+    some?: ActivityLogWhereInput
+    none?: ActivityLogWhereInput
+  }
+
+  export type AnalyticsListRelationFilter = {
+    every?: AnalyticsWhereInput
+    some?: AnalyticsWhereInput
+    none?: AnalyticsWhereInput
+  }
+
+  export type NotificationListRelationFilter = {
+    every?: NotificationWhereInput
+    some?: NotificationWhereInput
+    none?: NotificationWhereInput
+  }
+
+  export type GoalListRelationFilter = {
+    every?: GoalWhereInput
+    some?: GoalWhereInput
+    none?: GoalWhereInput
+  }
+
+  export type AchievementListRelationFilter = {
+    every?: AchievementWhereInput
+    some?: AchievementWhereInput
+    none?: AchievementWhereInput
+  }
+
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
   }
 
-  export type JobApplicationOrderByRelationAggregateInput = {
-    _count?: SortOrder
-  }
-
-  export type TemplateOrderByRelationAggregateInput = {
+  export type AccountOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -15994,47 +19094,73 @@ export namespace Prisma {
     _count?: SortOrder
   }
 
-  export type AccountOrderByRelationAggregateInput = {
+  export type JobApplicationOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type ActivityLogOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type AnalyticsOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type NotificationOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type GoalOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type AchievementOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
   export type UserCountOrderByAggregateInput = {
     id?: SortOrder
-    email?: SortOrder
     username?: SortOrder
+    email?: SortOrder
+    password?: SortOrder
     firstName?: SortOrder
     lastName?: SortOrder
-    password?: SortOrder
+    country?: SortOrder
     emailVerified?: SortOrder
     image?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    isPublic?: SortOrder
   }
 
   export type UserMaxOrderByAggregateInput = {
     id?: SortOrder
-    email?: SortOrder
     username?: SortOrder
+    email?: SortOrder
+    password?: SortOrder
     firstName?: SortOrder
     lastName?: SortOrder
-    password?: SortOrder
+    country?: SortOrder
     emailVerified?: SortOrder
     image?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    isPublic?: SortOrder
   }
 
   export type UserMinOrderByAggregateInput = {
     id?: SortOrder
-    email?: SortOrder
     username?: SortOrder
+    email?: SortOrder
+    password?: SortOrder
     firstName?: SortOrder
     lastName?: SortOrder
-    password?: SortOrder
+    country?: SortOrder
     emailVerified?: SortOrder
     image?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    isPublic?: SortOrder
   }
 
   export type StringWithAggregatesFilter<$PrismaModel = never> = {
@@ -16097,6 +19223,14 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedDateTimeFilter<$PrismaModel>
     _max?: NestedDateTimeFilter<$PrismaModel>
+  }
+
+  export type BoolWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedBoolFilter<$PrismaModel>
+    _max?: NestedBoolFilter<$PrismaModel>
   }
 
   export type IntNullableFilter<$PrismaModel = never> = {
@@ -16233,6 +19367,17 @@ export namespace Prisma {
     expires?: SortOrder
   }
 
+  export type FloatNullableFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel> | null
+    in?: number[] | null
+    notIn?: number[] | null
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatNullableFilter<$PrismaModel> | number | null
+  }
+
   export type EnumJobStatusFilter<$PrismaModel = never> = {
     equals?: $Enums.JobStatus | EnumJobStatusFieldRefInput<$PrismaModel>
     in?: $Enums.JobStatus[]
@@ -16253,23 +19398,12 @@ export namespace Prisma {
     none?: JobApplicationTagWhereInput
   }
 
-  export type ActivityLogListRelationFilter = {
-    every?: ActivityLogWhereInput
-    some?: ActivityLogWhereInput
-    none?: ActivityLogWhereInput
-  }
-
   export type JobApplicationTagOrderByRelationAggregateInput = {
-    _count?: SortOrder
-  }
-
-  export type ActivityLogOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
   export type JobApplicationCountOrderByAggregateInput = {
     id?: SortOrder
-    userId?: SortOrder
     jobTitle?: SortOrder
     company?: SortOrder
     location?: SortOrder
@@ -16285,6 +19419,7 @@ export namespace Prisma {
     priority?: SortOrder
     appliedDate?: SortOrder
     lastUpdated?: SortOrder
+    userId?: SortOrder
   }
 
   export type JobApplicationAvgOrderByAggregateInput = {
@@ -16294,7 +19429,6 @@ export namespace Prisma {
 
   export type JobApplicationMaxOrderByAggregateInput = {
     id?: SortOrder
-    userId?: SortOrder
     jobTitle?: SortOrder
     company?: SortOrder
     location?: SortOrder
@@ -16310,11 +19444,11 @@ export namespace Prisma {
     priority?: SortOrder
     appliedDate?: SortOrder
     lastUpdated?: SortOrder
+    userId?: SortOrder
   }
 
   export type JobApplicationMinOrderByAggregateInput = {
     id?: SortOrder
-    userId?: SortOrder
     jobTitle?: SortOrder
     company?: SortOrder
     location?: SortOrder
@@ -16330,11 +19464,28 @@ export namespace Prisma {
     priority?: SortOrder
     appliedDate?: SortOrder
     lastUpdated?: SortOrder
+    userId?: SortOrder
   }
 
   export type JobApplicationSumOrderByAggregateInput = {
     salaryMin?: SortOrder
     salaryMax?: SortOrder
+  }
+
+  export type FloatNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel> | null
+    in?: number[] | null
+    notIn?: number[] | null
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatNullableWithAggregatesFilter<$PrismaModel> | number | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedFloatNullableFilter<$PrismaModel>
+    _sum?: NestedFloatNullableFilter<$PrismaModel>
+    _min?: NestedFloatNullableFilter<$PrismaModel>
+    _max?: NestedFloatNullableFilter<$PrismaModel>
   }
 
   export type EnumJobStatusWithAggregatesFilter<$PrismaModel = never> = {
@@ -16360,16 +19511,19 @@ export namespace Prisma {
   export type TagCountOrderByAggregateInput = {
     id?: SortOrder
     name?: SortOrder
+    createdAt?: SortOrder
   }
 
   export type TagMaxOrderByAggregateInput = {
     id?: SortOrder
     name?: SortOrder
+    createdAt?: SortOrder
   }
 
   export type TagMinOrderByAggregateInput = {
     id?: SortOrder
     name?: SortOrder
+    createdAt?: SortOrder
   }
 
   export type JobApplicationScalarRelationFilter = {
@@ -16388,23 +19542,21 @@ export namespace Prisma {
   }
 
   export type JobApplicationTagCountOrderByAggregateInput = {
+    id?: SortOrder
     jobApplicationId?: SortOrder
     tagId?: SortOrder
   }
 
   export type JobApplicationTagMaxOrderByAggregateInput = {
+    id?: SortOrder
     jobApplicationId?: SortOrder
     tagId?: SortOrder
   }
 
   export type JobApplicationTagMinOrderByAggregateInput = {
+    id?: SortOrder
     jobApplicationId?: SortOrder
     tagId?: SortOrder
-  }
-
-  export type JobApplicationNullableScalarRelationFilter = {
-    is?: JobApplicationWhereInput | null
-    isNot?: JobApplicationWhereInput | null
   }
 
   export type ActivityLogCountOrderByAggregateInput = {
@@ -16413,8 +19565,7 @@ export namespace Prisma {
     jobApplicationId?: SortOrder
     action?: SortOrder
     description?: SortOrder
-    metadata?: SortOrder
-    createdAt?: SortOrder
+    timestamp?: SortOrder
   }
 
   export type ActivityLogMaxOrderByAggregateInput = {
@@ -16423,8 +19574,7 @@ export namespace Prisma {
     jobApplicationId?: SortOrder
     action?: SortOrder
     description?: SortOrder
-    metadata?: SortOrder
-    createdAt?: SortOrder
+    timestamp?: SortOrder
   }
 
   export type ActivityLogMinOrderByAggregateInput = {
@@ -16433,8 +19583,7 @@ export namespace Prisma {
     jobApplicationId?: SortOrder
     action?: SortOrder
     description?: SortOrder
-    metadata?: SortOrder
-    createdAt?: SortOrder
+    timestamp?: SortOrder
   }
 
   export type EnumTemplateTypeFilter<$PrismaModel = never> = {
@@ -16442,6 +19591,43 @@ export namespace Prisma {
     in?: $Enums.TemplateType[]
     notIn?: $Enums.TemplateType[]
     not?: NestedEnumTemplateTypeFilter<$PrismaModel> | $Enums.TemplateType
+  }
+
+  export type TemplateCountOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    content?: SortOrder
+    type?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type TemplateMaxOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    content?: SortOrder
+    type?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type TemplateMinOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    content?: SortOrder
+    type?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type EnumTemplateTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.TemplateType | EnumTemplateTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.TemplateType[]
+    notIn?: $Enums.TemplateType[]
+    not?: NestedEnumTemplateTypeWithAggregatesFilter<$PrismaModel> | $Enums.TemplateType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumTemplateTypeFilter<$PrismaModel>
+    _max?: NestedEnumTemplateTypeFilter<$PrismaModel>
   }
 
   export type IntFilter<$PrismaModel = never> = {
@@ -16455,58 +19641,76 @@ export namespace Prisma {
     not?: NestedIntFilter<$PrismaModel> | number
   }
 
-  export type TemplateCountOrderByAggregateInput = {
+  export type FloatFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel>
+    in?: number[]
+    notIn?: number[]
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatFilter<$PrismaModel> | number
+  }
+
+  export type AnalyticsUserIdPeriodDateCompoundUniqueInput = {
+    userId: string
+    period: string
+    date: Date | string
+  }
+
+  export type AnalyticsCountOrderByAggregateInput = {
     id?: SortOrder
     userId?: SortOrder
-    name?: SortOrder
-    type?: SortOrder
-    fileName?: SortOrder
-    fileSize?: SortOrder
-    mimeType?: SortOrder
-    fileData?: SortOrder
-    uploadDate?: SortOrder
+    period?: SortOrder
+    date?: SortOrder
+    totalApps?: SortOrder
+    responsesRate?: SortOrder
+    interviewRate?: SortOrder
+    offerRate?: SortOrder
+    avgResponseTime?: SortOrder
+    createdAt?: SortOrder
   }
 
-  export type TemplateAvgOrderByAggregateInput = {
-    fileSize?: SortOrder
+  export type AnalyticsAvgOrderByAggregateInput = {
+    totalApps?: SortOrder
+    responsesRate?: SortOrder
+    interviewRate?: SortOrder
+    offerRate?: SortOrder
+    avgResponseTime?: SortOrder
   }
 
-  export type TemplateMaxOrderByAggregateInput = {
+  export type AnalyticsMaxOrderByAggregateInput = {
     id?: SortOrder
     userId?: SortOrder
-    name?: SortOrder
-    type?: SortOrder
-    fileName?: SortOrder
-    fileSize?: SortOrder
-    mimeType?: SortOrder
-    fileData?: SortOrder
-    uploadDate?: SortOrder
+    period?: SortOrder
+    date?: SortOrder
+    totalApps?: SortOrder
+    responsesRate?: SortOrder
+    interviewRate?: SortOrder
+    offerRate?: SortOrder
+    avgResponseTime?: SortOrder
+    createdAt?: SortOrder
   }
 
-  export type TemplateMinOrderByAggregateInput = {
+  export type AnalyticsMinOrderByAggregateInput = {
     id?: SortOrder
     userId?: SortOrder
-    name?: SortOrder
-    type?: SortOrder
-    fileName?: SortOrder
-    fileSize?: SortOrder
-    mimeType?: SortOrder
-    fileData?: SortOrder
-    uploadDate?: SortOrder
+    period?: SortOrder
+    date?: SortOrder
+    totalApps?: SortOrder
+    responsesRate?: SortOrder
+    interviewRate?: SortOrder
+    offerRate?: SortOrder
+    avgResponseTime?: SortOrder
+    createdAt?: SortOrder
   }
 
-  export type TemplateSumOrderByAggregateInput = {
-    fileSize?: SortOrder
-  }
-
-  export type EnumTemplateTypeWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.TemplateType | EnumTemplateTypeFieldRefInput<$PrismaModel>
-    in?: $Enums.TemplateType[]
-    notIn?: $Enums.TemplateType[]
-    not?: NestedEnumTemplateTypeWithAggregatesFilter<$PrismaModel> | $Enums.TemplateType
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumTemplateTypeFilter<$PrismaModel>
-    _max?: NestedEnumTemplateTypeFilter<$PrismaModel>
+  export type AnalyticsSumOrderByAggregateInput = {
+    totalApps?: SortOrder
+    responsesRate?: SortOrder
+    interviewRate?: SortOrder
+    offerRate?: SortOrder
+    avgResponseTime?: SortOrder
   }
 
   export type IntWithAggregatesFilter<$PrismaModel = never> = {
@@ -16523,66 +19727,6 @@ export namespace Prisma {
     _sum?: NestedIntFilter<$PrismaModel>
     _min?: NestedIntFilter<$PrismaModel>
     _max?: NestedIntFilter<$PrismaModel>
-  }
-
-  export type FloatFilter<$PrismaModel = never> = {
-    equals?: number | FloatFieldRefInput<$PrismaModel>
-    in?: number[]
-    notIn?: number[]
-    lt?: number | FloatFieldRefInput<$PrismaModel>
-    lte?: number | FloatFieldRefInput<$PrismaModel>
-    gt?: number | FloatFieldRefInput<$PrismaModel>
-    gte?: number | FloatFieldRefInput<$PrismaModel>
-    not?: NestedFloatFilter<$PrismaModel> | number
-  }
-
-  export type AnalyticsCountOrderByAggregateInput = {
-    id?: SortOrder
-    userId?: SortOrder
-    totalApplications?: SortOrder
-    activeApplications?: SortOrder
-    offersReceived?: SortOrder
-    successRate?: SortOrder
-    averageResponseTime?: SortOrder
-    lastCalculated?: SortOrder
-  }
-
-  export type AnalyticsAvgOrderByAggregateInput = {
-    totalApplications?: SortOrder
-    activeApplications?: SortOrder
-    offersReceived?: SortOrder
-    successRate?: SortOrder
-    averageResponseTime?: SortOrder
-  }
-
-  export type AnalyticsMaxOrderByAggregateInput = {
-    id?: SortOrder
-    userId?: SortOrder
-    totalApplications?: SortOrder
-    activeApplications?: SortOrder
-    offersReceived?: SortOrder
-    successRate?: SortOrder
-    averageResponseTime?: SortOrder
-    lastCalculated?: SortOrder
-  }
-
-  export type AnalyticsMinOrderByAggregateInput = {
-    id?: SortOrder
-    userId?: SortOrder
-    totalApplications?: SortOrder
-    activeApplications?: SortOrder
-    offersReceived?: SortOrder
-    successRate?: SortOrder
-    averageResponseTime?: SortOrder
-    lastCalculated?: SortOrder
-  }
-
-  export type AnalyticsSumOrderByAggregateInput = {
-    totalApplications?: SortOrder
-    activeApplications?: SortOrder
-    offersReceived?: SortOrder
-    successRate?: SortOrder
-    averageResponseTime?: SortOrder
   }
 
   export type FloatWithAggregatesFilter<$PrismaModel = never> = {
@@ -16608,18 +19752,13 @@ export namespace Prisma {
     not?: NestedEnumNotificationTypeFilter<$PrismaModel> | $Enums.NotificationType
   }
 
-  export type BoolFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
-    not?: NestedBoolFilter<$PrismaModel> | boolean
-  }
-
   export type NotificationCountOrderByAggregateInput = {
     id?: SortOrder
     userId?: SortOrder
     title?: SortOrder
     message?: SortOrder
     type?: SortOrder
-    read?: SortOrder
+    isRead?: SortOrder
     createdAt?: SortOrder
   }
 
@@ -16629,7 +19768,7 @@ export namespace Prisma {
     title?: SortOrder
     message?: SortOrder
     type?: SortOrder
-    read?: SortOrder
+    isRead?: SortOrder
     createdAt?: SortOrder
   }
 
@@ -16639,7 +19778,7 @@ export namespace Prisma {
     title?: SortOrder
     message?: SortOrder
     type?: SortOrder
-    read?: SortOrder
+    isRead?: SortOrder
     createdAt?: SortOrder
   }
 
@@ -16653,33 +19792,134 @@ export namespace Prisma {
     _max?: NestedEnumNotificationTypeFilter<$PrismaModel>
   }
 
-  export type BoolWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
-    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+  export type EnumGoalTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.GoalType | EnumGoalTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.GoalType[]
+    notIn?: $Enums.GoalType[]
+    not?: NestedEnumGoalTypeFilter<$PrismaModel> | $Enums.GoalType
+  }
+
+  export type EnumGoalPeriodFilter<$PrismaModel = never> = {
+    equals?: $Enums.GoalPeriod | EnumGoalPeriodFieldRefInput<$PrismaModel>
+    in?: $Enums.GoalPeriod[]
+    notIn?: $Enums.GoalPeriod[]
+    not?: NestedEnumGoalPeriodFilter<$PrismaModel> | $Enums.GoalPeriod
+  }
+
+  export type GoalCountOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    type?: SortOrder
+    target?: SortOrder
+    period?: SortOrder
+    startDate?: SortOrder
+    endDate?: SortOrder
+    achieved?: SortOrder
+    isActive?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type GoalAvgOrderByAggregateInput = {
+    target?: SortOrder
+    achieved?: SortOrder
+  }
+
+  export type GoalMaxOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    type?: SortOrder
+    target?: SortOrder
+    period?: SortOrder
+    startDate?: SortOrder
+    endDate?: SortOrder
+    achieved?: SortOrder
+    isActive?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type GoalMinOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    type?: SortOrder
+    target?: SortOrder
+    period?: SortOrder
+    startDate?: SortOrder
+    endDate?: SortOrder
+    achieved?: SortOrder
+    isActive?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type GoalSumOrderByAggregateInput = {
+    target?: SortOrder
+    achieved?: SortOrder
+  }
+
+  export type EnumGoalTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.GoalType | EnumGoalTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.GoalType[]
+    notIn?: $Enums.GoalType[]
+    not?: NestedEnumGoalTypeWithAggregatesFilter<$PrismaModel> | $Enums.GoalType
     _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedBoolFilter<$PrismaModel>
-    _max?: NestedBoolFilter<$PrismaModel>
+    _min?: NestedEnumGoalTypeFilter<$PrismaModel>
+    _max?: NestedEnumGoalTypeFilter<$PrismaModel>
   }
 
-  export type JobApplicationCreateNestedManyWithoutUserInput = {
-    create?: XOR<JobApplicationCreateWithoutUserInput, JobApplicationUncheckedCreateWithoutUserInput> | JobApplicationCreateWithoutUserInput[] | JobApplicationUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: JobApplicationCreateOrConnectWithoutUserInput | JobApplicationCreateOrConnectWithoutUserInput[]
-    createMany?: JobApplicationCreateManyUserInputEnvelope
-    connect?: JobApplicationWhereUniqueInput | JobApplicationWhereUniqueInput[]
+  export type EnumGoalPeriodWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.GoalPeriod | EnumGoalPeriodFieldRefInput<$PrismaModel>
+    in?: $Enums.GoalPeriod[]
+    notIn?: $Enums.GoalPeriod[]
+    not?: NestedEnumGoalPeriodWithAggregatesFilter<$PrismaModel> | $Enums.GoalPeriod
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumGoalPeriodFilter<$PrismaModel>
+    _max?: NestedEnumGoalPeriodFilter<$PrismaModel>
   }
 
-  export type TemplateCreateNestedManyWithoutUserInput = {
-    create?: XOR<TemplateCreateWithoutUserInput, TemplateUncheckedCreateWithoutUserInput> | TemplateCreateWithoutUserInput[] | TemplateUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: TemplateCreateOrConnectWithoutUserInput | TemplateCreateOrConnectWithoutUserInput[]
-    createMany?: TemplateCreateManyUserInputEnvelope
-    connect?: TemplateWhereUniqueInput | TemplateWhereUniqueInput[]
+  export type EnumAchievementTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.AchievementType | EnumAchievementTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.AchievementType[]
+    notIn?: $Enums.AchievementType[]
+    not?: NestedEnumAchievementTypeFilter<$PrismaModel> | $Enums.AchievementType
   }
 
-  export type SessionCreateNestedManyWithoutUserInput = {
-    create?: XOR<SessionCreateWithoutUserInput, SessionUncheckedCreateWithoutUserInput> | SessionCreateWithoutUserInput[] | SessionUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: SessionCreateOrConnectWithoutUserInput | SessionCreateOrConnectWithoutUserInput[]
-    createMany?: SessionCreateManyUserInputEnvelope
-    connect?: SessionWhereUniqueInput | SessionWhereUniqueInput[]
+  export type AchievementCountOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    type?: SortOrder
+    title?: SortOrder
+    description?: SortOrder
+    unlockedAt?: SortOrder
+  }
+
+  export type AchievementMaxOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    type?: SortOrder
+    title?: SortOrder
+    description?: SortOrder
+    unlockedAt?: SortOrder
+  }
+
+  export type AchievementMinOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    type?: SortOrder
+    title?: SortOrder
+    description?: SortOrder
+    unlockedAt?: SortOrder
+  }
+
+  export type EnumAchievementTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.AchievementType | EnumAchievementTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.AchievementType[]
+    notIn?: $Enums.AchievementType[]
+    not?: NestedEnumAchievementTypeWithAggregatesFilter<$PrismaModel> | $Enums.AchievementType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumAchievementTypeFilter<$PrismaModel>
+    _max?: NestedEnumAchievementTypeFilter<$PrismaModel>
   }
 
   export type AccountCreateNestedManyWithoutUserInput = {
@@ -16689,18 +19929,60 @@ export namespace Prisma {
     connect?: AccountWhereUniqueInput | AccountWhereUniqueInput[]
   }
 
-  export type JobApplicationUncheckedCreateNestedManyWithoutUserInput = {
+  export type SessionCreateNestedManyWithoutUserInput = {
+    create?: XOR<SessionCreateWithoutUserInput, SessionUncheckedCreateWithoutUserInput> | SessionCreateWithoutUserInput[] | SessionUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: SessionCreateOrConnectWithoutUserInput | SessionCreateOrConnectWithoutUserInput[]
+    createMany?: SessionCreateManyUserInputEnvelope
+    connect?: SessionWhereUniqueInput | SessionWhereUniqueInput[]
+  }
+
+  export type JobApplicationCreateNestedManyWithoutUserInput = {
     create?: XOR<JobApplicationCreateWithoutUserInput, JobApplicationUncheckedCreateWithoutUserInput> | JobApplicationCreateWithoutUserInput[] | JobApplicationUncheckedCreateWithoutUserInput[]
     connectOrCreate?: JobApplicationCreateOrConnectWithoutUserInput | JobApplicationCreateOrConnectWithoutUserInput[]
     createMany?: JobApplicationCreateManyUserInputEnvelope
     connect?: JobApplicationWhereUniqueInput | JobApplicationWhereUniqueInput[]
   }
 
-  export type TemplateUncheckedCreateNestedManyWithoutUserInput = {
-    create?: XOR<TemplateCreateWithoutUserInput, TemplateUncheckedCreateWithoutUserInput> | TemplateCreateWithoutUserInput[] | TemplateUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: TemplateCreateOrConnectWithoutUserInput | TemplateCreateOrConnectWithoutUserInput[]
-    createMany?: TemplateCreateManyUserInputEnvelope
-    connect?: TemplateWhereUniqueInput | TemplateWhereUniqueInput[]
+  export type ActivityLogCreateNestedManyWithoutUserInput = {
+    create?: XOR<ActivityLogCreateWithoutUserInput, ActivityLogUncheckedCreateWithoutUserInput> | ActivityLogCreateWithoutUserInput[] | ActivityLogUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: ActivityLogCreateOrConnectWithoutUserInput | ActivityLogCreateOrConnectWithoutUserInput[]
+    createMany?: ActivityLogCreateManyUserInputEnvelope
+    connect?: ActivityLogWhereUniqueInput | ActivityLogWhereUniqueInput[]
+  }
+
+  export type AnalyticsCreateNestedManyWithoutUserInput = {
+    create?: XOR<AnalyticsCreateWithoutUserInput, AnalyticsUncheckedCreateWithoutUserInput> | AnalyticsCreateWithoutUserInput[] | AnalyticsUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: AnalyticsCreateOrConnectWithoutUserInput | AnalyticsCreateOrConnectWithoutUserInput[]
+    createMany?: AnalyticsCreateManyUserInputEnvelope
+    connect?: AnalyticsWhereUniqueInput | AnalyticsWhereUniqueInput[]
+  }
+
+  export type NotificationCreateNestedManyWithoutUserInput = {
+    create?: XOR<NotificationCreateWithoutUserInput, NotificationUncheckedCreateWithoutUserInput> | NotificationCreateWithoutUserInput[] | NotificationUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: NotificationCreateOrConnectWithoutUserInput | NotificationCreateOrConnectWithoutUserInput[]
+    createMany?: NotificationCreateManyUserInputEnvelope
+    connect?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
+  }
+
+  export type GoalCreateNestedManyWithoutUserInput = {
+    create?: XOR<GoalCreateWithoutUserInput, GoalUncheckedCreateWithoutUserInput> | GoalCreateWithoutUserInput[] | GoalUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: GoalCreateOrConnectWithoutUserInput | GoalCreateOrConnectWithoutUserInput[]
+    createMany?: GoalCreateManyUserInputEnvelope
+    connect?: GoalWhereUniqueInput | GoalWhereUniqueInput[]
+  }
+
+  export type AchievementCreateNestedManyWithoutUserInput = {
+    create?: XOR<AchievementCreateWithoutUserInput, AchievementUncheckedCreateWithoutUserInput> | AchievementCreateWithoutUserInput[] | AchievementUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: AchievementCreateOrConnectWithoutUserInput | AchievementCreateOrConnectWithoutUserInput[]
+    createMany?: AchievementCreateManyUserInputEnvelope
+    connect?: AchievementWhereUniqueInput | AchievementWhereUniqueInput[]
+  }
+
+  export type AccountUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<AccountCreateWithoutUserInput, AccountUncheckedCreateWithoutUserInput> | AccountCreateWithoutUserInput[] | AccountUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: AccountCreateOrConnectWithoutUserInput | AccountCreateOrConnectWithoutUserInput[]
+    createMany?: AccountCreateManyUserInputEnvelope
+    connect?: AccountWhereUniqueInput | AccountWhereUniqueInput[]
   }
 
   export type SessionUncheckedCreateNestedManyWithoutUserInput = {
@@ -16710,11 +19992,46 @@ export namespace Prisma {
     connect?: SessionWhereUniqueInput | SessionWhereUniqueInput[]
   }
 
-  export type AccountUncheckedCreateNestedManyWithoutUserInput = {
-    create?: XOR<AccountCreateWithoutUserInput, AccountUncheckedCreateWithoutUserInput> | AccountCreateWithoutUserInput[] | AccountUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: AccountCreateOrConnectWithoutUserInput | AccountCreateOrConnectWithoutUserInput[]
-    createMany?: AccountCreateManyUserInputEnvelope
-    connect?: AccountWhereUniqueInput | AccountWhereUniqueInput[]
+  export type JobApplicationUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<JobApplicationCreateWithoutUserInput, JobApplicationUncheckedCreateWithoutUserInput> | JobApplicationCreateWithoutUserInput[] | JobApplicationUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: JobApplicationCreateOrConnectWithoutUserInput | JobApplicationCreateOrConnectWithoutUserInput[]
+    createMany?: JobApplicationCreateManyUserInputEnvelope
+    connect?: JobApplicationWhereUniqueInput | JobApplicationWhereUniqueInput[]
+  }
+
+  export type ActivityLogUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<ActivityLogCreateWithoutUserInput, ActivityLogUncheckedCreateWithoutUserInput> | ActivityLogCreateWithoutUserInput[] | ActivityLogUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: ActivityLogCreateOrConnectWithoutUserInput | ActivityLogCreateOrConnectWithoutUserInput[]
+    createMany?: ActivityLogCreateManyUserInputEnvelope
+    connect?: ActivityLogWhereUniqueInput | ActivityLogWhereUniqueInput[]
+  }
+
+  export type AnalyticsUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<AnalyticsCreateWithoutUserInput, AnalyticsUncheckedCreateWithoutUserInput> | AnalyticsCreateWithoutUserInput[] | AnalyticsUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: AnalyticsCreateOrConnectWithoutUserInput | AnalyticsCreateOrConnectWithoutUserInput[]
+    createMany?: AnalyticsCreateManyUserInputEnvelope
+    connect?: AnalyticsWhereUniqueInput | AnalyticsWhereUniqueInput[]
+  }
+
+  export type NotificationUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<NotificationCreateWithoutUserInput, NotificationUncheckedCreateWithoutUserInput> | NotificationCreateWithoutUserInput[] | NotificationUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: NotificationCreateOrConnectWithoutUserInput | NotificationCreateOrConnectWithoutUserInput[]
+    createMany?: NotificationCreateManyUserInputEnvelope
+    connect?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
+  }
+
+  export type GoalUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<GoalCreateWithoutUserInput, GoalUncheckedCreateWithoutUserInput> | GoalCreateWithoutUserInput[] | GoalUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: GoalCreateOrConnectWithoutUserInput | GoalCreateOrConnectWithoutUserInput[]
+    createMany?: GoalCreateManyUserInputEnvelope
+    connect?: GoalWhereUniqueInput | GoalWhereUniqueInput[]
+  }
+
+  export type AchievementUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<AchievementCreateWithoutUserInput, AchievementUncheckedCreateWithoutUserInput> | AchievementCreateWithoutUserInput[] | AchievementUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: AchievementCreateOrConnectWithoutUserInput | AchievementCreateOrConnectWithoutUserInput[]
+    createMany?: AchievementCreateManyUserInputEnvelope
+    connect?: AchievementWhereUniqueInput | AchievementWhereUniqueInput[]
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -16733,46 +20050,8 @@ export namespace Prisma {
     set?: Date | string
   }
 
-  export type JobApplicationUpdateManyWithoutUserNestedInput = {
-    create?: XOR<JobApplicationCreateWithoutUserInput, JobApplicationUncheckedCreateWithoutUserInput> | JobApplicationCreateWithoutUserInput[] | JobApplicationUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: JobApplicationCreateOrConnectWithoutUserInput | JobApplicationCreateOrConnectWithoutUserInput[]
-    upsert?: JobApplicationUpsertWithWhereUniqueWithoutUserInput | JobApplicationUpsertWithWhereUniqueWithoutUserInput[]
-    createMany?: JobApplicationCreateManyUserInputEnvelope
-    set?: JobApplicationWhereUniqueInput | JobApplicationWhereUniqueInput[]
-    disconnect?: JobApplicationWhereUniqueInput | JobApplicationWhereUniqueInput[]
-    delete?: JobApplicationWhereUniqueInput | JobApplicationWhereUniqueInput[]
-    connect?: JobApplicationWhereUniqueInput | JobApplicationWhereUniqueInput[]
-    update?: JobApplicationUpdateWithWhereUniqueWithoutUserInput | JobApplicationUpdateWithWhereUniqueWithoutUserInput[]
-    updateMany?: JobApplicationUpdateManyWithWhereWithoutUserInput | JobApplicationUpdateManyWithWhereWithoutUserInput[]
-    deleteMany?: JobApplicationScalarWhereInput | JobApplicationScalarWhereInput[]
-  }
-
-  export type TemplateUpdateManyWithoutUserNestedInput = {
-    create?: XOR<TemplateCreateWithoutUserInput, TemplateUncheckedCreateWithoutUserInput> | TemplateCreateWithoutUserInput[] | TemplateUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: TemplateCreateOrConnectWithoutUserInput | TemplateCreateOrConnectWithoutUserInput[]
-    upsert?: TemplateUpsertWithWhereUniqueWithoutUserInput | TemplateUpsertWithWhereUniqueWithoutUserInput[]
-    createMany?: TemplateCreateManyUserInputEnvelope
-    set?: TemplateWhereUniqueInput | TemplateWhereUniqueInput[]
-    disconnect?: TemplateWhereUniqueInput | TemplateWhereUniqueInput[]
-    delete?: TemplateWhereUniqueInput | TemplateWhereUniqueInput[]
-    connect?: TemplateWhereUniqueInput | TemplateWhereUniqueInput[]
-    update?: TemplateUpdateWithWhereUniqueWithoutUserInput | TemplateUpdateWithWhereUniqueWithoutUserInput[]
-    updateMany?: TemplateUpdateManyWithWhereWithoutUserInput | TemplateUpdateManyWithWhereWithoutUserInput[]
-    deleteMany?: TemplateScalarWhereInput | TemplateScalarWhereInput[]
-  }
-
-  export type SessionUpdateManyWithoutUserNestedInput = {
-    create?: XOR<SessionCreateWithoutUserInput, SessionUncheckedCreateWithoutUserInput> | SessionCreateWithoutUserInput[] | SessionUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: SessionCreateOrConnectWithoutUserInput | SessionCreateOrConnectWithoutUserInput[]
-    upsert?: SessionUpsertWithWhereUniqueWithoutUserInput | SessionUpsertWithWhereUniqueWithoutUserInput[]
-    createMany?: SessionCreateManyUserInputEnvelope
-    set?: SessionWhereUniqueInput | SessionWhereUniqueInput[]
-    disconnect?: SessionWhereUniqueInput | SessionWhereUniqueInput[]
-    delete?: SessionWhereUniqueInput | SessionWhereUniqueInput[]
-    connect?: SessionWhereUniqueInput | SessionWhereUniqueInput[]
-    update?: SessionUpdateWithWhereUniqueWithoutUserInput | SessionUpdateWithWhereUniqueWithoutUserInput[]
-    updateMany?: SessionUpdateManyWithWhereWithoutUserInput | SessionUpdateManyWithWhereWithoutUserInput[]
-    deleteMany?: SessionScalarWhereInput | SessionScalarWhereInput[]
+  export type BoolFieldUpdateOperationsInput = {
+    set?: boolean
   }
 
   export type AccountUpdateManyWithoutUserNestedInput = {
@@ -16789,7 +20068,21 @@ export namespace Prisma {
     deleteMany?: AccountScalarWhereInput | AccountScalarWhereInput[]
   }
 
-  export type JobApplicationUncheckedUpdateManyWithoutUserNestedInput = {
+  export type SessionUpdateManyWithoutUserNestedInput = {
+    create?: XOR<SessionCreateWithoutUserInput, SessionUncheckedCreateWithoutUserInput> | SessionCreateWithoutUserInput[] | SessionUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: SessionCreateOrConnectWithoutUserInput | SessionCreateOrConnectWithoutUserInput[]
+    upsert?: SessionUpsertWithWhereUniqueWithoutUserInput | SessionUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: SessionCreateManyUserInputEnvelope
+    set?: SessionWhereUniqueInput | SessionWhereUniqueInput[]
+    disconnect?: SessionWhereUniqueInput | SessionWhereUniqueInput[]
+    delete?: SessionWhereUniqueInput | SessionWhereUniqueInput[]
+    connect?: SessionWhereUniqueInput | SessionWhereUniqueInput[]
+    update?: SessionUpdateWithWhereUniqueWithoutUserInput | SessionUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: SessionUpdateManyWithWhereWithoutUserInput | SessionUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: SessionScalarWhereInput | SessionScalarWhereInput[]
+  }
+
+  export type JobApplicationUpdateManyWithoutUserNestedInput = {
     create?: XOR<JobApplicationCreateWithoutUserInput, JobApplicationUncheckedCreateWithoutUserInput> | JobApplicationCreateWithoutUserInput[] | JobApplicationUncheckedCreateWithoutUserInput[]
     connectOrCreate?: JobApplicationCreateOrConnectWithoutUserInput | JobApplicationCreateOrConnectWithoutUserInput[]
     upsert?: JobApplicationUpsertWithWhereUniqueWithoutUserInput | JobApplicationUpsertWithWhereUniqueWithoutUserInput[]
@@ -16803,18 +20096,88 @@ export namespace Prisma {
     deleteMany?: JobApplicationScalarWhereInput | JobApplicationScalarWhereInput[]
   }
 
-  export type TemplateUncheckedUpdateManyWithoutUserNestedInput = {
-    create?: XOR<TemplateCreateWithoutUserInput, TemplateUncheckedCreateWithoutUserInput> | TemplateCreateWithoutUserInput[] | TemplateUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: TemplateCreateOrConnectWithoutUserInput | TemplateCreateOrConnectWithoutUserInput[]
-    upsert?: TemplateUpsertWithWhereUniqueWithoutUserInput | TemplateUpsertWithWhereUniqueWithoutUserInput[]
-    createMany?: TemplateCreateManyUserInputEnvelope
-    set?: TemplateWhereUniqueInput | TemplateWhereUniqueInput[]
-    disconnect?: TemplateWhereUniqueInput | TemplateWhereUniqueInput[]
-    delete?: TemplateWhereUniqueInput | TemplateWhereUniqueInput[]
-    connect?: TemplateWhereUniqueInput | TemplateWhereUniqueInput[]
-    update?: TemplateUpdateWithWhereUniqueWithoutUserInput | TemplateUpdateWithWhereUniqueWithoutUserInput[]
-    updateMany?: TemplateUpdateManyWithWhereWithoutUserInput | TemplateUpdateManyWithWhereWithoutUserInput[]
-    deleteMany?: TemplateScalarWhereInput | TemplateScalarWhereInput[]
+  export type ActivityLogUpdateManyWithoutUserNestedInput = {
+    create?: XOR<ActivityLogCreateWithoutUserInput, ActivityLogUncheckedCreateWithoutUserInput> | ActivityLogCreateWithoutUserInput[] | ActivityLogUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: ActivityLogCreateOrConnectWithoutUserInput | ActivityLogCreateOrConnectWithoutUserInput[]
+    upsert?: ActivityLogUpsertWithWhereUniqueWithoutUserInput | ActivityLogUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: ActivityLogCreateManyUserInputEnvelope
+    set?: ActivityLogWhereUniqueInput | ActivityLogWhereUniqueInput[]
+    disconnect?: ActivityLogWhereUniqueInput | ActivityLogWhereUniqueInput[]
+    delete?: ActivityLogWhereUniqueInput | ActivityLogWhereUniqueInput[]
+    connect?: ActivityLogWhereUniqueInput | ActivityLogWhereUniqueInput[]
+    update?: ActivityLogUpdateWithWhereUniqueWithoutUserInput | ActivityLogUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: ActivityLogUpdateManyWithWhereWithoutUserInput | ActivityLogUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: ActivityLogScalarWhereInput | ActivityLogScalarWhereInput[]
+  }
+
+  export type AnalyticsUpdateManyWithoutUserNestedInput = {
+    create?: XOR<AnalyticsCreateWithoutUserInput, AnalyticsUncheckedCreateWithoutUserInput> | AnalyticsCreateWithoutUserInput[] | AnalyticsUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: AnalyticsCreateOrConnectWithoutUserInput | AnalyticsCreateOrConnectWithoutUserInput[]
+    upsert?: AnalyticsUpsertWithWhereUniqueWithoutUserInput | AnalyticsUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: AnalyticsCreateManyUserInputEnvelope
+    set?: AnalyticsWhereUniqueInput | AnalyticsWhereUniqueInput[]
+    disconnect?: AnalyticsWhereUniqueInput | AnalyticsWhereUniqueInput[]
+    delete?: AnalyticsWhereUniqueInput | AnalyticsWhereUniqueInput[]
+    connect?: AnalyticsWhereUniqueInput | AnalyticsWhereUniqueInput[]
+    update?: AnalyticsUpdateWithWhereUniqueWithoutUserInput | AnalyticsUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: AnalyticsUpdateManyWithWhereWithoutUserInput | AnalyticsUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: AnalyticsScalarWhereInput | AnalyticsScalarWhereInput[]
+  }
+
+  export type NotificationUpdateManyWithoutUserNestedInput = {
+    create?: XOR<NotificationCreateWithoutUserInput, NotificationUncheckedCreateWithoutUserInput> | NotificationCreateWithoutUserInput[] | NotificationUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: NotificationCreateOrConnectWithoutUserInput | NotificationCreateOrConnectWithoutUserInput[]
+    upsert?: NotificationUpsertWithWhereUniqueWithoutUserInput | NotificationUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: NotificationCreateManyUserInputEnvelope
+    set?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
+    disconnect?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
+    delete?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
+    connect?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
+    update?: NotificationUpdateWithWhereUniqueWithoutUserInput | NotificationUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: NotificationUpdateManyWithWhereWithoutUserInput | NotificationUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: NotificationScalarWhereInput | NotificationScalarWhereInput[]
+  }
+
+  export type GoalUpdateManyWithoutUserNestedInput = {
+    create?: XOR<GoalCreateWithoutUserInput, GoalUncheckedCreateWithoutUserInput> | GoalCreateWithoutUserInput[] | GoalUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: GoalCreateOrConnectWithoutUserInput | GoalCreateOrConnectWithoutUserInput[]
+    upsert?: GoalUpsertWithWhereUniqueWithoutUserInput | GoalUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: GoalCreateManyUserInputEnvelope
+    set?: GoalWhereUniqueInput | GoalWhereUniqueInput[]
+    disconnect?: GoalWhereUniqueInput | GoalWhereUniqueInput[]
+    delete?: GoalWhereUniqueInput | GoalWhereUniqueInput[]
+    connect?: GoalWhereUniqueInput | GoalWhereUniqueInput[]
+    update?: GoalUpdateWithWhereUniqueWithoutUserInput | GoalUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: GoalUpdateManyWithWhereWithoutUserInput | GoalUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: GoalScalarWhereInput | GoalScalarWhereInput[]
+  }
+
+  export type AchievementUpdateManyWithoutUserNestedInput = {
+    create?: XOR<AchievementCreateWithoutUserInput, AchievementUncheckedCreateWithoutUserInput> | AchievementCreateWithoutUserInput[] | AchievementUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: AchievementCreateOrConnectWithoutUserInput | AchievementCreateOrConnectWithoutUserInput[]
+    upsert?: AchievementUpsertWithWhereUniqueWithoutUserInput | AchievementUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: AchievementCreateManyUserInputEnvelope
+    set?: AchievementWhereUniqueInput | AchievementWhereUniqueInput[]
+    disconnect?: AchievementWhereUniqueInput | AchievementWhereUniqueInput[]
+    delete?: AchievementWhereUniqueInput | AchievementWhereUniqueInput[]
+    connect?: AchievementWhereUniqueInput | AchievementWhereUniqueInput[]
+    update?: AchievementUpdateWithWhereUniqueWithoutUserInput | AchievementUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: AchievementUpdateManyWithWhereWithoutUserInput | AchievementUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: AchievementScalarWhereInput | AchievementScalarWhereInput[]
+  }
+
+  export type AccountUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<AccountCreateWithoutUserInput, AccountUncheckedCreateWithoutUserInput> | AccountCreateWithoutUserInput[] | AccountUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: AccountCreateOrConnectWithoutUserInput | AccountCreateOrConnectWithoutUserInput[]
+    upsert?: AccountUpsertWithWhereUniqueWithoutUserInput | AccountUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: AccountCreateManyUserInputEnvelope
+    set?: AccountWhereUniqueInput | AccountWhereUniqueInput[]
+    disconnect?: AccountWhereUniqueInput | AccountWhereUniqueInput[]
+    delete?: AccountWhereUniqueInput | AccountWhereUniqueInput[]
+    connect?: AccountWhereUniqueInput | AccountWhereUniqueInput[]
+    update?: AccountUpdateWithWhereUniqueWithoutUserInput | AccountUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: AccountUpdateManyWithWhereWithoutUserInput | AccountUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: AccountScalarWhereInput | AccountScalarWhereInput[]
   }
 
   export type SessionUncheckedUpdateManyWithoutUserNestedInput = {
@@ -16831,18 +20194,88 @@ export namespace Prisma {
     deleteMany?: SessionScalarWhereInput | SessionScalarWhereInput[]
   }
 
-  export type AccountUncheckedUpdateManyWithoutUserNestedInput = {
-    create?: XOR<AccountCreateWithoutUserInput, AccountUncheckedCreateWithoutUserInput> | AccountCreateWithoutUserInput[] | AccountUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: AccountCreateOrConnectWithoutUserInput | AccountCreateOrConnectWithoutUserInput[]
-    upsert?: AccountUpsertWithWhereUniqueWithoutUserInput | AccountUpsertWithWhereUniqueWithoutUserInput[]
-    createMany?: AccountCreateManyUserInputEnvelope
-    set?: AccountWhereUniqueInput | AccountWhereUniqueInput[]
-    disconnect?: AccountWhereUniqueInput | AccountWhereUniqueInput[]
-    delete?: AccountWhereUniqueInput | AccountWhereUniqueInput[]
-    connect?: AccountWhereUniqueInput | AccountWhereUniqueInput[]
-    update?: AccountUpdateWithWhereUniqueWithoutUserInput | AccountUpdateWithWhereUniqueWithoutUserInput[]
-    updateMany?: AccountUpdateManyWithWhereWithoutUserInput | AccountUpdateManyWithWhereWithoutUserInput[]
-    deleteMany?: AccountScalarWhereInput | AccountScalarWhereInput[]
+  export type JobApplicationUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<JobApplicationCreateWithoutUserInput, JobApplicationUncheckedCreateWithoutUserInput> | JobApplicationCreateWithoutUserInput[] | JobApplicationUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: JobApplicationCreateOrConnectWithoutUserInput | JobApplicationCreateOrConnectWithoutUserInput[]
+    upsert?: JobApplicationUpsertWithWhereUniqueWithoutUserInput | JobApplicationUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: JobApplicationCreateManyUserInputEnvelope
+    set?: JobApplicationWhereUniqueInput | JobApplicationWhereUniqueInput[]
+    disconnect?: JobApplicationWhereUniqueInput | JobApplicationWhereUniqueInput[]
+    delete?: JobApplicationWhereUniqueInput | JobApplicationWhereUniqueInput[]
+    connect?: JobApplicationWhereUniqueInput | JobApplicationWhereUniqueInput[]
+    update?: JobApplicationUpdateWithWhereUniqueWithoutUserInput | JobApplicationUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: JobApplicationUpdateManyWithWhereWithoutUserInput | JobApplicationUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: JobApplicationScalarWhereInput | JobApplicationScalarWhereInput[]
+  }
+
+  export type ActivityLogUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<ActivityLogCreateWithoutUserInput, ActivityLogUncheckedCreateWithoutUserInput> | ActivityLogCreateWithoutUserInput[] | ActivityLogUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: ActivityLogCreateOrConnectWithoutUserInput | ActivityLogCreateOrConnectWithoutUserInput[]
+    upsert?: ActivityLogUpsertWithWhereUniqueWithoutUserInput | ActivityLogUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: ActivityLogCreateManyUserInputEnvelope
+    set?: ActivityLogWhereUniqueInput | ActivityLogWhereUniqueInput[]
+    disconnect?: ActivityLogWhereUniqueInput | ActivityLogWhereUniqueInput[]
+    delete?: ActivityLogWhereUniqueInput | ActivityLogWhereUniqueInput[]
+    connect?: ActivityLogWhereUniqueInput | ActivityLogWhereUniqueInput[]
+    update?: ActivityLogUpdateWithWhereUniqueWithoutUserInput | ActivityLogUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: ActivityLogUpdateManyWithWhereWithoutUserInput | ActivityLogUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: ActivityLogScalarWhereInput | ActivityLogScalarWhereInput[]
+  }
+
+  export type AnalyticsUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<AnalyticsCreateWithoutUserInput, AnalyticsUncheckedCreateWithoutUserInput> | AnalyticsCreateWithoutUserInput[] | AnalyticsUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: AnalyticsCreateOrConnectWithoutUserInput | AnalyticsCreateOrConnectWithoutUserInput[]
+    upsert?: AnalyticsUpsertWithWhereUniqueWithoutUserInput | AnalyticsUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: AnalyticsCreateManyUserInputEnvelope
+    set?: AnalyticsWhereUniqueInput | AnalyticsWhereUniqueInput[]
+    disconnect?: AnalyticsWhereUniqueInput | AnalyticsWhereUniqueInput[]
+    delete?: AnalyticsWhereUniqueInput | AnalyticsWhereUniqueInput[]
+    connect?: AnalyticsWhereUniqueInput | AnalyticsWhereUniqueInput[]
+    update?: AnalyticsUpdateWithWhereUniqueWithoutUserInput | AnalyticsUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: AnalyticsUpdateManyWithWhereWithoutUserInput | AnalyticsUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: AnalyticsScalarWhereInput | AnalyticsScalarWhereInput[]
+  }
+
+  export type NotificationUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<NotificationCreateWithoutUserInput, NotificationUncheckedCreateWithoutUserInput> | NotificationCreateWithoutUserInput[] | NotificationUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: NotificationCreateOrConnectWithoutUserInput | NotificationCreateOrConnectWithoutUserInput[]
+    upsert?: NotificationUpsertWithWhereUniqueWithoutUserInput | NotificationUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: NotificationCreateManyUserInputEnvelope
+    set?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
+    disconnect?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
+    delete?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
+    connect?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
+    update?: NotificationUpdateWithWhereUniqueWithoutUserInput | NotificationUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: NotificationUpdateManyWithWhereWithoutUserInput | NotificationUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: NotificationScalarWhereInput | NotificationScalarWhereInput[]
+  }
+
+  export type GoalUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<GoalCreateWithoutUserInput, GoalUncheckedCreateWithoutUserInput> | GoalCreateWithoutUserInput[] | GoalUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: GoalCreateOrConnectWithoutUserInput | GoalCreateOrConnectWithoutUserInput[]
+    upsert?: GoalUpsertWithWhereUniqueWithoutUserInput | GoalUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: GoalCreateManyUserInputEnvelope
+    set?: GoalWhereUniqueInput | GoalWhereUniqueInput[]
+    disconnect?: GoalWhereUniqueInput | GoalWhereUniqueInput[]
+    delete?: GoalWhereUniqueInput | GoalWhereUniqueInput[]
+    connect?: GoalWhereUniqueInput | GoalWhereUniqueInput[]
+    update?: GoalUpdateWithWhereUniqueWithoutUserInput | GoalUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: GoalUpdateManyWithWhereWithoutUserInput | GoalUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: GoalScalarWhereInput | GoalScalarWhereInput[]
+  }
+
+  export type AchievementUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<AchievementCreateWithoutUserInput, AchievementUncheckedCreateWithoutUserInput> | AchievementCreateWithoutUserInput[] | AchievementUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: AchievementCreateOrConnectWithoutUserInput | AchievementCreateOrConnectWithoutUserInput[]
+    upsert?: AchievementUpsertWithWhereUniqueWithoutUserInput | AchievementUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: AchievementCreateManyUserInputEnvelope
+    set?: AchievementWhereUniqueInput | AchievementWhereUniqueInput[]
+    disconnect?: AchievementWhereUniqueInput | AchievementWhereUniqueInput[]
+    delete?: AchievementWhereUniqueInput | AchievementWhereUniqueInput[]
+    connect?: AchievementWhereUniqueInput | AchievementWhereUniqueInput[]
+    update?: AchievementUpdateWithWhereUniqueWithoutUserInput | AchievementUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: AchievementUpdateManyWithWhereWithoutUserInput | AchievementUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: AchievementScalarWhereInput | AchievementScalarWhereInput[]
   }
 
   export type UserCreateNestedOneWithoutAccountsInput = {
@@ -16913,6 +20346,14 @@ export namespace Prisma {
     connectOrCreate?: ActivityLogCreateOrConnectWithoutJobApplicationInput | ActivityLogCreateOrConnectWithoutJobApplicationInput[]
     createMany?: ActivityLogCreateManyJobApplicationInputEnvelope
     connect?: ActivityLogWhereUniqueInput | ActivityLogWhereUniqueInput[]
+  }
+
+  export type NullableFloatFieldUpdateOperationsInput = {
+    set?: number | null
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
   }
 
   export type EnumJobStatusFieldUpdateOperationsInput = {
@@ -17057,30 +20498,42 @@ export namespace Prisma {
     update?: XOR<XOR<TagUpdateToOneWithWhereWithoutJobApplicationsInput, TagUpdateWithoutJobApplicationsInput>, TagUncheckedUpdateWithoutJobApplicationsInput>
   }
 
-  export type JobApplicationCreateNestedOneWithoutActivitiesInput = {
-    create?: XOR<JobApplicationCreateWithoutActivitiesInput, JobApplicationUncheckedCreateWithoutActivitiesInput>
-    connectOrCreate?: JobApplicationCreateOrConnectWithoutActivitiesInput
-    connect?: JobApplicationWhereUniqueInput
-  }
-
-  export type JobApplicationUpdateOneWithoutActivitiesNestedInput = {
-    create?: XOR<JobApplicationCreateWithoutActivitiesInput, JobApplicationUncheckedCreateWithoutActivitiesInput>
-    connectOrCreate?: JobApplicationCreateOrConnectWithoutActivitiesInput
-    upsert?: JobApplicationUpsertWithoutActivitiesInput
-    disconnect?: JobApplicationWhereInput | boolean
-    delete?: JobApplicationWhereInput | boolean
-    connect?: JobApplicationWhereUniqueInput
-    update?: XOR<XOR<JobApplicationUpdateToOneWithWhereWithoutActivitiesInput, JobApplicationUpdateWithoutActivitiesInput>, JobApplicationUncheckedUpdateWithoutActivitiesInput>
-  }
-
-  export type UserCreateNestedOneWithoutTemplatesInput = {
-    create?: XOR<UserCreateWithoutTemplatesInput, UserUncheckedCreateWithoutTemplatesInput>
-    connectOrCreate?: UserCreateOrConnectWithoutTemplatesInput
+  export type UserCreateNestedOneWithoutActivityLogsInput = {
+    create?: XOR<UserCreateWithoutActivityLogsInput, UserUncheckedCreateWithoutActivityLogsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutActivityLogsInput
     connect?: UserWhereUniqueInput
+  }
+
+  export type JobApplicationCreateNestedOneWithoutActivityLogsInput = {
+    create?: XOR<JobApplicationCreateWithoutActivityLogsInput, JobApplicationUncheckedCreateWithoutActivityLogsInput>
+    connectOrCreate?: JobApplicationCreateOrConnectWithoutActivityLogsInput
+    connect?: JobApplicationWhereUniqueInput
+  }
+
+  export type UserUpdateOneRequiredWithoutActivityLogsNestedInput = {
+    create?: XOR<UserCreateWithoutActivityLogsInput, UserUncheckedCreateWithoutActivityLogsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutActivityLogsInput
+    upsert?: UserUpsertWithoutActivityLogsInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutActivityLogsInput, UserUpdateWithoutActivityLogsInput>, UserUncheckedUpdateWithoutActivityLogsInput>
+  }
+
+  export type JobApplicationUpdateOneRequiredWithoutActivityLogsNestedInput = {
+    create?: XOR<JobApplicationCreateWithoutActivityLogsInput, JobApplicationUncheckedCreateWithoutActivityLogsInput>
+    connectOrCreate?: JobApplicationCreateOrConnectWithoutActivityLogsInput
+    upsert?: JobApplicationUpsertWithoutActivityLogsInput
+    connect?: JobApplicationWhereUniqueInput
+    update?: XOR<XOR<JobApplicationUpdateToOneWithWhereWithoutActivityLogsInput, JobApplicationUpdateWithoutActivityLogsInput>, JobApplicationUncheckedUpdateWithoutActivityLogsInput>
   }
 
   export type EnumTemplateTypeFieldUpdateOperationsInput = {
     set?: $Enums.TemplateType
+  }
+
+  export type UserCreateNestedOneWithoutAnalyticsInput = {
+    create?: XOR<UserCreateWithoutAnalyticsInput, UserUncheckedCreateWithoutAnalyticsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutAnalyticsInput
+    connect?: UserWhereUniqueInput
   }
 
   export type IntFieldUpdateOperationsInput = {
@@ -17091,14 +20544,6 @@ export namespace Prisma {
     divide?: number
   }
 
-  export type UserUpdateOneRequiredWithoutTemplatesNestedInput = {
-    create?: XOR<UserCreateWithoutTemplatesInput, UserUncheckedCreateWithoutTemplatesInput>
-    connectOrCreate?: UserCreateOrConnectWithoutTemplatesInput
-    upsert?: UserUpsertWithoutTemplatesInput
-    connect?: UserWhereUniqueInput
-    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutTemplatesInput, UserUpdateWithoutTemplatesInput>, UserUncheckedUpdateWithoutTemplatesInput>
-  }
-
   export type FloatFieldUpdateOperationsInput = {
     set?: number
     increment?: number
@@ -17107,12 +20552,70 @@ export namespace Prisma {
     divide?: number
   }
 
+  export type UserUpdateOneRequiredWithoutAnalyticsNestedInput = {
+    create?: XOR<UserCreateWithoutAnalyticsInput, UserUncheckedCreateWithoutAnalyticsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutAnalyticsInput
+    upsert?: UserUpsertWithoutAnalyticsInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutAnalyticsInput, UserUpdateWithoutAnalyticsInput>, UserUncheckedUpdateWithoutAnalyticsInput>
+  }
+
+  export type UserCreateNestedOneWithoutNotificationsInput = {
+    create?: XOR<UserCreateWithoutNotificationsInput, UserUncheckedCreateWithoutNotificationsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutNotificationsInput
+    connect?: UserWhereUniqueInput
+  }
+
   export type EnumNotificationTypeFieldUpdateOperationsInput = {
     set?: $Enums.NotificationType
   }
 
-  export type BoolFieldUpdateOperationsInput = {
-    set?: boolean
+  export type UserUpdateOneRequiredWithoutNotificationsNestedInput = {
+    create?: XOR<UserCreateWithoutNotificationsInput, UserUncheckedCreateWithoutNotificationsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutNotificationsInput
+    upsert?: UserUpsertWithoutNotificationsInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutNotificationsInput, UserUpdateWithoutNotificationsInput>, UserUncheckedUpdateWithoutNotificationsInput>
+  }
+
+  export type UserCreateNestedOneWithoutGoalsInput = {
+    create?: XOR<UserCreateWithoutGoalsInput, UserUncheckedCreateWithoutGoalsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutGoalsInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type EnumGoalTypeFieldUpdateOperationsInput = {
+    set?: $Enums.GoalType
+  }
+
+  export type EnumGoalPeriodFieldUpdateOperationsInput = {
+    set?: $Enums.GoalPeriod
+  }
+
+  export type UserUpdateOneRequiredWithoutGoalsNestedInput = {
+    create?: XOR<UserCreateWithoutGoalsInput, UserUncheckedCreateWithoutGoalsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutGoalsInput
+    upsert?: UserUpsertWithoutGoalsInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutGoalsInput, UserUpdateWithoutGoalsInput>, UserUncheckedUpdateWithoutGoalsInput>
+  }
+
+  export type UserCreateNestedOneWithoutAchievementsInput = {
+    create?: XOR<UserCreateWithoutAchievementsInput, UserUncheckedCreateWithoutAchievementsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutAchievementsInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type EnumAchievementTypeFieldUpdateOperationsInput = {
+    set?: $Enums.AchievementType
+  }
+
+  export type UserUpdateOneRequiredWithoutAchievementsNestedInput = {
+    create?: XOR<UserCreateWithoutAchievementsInput, UserUncheckedCreateWithoutAchievementsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutAchievementsInput
+    upsert?: UserUpsertWithoutAchievementsInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutAchievementsInput, UserUpdateWithoutAchievementsInput>, UserUncheckedUpdateWithoutAchievementsInput>
   }
 
   export type NestedStringFilter<$PrismaModel = never> = {
@@ -17163,6 +20666,11 @@ export namespace Prisma {
     gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     not?: NestedDateTimeFilter<$PrismaModel> | Date | string
+  }
+
+  export type NestedBoolFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolFilter<$PrismaModel> | boolean
   }
 
   export type NestedStringWithAggregatesFilter<$PrismaModel = never> = {
@@ -17249,6 +20757,14 @@ export namespace Prisma {
     _max?: NestedDateTimeFilter<$PrismaModel>
   }
 
+  export type NestedBoolWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedBoolFilter<$PrismaModel>
+    _max?: NestedBoolFilter<$PrismaModel>
+  }
+
   export type NestedIntNullableWithAggregatesFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel> | null
     in?: number[] | null
@@ -17290,6 +20806,22 @@ export namespace Prisma {
     not?: NestedEnumPriorityFilter<$PrismaModel> | $Enums.Priority
   }
 
+  export type NestedFloatNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel> | null
+    in?: number[] | null
+    notIn?: number[] | null
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatNullableWithAggregatesFilter<$PrismaModel> | number | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedFloatNullableFilter<$PrismaModel>
+    _sum?: NestedFloatNullableFilter<$PrismaModel>
+    _min?: NestedFloatNullableFilter<$PrismaModel>
+    _max?: NestedFloatNullableFilter<$PrismaModel>
+  }
+
   export type NestedEnumJobStatusWithAggregatesFilter<$PrismaModel = never> = {
     equals?: $Enums.JobStatus | EnumJobStatusFieldRefInput<$PrismaModel>
     in?: $Enums.JobStatus[]
@@ -17327,6 +20859,17 @@ export namespace Prisma {
     _max?: NestedEnumTemplateTypeFilter<$PrismaModel>
   }
 
+  export type NestedFloatFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel>
+    in?: number[]
+    notIn?: number[]
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatFilter<$PrismaModel> | number
+  }
+
   export type NestedIntWithAggregatesFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel>
     in?: number[]
@@ -17341,17 +20884,6 @@ export namespace Prisma {
     _sum?: NestedIntFilter<$PrismaModel>
     _min?: NestedIntFilter<$PrismaModel>
     _max?: NestedIntFilter<$PrismaModel>
-  }
-
-  export type NestedFloatFilter<$PrismaModel = never> = {
-    equals?: number | FloatFieldRefInput<$PrismaModel>
-    in?: number[]
-    notIn?: number[]
-    lt?: number | FloatFieldRefInput<$PrismaModel>
-    lte?: number | FloatFieldRefInput<$PrismaModel>
-    gt?: number | FloatFieldRefInput<$PrismaModel>
-    gte?: number | FloatFieldRefInput<$PrismaModel>
-    not?: NestedFloatFilter<$PrismaModel> | number
   }
 
   export type NestedFloatWithAggregatesFilter<$PrismaModel = never> = {
@@ -17377,11 +20909,6 @@ export namespace Prisma {
     not?: NestedEnumNotificationTypeFilter<$PrismaModel> | $Enums.NotificationType
   }
 
-  export type NestedBoolFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
-    not?: NestedBoolFilter<$PrismaModel> | boolean
-  }
-
   export type NestedEnumNotificationTypeWithAggregatesFilter<$PrismaModel = never> = {
     equals?: $Enums.NotificationType | EnumNotificationTypeFieldRefInput<$PrismaModel>
     in?: $Enums.NotificationType[]
@@ -17392,115 +20919,55 @@ export namespace Prisma {
     _max?: NestedEnumNotificationTypeFilter<$PrismaModel>
   }
 
-  export type NestedBoolWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
-    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+  export type NestedEnumGoalTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.GoalType | EnumGoalTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.GoalType[]
+    notIn?: $Enums.GoalType[]
+    not?: NestedEnumGoalTypeFilter<$PrismaModel> | $Enums.GoalType
+  }
+
+  export type NestedEnumGoalPeriodFilter<$PrismaModel = never> = {
+    equals?: $Enums.GoalPeriod | EnumGoalPeriodFieldRefInput<$PrismaModel>
+    in?: $Enums.GoalPeriod[]
+    notIn?: $Enums.GoalPeriod[]
+    not?: NestedEnumGoalPeriodFilter<$PrismaModel> | $Enums.GoalPeriod
+  }
+
+  export type NestedEnumGoalTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.GoalType | EnumGoalTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.GoalType[]
+    notIn?: $Enums.GoalType[]
+    not?: NestedEnumGoalTypeWithAggregatesFilter<$PrismaModel> | $Enums.GoalType
     _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedBoolFilter<$PrismaModel>
-    _max?: NestedBoolFilter<$PrismaModel>
+    _min?: NestedEnumGoalTypeFilter<$PrismaModel>
+    _max?: NestedEnumGoalTypeFilter<$PrismaModel>
   }
 
-  export type JobApplicationCreateWithoutUserInput = {
-    id?: string
-    jobTitle: string
-    company: string
-    location: string
-    jobPostUrl?: string | null
-    salaryMin?: number | null
-    salaryMax?: number | null
-    salaryCurrency?: string | null
-    contactName?: string | null
-    contactEmail?: string | null
-    contactPhone?: string | null
-    notes?: string | null
-    status?: $Enums.JobStatus
-    priority?: $Enums.Priority
-    appliedDate?: Date | string
-    lastUpdated?: Date | string
-    tags?: JobApplicationTagCreateNestedManyWithoutJobApplicationInput
-    activities?: ActivityLogCreateNestedManyWithoutJobApplicationInput
+  export type NestedEnumGoalPeriodWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.GoalPeriod | EnumGoalPeriodFieldRefInput<$PrismaModel>
+    in?: $Enums.GoalPeriod[]
+    notIn?: $Enums.GoalPeriod[]
+    not?: NestedEnumGoalPeriodWithAggregatesFilter<$PrismaModel> | $Enums.GoalPeriod
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumGoalPeriodFilter<$PrismaModel>
+    _max?: NestedEnumGoalPeriodFilter<$PrismaModel>
   }
 
-  export type JobApplicationUncheckedCreateWithoutUserInput = {
-    id?: string
-    jobTitle: string
-    company: string
-    location: string
-    jobPostUrl?: string | null
-    salaryMin?: number | null
-    salaryMax?: number | null
-    salaryCurrency?: string | null
-    contactName?: string | null
-    contactEmail?: string | null
-    contactPhone?: string | null
-    notes?: string | null
-    status?: $Enums.JobStatus
-    priority?: $Enums.Priority
-    appliedDate?: Date | string
-    lastUpdated?: Date | string
-    tags?: JobApplicationTagUncheckedCreateNestedManyWithoutJobApplicationInput
-    activities?: ActivityLogUncheckedCreateNestedManyWithoutJobApplicationInput
+  export type NestedEnumAchievementTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.AchievementType | EnumAchievementTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.AchievementType[]
+    notIn?: $Enums.AchievementType[]
+    not?: NestedEnumAchievementTypeFilter<$PrismaModel> | $Enums.AchievementType
   }
 
-  export type JobApplicationCreateOrConnectWithoutUserInput = {
-    where: JobApplicationWhereUniqueInput
-    create: XOR<JobApplicationCreateWithoutUserInput, JobApplicationUncheckedCreateWithoutUserInput>
-  }
-
-  export type JobApplicationCreateManyUserInputEnvelope = {
-    data: JobApplicationCreateManyUserInput | JobApplicationCreateManyUserInput[]
-  }
-
-  export type TemplateCreateWithoutUserInput = {
-    id?: string
-    name: string
-    type: $Enums.TemplateType
-    fileName: string
-    fileSize: number
-    mimeType: string
-    fileData: string
-    uploadDate?: Date | string
-  }
-
-  export type TemplateUncheckedCreateWithoutUserInput = {
-    id?: string
-    name: string
-    type: $Enums.TemplateType
-    fileName: string
-    fileSize: number
-    mimeType: string
-    fileData: string
-    uploadDate?: Date | string
-  }
-
-  export type TemplateCreateOrConnectWithoutUserInput = {
-    where: TemplateWhereUniqueInput
-    create: XOR<TemplateCreateWithoutUserInput, TemplateUncheckedCreateWithoutUserInput>
-  }
-
-  export type TemplateCreateManyUserInputEnvelope = {
-    data: TemplateCreateManyUserInput | TemplateCreateManyUserInput[]
-  }
-
-  export type SessionCreateWithoutUserInput = {
-    id?: string
-    sessionToken: string
-    expires: Date | string
-  }
-
-  export type SessionUncheckedCreateWithoutUserInput = {
-    id?: string
-    sessionToken: string
-    expires: Date | string
-  }
-
-  export type SessionCreateOrConnectWithoutUserInput = {
-    where: SessionWhereUniqueInput
-    create: XOR<SessionCreateWithoutUserInput, SessionUncheckedCreateWithoutUserInput>
-  }
-
-  export type SessionCreateManyUserInputEnvelope = {
-    data: SessionCreateManyUserInput | SessionCreateManyUserInput[]
+  export type NestedEnumAchievementTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.AchievementType | EnumAchievementTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.AchievementType[]
+    notIn?: $Enums.AchievementType[]
+    not?: NestedEnumAchievementTypeWithAggregatesFilter<$PrismaModel> | $Enums.AchievementType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumAchievementTypeFilter<$PrismaModel>
+    _max?: NestedEnumAchievementTypeFilter<$PrismaModel>
   }
 
   export type AccountCreateWithoutUserInput = {
@@ -17540,100 +21007,221 @@ export namespace Prisma {
     data: AccountCreateManyUserInput | AccountCreateManyUserInput[]
   }
 
-  export type JobApplicationUpsertWithWhereUniqueWithoutUserInput = {
-    where: JobApplicationWhereUniqueInput
-    update: XOR<JobApplicationUpdateWithoutUserInput, JobApplicationUncheckedUpdateWithoutUserInput>
-    create: XOR<JobApplicationCreateWithoutUserInput, JobApplicationUncheckedCreateWithoutUserInput>
+  export type SessionCreateWithoutUserInput = {
+    id?: string
+    sessionToken: string
+    expires: Date | string
   }
 
-  export type JobApplicationUpdateWithWhereUniqueWithoutUserInput = {
-    where: JobApplicationWhereUniqueInput
-    data: XOR<JobApplicationUpdateWithoutUserInput, JobApplicationUncheckedUpdateWithoutUserInput>
+  export type SessionUncheckedCreateWithoutUserInput = {
+    id?: string
+    sessionToken: string
+    expires: Date | string
   }
 
-  export type JobApplicationUpdateManyWithWhereWithoutUserInput = {
-    where: JobApplicationScalarWhereInput
-    data: XOR<JobApplicationUpdateManyMutationInput, JobApplicationUncheckedUpdateManyWithoutUserInput>
-  }
-
-  export type JobApplicationScalarWhereInput = {
-    AND?: JobApplicationScalarWhereInput | JobApplicationScalarWhereInput[]
-    OR?: JobApplicationScalarWhereInput[]
-    NOT?: JobApplicationScalarWhereInput | JobApplicationScalarWhereInput[]
-    id?: StringFilter<"JobApplication"> | string
-    userId?: StringFilter<"JobApplication"> | string
-    jobTitle?: StringFilter<"JobApplication"> | string
-    company?: StringFilter<"JobApplication"> | string
-    location?: StringFilter<"JobApplication"> | string
-    jobPostUrl?: StringNullableFilter<"JobApplication"> | string | null
-    salaryMin?: IntNullableFilter<"JobApplication"> | number | null
-    salaryMax?: IntNullableFilter<"JobApplication"> | number | null
-    salaryCurrency?: StringNullableFilter<"JobApplication"> | string | null
-    contactName?: StringNullableFilter<"JobApplication"> | string | null
-    contactEmail?: StringNullableFilter<"JobApplication"> | string | null
-    contactPhone?: StringNullableFilter<"JobApplication"> | string | null
-    notes?: StringNullableFilter<"JobApplication"> | string | null
-    status?: EnumJobStatusFilter<"JobApplication"> | $Enums.JobStatus
-    priority?: EnumPriorityFilter<"JobApplication"> | $Enums.Priority
-    appliedDate?: DateTimeFilter<"JobApplication"> | Date | string
-    lastUpdated?: DateTimeFilter<"JobApplication"> | Date | string
-  }
-
-  export type TemplateUpsertWithWhereUniqueWithoutUserInput = {
-    where: TemplateWhereUniqueInput
-    update: XOR<TemplateUpdateWithoutUserInput, TemplateUncheckedUpdateWithoutUserInput>
-    create: XOR<TemplateCreateWithoutUserInput, TemplateUncheckedCreateWithoutUserInput>
-  }
-
-  export type TemplateUpdateWithWhereUniqueWithoutUserInput = {
-    where: TemplateWhereUniqueInput
-    data: XOR<TemplateUpdateWithoutUserInput, TemplateUncheckedUpdateWithoutUserInput>
-  }
-
-  export type TemplateUpdateManyWithWhereWithoutUserInput = {
-    where: TemplateScalarWhereInput
-    data: XOR<TemplateUpdateManyMutationInput, TemplateUncheckedUpdateManyWithoutUserInput>
-  }
-
-  export type TemplateScalarWhereInput = {
-    AND?: TemplateScalarWhereInput | TemplateScalarWhereInput[]
-    OR?: TemplateScalarWhereInput[]
-    NOT?: TemplateScalarWhereInput | TemplateScalarWhereInput[]
-    id?: StringFilter<"Template"> | string
-    userId?: StringFilter<"Template"> | string
-    name?: StringFilter<"Template"> | string
-    type?: EnumTemplateTypeFilter<"Template"> | $Enums.TemplateType
-    fileName?: StringFilter<"Template"> | string
-    fileSize?: IntFilter<"Template"> | number
-    mimeType?: StringFilter<"Template"> | string
-    fileData?: StringFilter<"Template"> | string
-    uploadDate?: DateTimeFilter<"Template"> | Date | string
-  }
-
-  export type SessionUpsertWithWhereUniqueWithoutUserInput = {
+  export type SessionCreateOrConnectWithoutUserInput = {
     where: SessionWhereUniqueInput
-    update: XOR<SessionUpdateWithoutUserInput, SessionUncheckedUpdateWithoutUserInput>
     create: XOR<SessionCreateWithoutUserInput, SessionUncheckedCreateWithoutUserInput>
   }
 
-  export type SessionUpdateWithWhereUniqueWithoutUserInput = {
-    where: SessionWhereUniqueInput
-    data: XOR<SessionUpdateWithoutUserInput, SessionUncheckedUpdateWithoutUserInput>
+  export type SessionCreateManyUserInputEnvelope = {
+    data: SessionCreateManyUserInput | SessionCreateManyUserInput[]
   }
 
-  export type SessionUpdateManyWithWhereWithoutUserInput = {
-    where: SessionScalarWhereInput
-    data: XOR<SessionUpdateManyMutationInput, SessionUncheckedUpdateManyWithoutUserInput>
+  export type JobApplicationCreateWithoutUserInput = {
+    id?: string
+    jobTitle: string
+    company: string
+    location: string
+    jobPostUrl?: string | null
+    salaryMin?: number | null
+    salaryMax?: number | null
+    salaryCurrency?: string | null
+    contactName?: string | null
+    contactEmail?: string | null
+    contactPhone?: string | null
+    notes?: string | null
+    status?: $Enums.JobStatus
+    priority?: $Enums.Priority
+    appliedDate?: Date | string
+    lastUpdated?: Date | string
+    tags?: JobApplicationTagCreateNestedManyWithoutJobApplicationInput
+    activityLogs?: ActivityLogCreateNestedManyWithoutJobApplicationInput
   }
 
-  export type SessionScalarWhereInput = {
-    AND?: SessionScalarWhereInput | SessionScalarWhereInput[]
-    OR?: SessionScalarWhereInput[]
-    NOT?: SessionScalarWhereInput | SessionScalarWhereInput[]
-    id?: StringFilter<"Session"> | string
-    sessionToken?: StringFilter<"Session"> | string
-    userId?: StringFilter<"Session"> | string
-    expires?: DateTimeFilter<"Session"> | Date | string
+  export type JobApplicationUncheckedCreateWithoutUserInput = {
+    id?: string
+    jobTitle: string
+    company: string
+    location: string
+    jobPostUrl?: string | null
+    salaryMin?: number | null
+    salaryMax?: number | null
+    salaryCurrency?: string | null
+    contactName?: string | null
+    contactEmail?: string | null
+    contactPhone?: string | null
+    notes?: string | null
+    status?: $Enums.JobStatus
+    priority?: $Enums.Priority
+    appliedDate?: Date | string
+    lastUpdated?: Date | string
+    tags?: JobApplicationTagUncheckedCreateNestedManyWithoutJobApplicationInput
+    activityLogs?: ActivityLogUncheckedCreateNestedManyWithoutJobApplicationInput
+  }
+
+  export type JobApplicationCreateOrConnectWithoutUserInput = {
+    where: JobApplicationWhereUniqueInput
+    create: XOR<JobApplicationCreateWithoutUserInput, JobApplicationUncheckedCreateWithoutUserInput>
+  }
+
+  export type JobApplicationCreateManyUserInputEnvelope = {
+    data: JobApplicationCreateManyUserInput | JobApplicationCreateManyUserInput[]
+  }
+
+  export type ActivityLogCreateWithoutUserInput = {
+    id?: string
+    action: string
+    description: string
+    timestamp?: Date | string
+    jobApplication: JobApplicationCreateNestedOneWithoutActivityLogsInput
+  }
+
+  export type ActivityLogUncheckedCreateWithoutUserInput = {
+    id?: string
+    jobApplicationId: string
+    action: string
+    description: string
+    timestamp?: Date | string
+  }
+
+  export type ActivityLogCreateOrConnectWithoutUserInput = {
+    where: ActivityLogWhereUniqueInput
+    create: XOR<ActivityLogCreateWithoutUserInput, ActivityLogUncheckedCreateWithoutUserInput>
+  }
+
+  export type ActivityLogCreateManyUserInputEnvelope = {
+    data: ActivityLogCreateManyUserInput | ActivityLogCreateManyUserInput[]
+  }
+
+  export type AnalyticsCreateWithoutUserInput = {
+    id?: string
+    period: string
+    date: Date | string
+    totalApps?: number
+    responsesRate?: number
+    interviewRate?: number
+    offerRate?: number
+    avgResponseTime?: number
+    createdAt?: Date | string
+  }
+
+  export type AnalyticsUncheckedCreateWithoutUserInput = {
+    id?: string
+    period: string
+    date: Date | string
+    totalApps?: number
+    responsesRate?: number
+    interviewRate?: number
+    offerRate?: number
+    avgResponseTime?: number
+    createdAt?: Date | string
+  }
+
+  export type AnalyticsCreateOrConnectWithoutUserInput = {
+    where: AnalyticsWhereUniqueInput
+    create: XOR<AnalyticsCreateWithoutUserInput, AnalyticsUncheckedCreateWithoutUserInput>
+  }
+
+  export type AnalyticsCreateManyUserInputEnvelope = {
+    data: AnalyticsCreateManyUserInput | AnalyticsCreateManyUserInput[]
+  }
+
+  export type NotificationCreateWithoutUserInput = {
+    id?: string
+    title: string
+    message: string
+    type: $Enums.NotificationType
+    isRead?: boolean
+    createdAt?: Date | string
+  }
+
+  export type NotificationUncheckedCreateWithoutUserInput = {
+    id?: string
+    title: string
+    message: string
+    type: $Enums.NotificationType
+    isRead?: boolean
+    createdAt?: Date | string
+  }
+
+  export type NotificationCreateOrConnectWithoutUserInput = {
+    where: NotificationWhereUniqueInput
+    create: XOR<NotificationCreateWithoutUserInput, NotificationUncheckedCreateWithoutUserInput>
+  }
+
+  export type NotificationCreateManyUserInputEnvelope = {
+    data: NotificationCreateManyUserInput | NotificationCreateManyUserInput[]
+  }
+
+  export type GoalCreateWithoutUserInput = {
+    id?: string
+    type: $Enums.GoalType
+    target: number
+    period: $Enums.GoalPeriod
+    startDate: Date | string
+    endDate: Date | string
+    achieved?: number
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type GoalUncheckedCreateWithoutUserInput = {
+    id?: string
+    type: $Enums.GoalType
+    target: number
+    period: $Enums.GoalPeriod
+    startDate: Date | string
+    endDate: Date | string
+    achieved?: number
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type GoalCreateOrConnectWithoutUserInput = {
+    where: GoalWhereUniqueInput
+    create: XOR<GoalCreateWithoutUserInput, GoalUncheckedCreateWithoutUserInput>
+  }
+
+  export type GoalCreateManyUserInputEnvelope = {
+    data: GoalCreateManyUserInput | GoalCreateManyUserInput[]
+  }
+
+  export type AchievementCreateWithoutUserInput = {
+    id?: string
+    type: $Enums.AchievementType
+    title: string
+    description: string
+    unlockedAt?: Date | string
+  }
+
+  export type AchievementUncheckedCreateWithoutUserInput = {
+    id?: string
+    type: $Enums.AchievementType
+    title: string
+    description: string
+    unlockedAt?: Date | string
+  }
+
+  export type AchievementCreateOrConnectWithoutUserInput = {
+    where: AchievementWhereUniqueInput
+    create: XOR<AchievementCreateWithoutUserInput, AchievementUncheckedCreateWithoutUserInput>
+  }
+
+  export type AchievementCreateManyUserInputEnvelope = {
+    data: AchievementCreateManyUserInput | AchievementCreateManyUserInput[]
   }
 
   export type AccountUpsertWithWhereUniqueWithoutUserInput = {
@@ -17670,36 +21258,263 @@ export namespace Prisma {
     session_state?: StringNullableFilter<"Account"> | string | null
   }
 
+  export type SessionUpsertWithWhereUniqueWithoutUserInput = {
+    where: SessionWhereUniqueInput
+    update: XOR<SessionUpdateWithoutUserInput, SessionUncheckedUpdateWithoutUserInput>
+    create: XOR<SessionCreateWithoutUserInput, SessionUncheckedCreateWithoutUserInput>
+  }
+
+  export type SessionUpdateWithWhereUniqueWithoutUserInput = {
+    where: SessionWhereUniqueInput
+    data: XOR<SessionUpdateWithoutUserInput, SessionUncheckedUpdateWithoutUserInput>
+  }
+
+  export type SessionUpdateManyWithWhereWithoutUserInput = {
+    where: SessionScalarWhereInput
+    data: XOR<SessionUpdateManyMutationInput, SessionUncheckedUpdateManyWithoutUserInput>
+  }
+
+  export type SessionScalarWhereInput = {
+    AND?: SessionScalarWhereInput | SessionScalarWhereInput[]
+    OR?: SessionScalarWhereInput[]
+    NOT?: SessionScalarWhereInput | SessionScalarWhereInput[]
+    id?: StringFilter<"Session"> | string
+    sessionToken?: StringFilter<"Session"> | string
+    userId?: StringFilter<"Session"> | string
+    expires?: DateTimeFilter<"Session"> | Date | string
+  }
+
+  export type JobApplicationUpsertWithWhereUniqueWithoutUserInput = {
+    where: JobApplicationWhereUniqueInput
+    update: XOR<JobApplicationUpdateWithoutUserInput, JobApplicationUncheckedUpdateWithoutUserInput>
+    create: XOR<JobApplicationCreateWithoutUserInput, JobApplicationUncheckedCreateWithoutUserInput>
+  }
+
+  export type JobApplicationUpdateWithWhereUniqueWithoutUserInput = {
+    where: JobApplicationWhereUniqueInput
+    data: XOR<JobApplicationUpdateWithoutUserInput, JobApplicationUncheckedUpdateWithoutUserInput>
+  }
+
+  export type JobApplicationUpdateManyWithWhereWithoutUserInput = {
+    where: JobApplicationScalarWhereInput
+    data: XOR<JobApplicationUpdateManyMutationInput, JobApplicationUncheckedUpdateManyWithoutUserInput>
+  }
+
+  export type JobApplicationScalarWhereInput = {
+    AND?: JobApplicationScalarWhereInput | JobApplicationScalarWhereInput[]
+    OR?: JobApplicationScalarWhereInput[]
+    NOT?: JobApplicationScalarWhereInput | JobApplicationScalarWhereInput[]
+    id?: StringFilter<"JobApplication"> | string
+    jobTitle?: StringFilter<"JobApplication"> | string
+    company?: StringFilter<"JobApplication"> | string
+    location?: StringFilter<"JobApplication"> | string
+    jobPostUrl?: StringNullableFilter<"JobApplication"> | string | null
+    salaryMin?: FloatNullableFilter<"JobApplication"> | number | null
+    salaryMax?: FloatNullableFilter<"JobApplication"> | number | null
+    salaryCurrency?: StringNullableFilter<"JobApplication"> | string | null
+    contactName?: StringNullableFilter<"JobApplication"> | string | null
+    contactEmail?: StringNullableFilter<"JobApplication"> | string | null
+    contactPhone?: StringNullableFilter<"JobApplication"> | string | null
+    notes?: StringNullableFilter<"JobApplication"> | string | null
+    status?: EnumJobStatusFilter<"JobApplication"> | $Enums.JobStatus
+    priority?: EnumPriorityFilter<"JobApplication"> | $Enums.Priority
+    appliedDate?: DateTimeFilter<"JobApplication"> | Date | string
+    lastUpdated?: DateTimeFilter<"JobApplication"> | Date | string
+    userId?: StringFilter<"JobApplication"> | string
+  }
+
+  export type ActivityLogUpsertWithWhereUniqueWithoutUserInput = {
+    where: ActivityLogWhereUniqueInput
+    update: XOR<ActivityLogUpdateWithoutUserInput, ActivityLogUncheckedUpdateWithoutUserInput>
+    create: XOR<ActivityLogCreateWithoutUserInput, ActivityLogUncheckedCreateWithoutUserInput>
+  }
+
+  export type ActivityLogUpdateWithWhereUniqueWithoutUserInput = {
+    where: ActivityLogWhereUniqueInput
+    data: XOR<ActivityLogUpdateWithoutUserInput, ActivityLogUncheckedUpdateWithoutUserInput>
+  }
+
+  export type ActivityLogUpdateManyWithWhereWithoutUserInput = {
+    where: ActivityLogScalarWhereInput
+    data: XOR<ActivityLogUpdateManyMutationInput, ActivityLogUncheckedUpdateManyWithoutUserInput>
+  }
+
+  export type ActivityLogScalarWhereInput = {
+    AND?: ActivityLogScalarWhereInput | ActivityLogScalarWhereInput[]
+    OR?: ActivityLogScalarWhereInput[]
+    NOT?: ActivityLogScalarWhereInput | ActivityLogScalarWhereInput[]
+    id?: StringFilter<"ActivityLog"> | string
+    userId?: StringFilter<"ActivityLog"> | string
+    jobApplicationId?: StringFilter<"ActivityLog"> | string
+    action?: StringFilter<"ActivityLog"> | string
+    description?: StringFilter<"ActivityLog"> | string
+    timestamp?: DateTimeFilter<"ActivityLog"> | Date | string
+  }
+
+  export type AnalyticsUpsertWithWhereUniqueWithoutUserInput = {
+    where: AnalyticsWhereUniqueInput
+    update: XOR<AnalyticsUpdateWithoutUserInput, AnalyticsUncheckedUpdateWithoutUserInput>
+    create: XOR<AnalyticsCreateWithoutUserInput, AnalyticsUncheckedCreateWithoutUserInput>
+  }
+
+  export type AnalyticsUpdateWithWhereUniqueWithoutUserInput = {
+    where: AnalyticsWhereUniqueInput
+    data: XOR<AnalyticsUpdateWithoutUserInput, AnalyticsUncheckedUpdateWithoutUserInput>
+  }
+
+  export type AnalyticsUpdateManyWithWhereWithoutUserInput = {
+    where: AnalyticsScalarWhereInput
+    data: XOR<AnalyticsUpdateManyMutationInput, AnalyticsUncheckedUpdateManyWithoutUserInput>
+  }
+
+  export type AnalyticsScalarWhereInput = {
+    AND?: AnalyticsScalarWhereInput | AnalyticsScalarWhereInput[]
+    OR?: AnalyticsScalarWhereInput[]
+    NOT?: AnalyticsScalarWhereInput | AnalyticsScalarWhereInput[]
+    id?: StringFilter<"Analytics"> | string
+    userId?: StringFilter<"Analytics"> | string
+    period?: StringFilter<"Analytics"> | string
+    date?: DateTimeFilter<"Analytics"> | Date | string
+    totalApps?: IntFilter<"Analytics"> | number
+    responsesRate?: FloatFilter<"Analytics"> | number
+    interviewRate?: FloatFilter<"Analytics"> | number
+    offerRate?: FloatFilter<"Analytics"> | number
+    avgResponseTime?: IntFilter<"Analytics"> | number
+    createdAt?: DateTimeFilter<"Analytics"> | Date | string
+  }
+
+  export type NotificationUpsertWithWhereUniqueWithoutUserInput = {
+    where: NotificationWhereUniqueInput
+    update: XOR<NotificationUpdateWithoutUserInput, NotificationUncheckedUpdateWithoutUserInput>
+    create: XOR<NotificationCreateWithoutUserInput, NotificationUncheckedCreateWithoutUserInput>
+  }
+
+  export type NotificationUpdateWithWhereUniqueWithoutUserInput = {
+    where: NotificationWhereUniqueInput
+    data: XOR<NotificationUpdateWithoutUserInput, NotificationUncheckedUpdateWithoutUserInput>
+  }
+
+  export type NotificationUpdateManyWithWhereWithoutUserInput = {
+    where: NotificationScalarWhereInput
+    data: XOR<NotificationUpdateManyMutationInput, NotificationUncheckedUpdateManyWithoutUserInput>
+  }
+
+  export type NotificationScalarWhereInput = {
+    AND?: NotificationScalarWhereInput | NotificationScalarWhereInput[]
+    OR?: NotificationScalarWhereInput[]
+    NOT?: NotificationScalarWhereInput | NotificationScalarWhereInput[]
+    id?: StringFilter<"Notification"> | string
+    userId?: StringFilter<"Notification"> | string
+    title?: StringFilter<"Notification"> | string
+    message?: StringFilter<"Notification"> | string
+    type?: EnumNotificationTypeFilter<"Notification"> | $Enums.NotificationType
+    isRead?: BoolFilter<"Notification"> | boolean
+    createdAt?: DateTimeFilter<"Notification"> | Date | string
+  }
+
+  export type GoalUpsertWithWhereUniqueWithoutUserInput = {
+    where: GoalWhereUniqueInput
+    update: XOR<GoalUpdateWithoutUserInput, GoalUncheckedUpdateWithoutUserInput>
+    create: XOR<GoalCreateWithoutUserInput, GoalUncheckedCreateWithoutUserInput>
+  }
+
+  export type GoalUpdateWithWhereUniqueWithoutUserInput = {
+    where: GoalWhereUniqueInput
+    data: XOR<GoalUpdateWithoutUserInput, GoalUncheckedUpdateWithoutUserInput>
+  }
+
+  export type GoalUpdateManyWithWhereWithoutUserInput = {
+    where: GoalScalarWhereInput
+    data: XOR<GoalUpdateManyMutationInput, GoalUncheckedUpdateManyWithoutUserInput>
+  }
+
+  export type GoalScalarWhereInput = {
+    AND?: GoalScalarWhereInput | GoalScalarWhereInput[]
+    OR?: GoalScalarWhereInput[]
+    NOT?: GoalScalarWhereInput | GoalScalarWhereInput[]
+    id?: StringFilter<"Goal"> | string
+    userId?: StringFilter<"Goal"> | string
+    type?: EnumGoalTypeFilter<"Goal"> | $Enums.GoalType
+    target?: IntFilter<"Goal"> | number
+    period?: EnumGoalPeriodFilter<"Goal"> | $Enums.GoalPeriod
+    startDate?: DateTimeFilter<"Goal"> | Date | string
+    endDate?: DateTimeFilter<"Goal"> | Date | string
+    achieved?: IntFilter<"Goal"> | number
+    isActive?: BoolFilter<"Goal"> | boolean
+    createdAt?: DateTimeFilter<"Goal"> | Date | string
+    updatedAt?: DateTimeFilter<"Goal"> | Date | string
+  }
+
+  export type AchievementUpsertWithWhereUniqueWithoutUserInput = {
+    where: AchievementWhereUniqueInput
+    update: XOR<AchievementUpdateWithoutUserInput, AchievementUncheckedUpdateWithoutUserInput>
+    create: XOR<AchievementCreateWithoutUserInput, AchievementUncheckedCreateWithoutUserInput>
+  }
+
+  export type AchievementUpdateWithWhereUniqueWithoutUserInput = {
+    where: AchievementWhereUniqueInput
+    data: XOR<AchievementUpdateWithoutUserInput, AchievementUncheckedUpdateWithoutUserInput>
+  }
+
+  export type AchievementUpdateManyWithWhereWithoutUserInput = {
+    where: AchievementScalarWhereInput
+    data: XOR<AchievementUpdateManyMutationInput, AchievementUncheckedUpdateManyWithoutUserInput>
+  }
+
+  export type AchievementScalarWhereInput = {
+    AND?: AchievementScalarWhereInput | AchievementScalarWhereInput[]
+    OR?: AchievementScalarWhereInput[]
+    NOT?: AchievementScalarWhereInput | AchievementScalarWhereInput[]
+    id?: StringFilter<"Achievement"> | string
+    userId?: StringFilter<"Achievement"> | string
+    type?: EnumAchievementTypeFilter<"Achievement"> | $Enums.AchievementType
+    title?: StringFilter<"Achievement"> | string
+    description?: StringFilter<"Achievement"> | string
+    unlockedAt?: DateTimeFilter<"Achievement"> | Date | string
+  }
+
   export type UserCreateWithoutAccountsInput = {
     id?: string
-    email: string
     username: string
+    email: string
+    password: string
     firstName?: string | null
     lastName?: string | null
-    password: string
+    country?: string | null
     emailVerified?: Date | string | null
     image?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    jobApplications?: JobApplicationCreateNestedManyWithoutUserInput
-    templates?: TemplateCreateNestedManyWithoutUserInput
+    isPublic?: boolean
     sessions?: SessionCreateNestedManyWithoutUserInput
+    jobApplications?: JobApplicationCreateNestedManyWithoutUserInput
+    activityLogs?: ActivityLogCreateNestedManyWithoutUserInput
+    analytics?: AnalyticsCreateNestedManyWithoutUserInput
+    notifications?: NotificationCreateNestedManyWithoutUserInput
+    goals?: GoalCreateNestedManyWithoutUserInput
+    achievements?: AchievementCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutAccountsInput = {
     id?: string
-    email: string
     username: string
+    email: string
+    password: string
     firstName?: string | null
     lastName?: string | null
-    password: string
+    country?: string | null
     emailVerified?: Date | string | null
     image?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    jobApplications?: JobApplicationUncheckedCreateNestedManyWithoutUserInput
-    templates?: TemplateUncheckedCreateNestedManyWithoutUserInput
+    isPublic?: boolean
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    jobApplications?: JobApplicationUncheckedCreateNestedManyWithoutUserInput
+    activityLogs?: ActivityLogUncheckedCreateNestedManyWithoutUserInput
+    analytics?: AnalyticsUncheckedCreateNestedManyWithoutUserInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    goals?: GoalUncheckedCreateNestedManyWithoutUserInput
+    achievements?: AchievementUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutAccountsInput = {
@@ -17720,66 +21535,90 @@ export namespace Prisma {
 
   export type UserUpdateWithoutAccountsInput = {
     id?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
     username?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
     firstName?: NullableStringFieldUpdateOperationsInput | string | null
     lastName?: NullableStringFieldUpdateOperationsInput | string | null
-    password?: StringFieldUpdateOperationsInput | string
+    country?: NullableStringFieldUpdateOperationsInput | string | null
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     image?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    jobApplications?: JobApplicationUpdateManyWithoutUserNestedInput
-    templates?: TemplateUpdateManyWithoutUserNestedInput
+    isPublic?: BoolFieldUpdateOperationsInput | boolean
     sessions?: SessionUpdateManyWithoutUserNestedInput
+    jobApplications?: JobApplicationUpdateManyWithoutUserNestedInput
+    activityLogs?: ActivityLogUpdateManyWithoutUserNestedInput
+    analytics?: AnalyticsUpdateManyWithoutUserNestedInput
+    notifications?: NotificationUpdateManyWithoutUserNestedInput
+    goals?: GoalUpdateManyWithoutUserNestedInput
+    achievements?: AchievementUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutAccountsInput = {
     id?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
     username?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
     firstName?: NullableStringFieldUpdateOperationsInput | string | null
     lastName?: NullableStringFieldUpdateOperationsInput | string | null
-    password?: StringFieldUpdateOperationsInput | string
+    country?: NullableStringFieldUpdateOperationsInput | string | null
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     image?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    jobApplications?: JobApplicationUncheckedUpdateManyWithoutUserNestedInput
-    templates?: TemplateUncheckedUpdateManyWithoutUserNestedInput
+    isPublic?: BoolFieldUpdateOperationsInput | boolean
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    jobApplications?: JobApplicationUncheckedUpdateManyWithoutUserNestedInput
+    activityLogs?: ActivityLogUncheckedUpdateManyWithoutUserNestedInput
+    analytics?: AnalyticsUncheckedUpdateManyWithoutUserNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    goals?: GoalUncheckedUpdateManyWithoutUserNestedInput
+    achievements?: AchievementUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateWithoutSessionsInput = {
     id?: string
-    email: string
     username: string
+    email: string
+    password: string
     firstName?: string | null
     lastName?: string | null
-    password: string
+    country?: string | null
     emailVerified?: Date | string | null
     image?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    jobApplications?: JobApplicationCreateNestedManyWithoutUserInput
-    templates?: TemplateCreateNestedManyWithoutUserInput
+    isPublic?: boolean
     accounts?: AccountCreateNestedManyWithoutUserInput
+    jobApplications?: JobApplicationCreateNestedManyWithoutUserInput
+    activityLogs?: ActivityLogCreateNestedManyWithoutUserInput
+    analytics?: AnalyticsCreateNestedManyWithoutUserInput
+    notifications?: NotificationCreateNestedManyWithoutUserInput
+    goals?: GoalCreateNestedManyWithoutUserInput
+    achievements?: AchievementCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutSessionsInput = {
     id?: string
-    email: string
     username: string
+    email: string
+    password: string
     firstName?: string | null
     lastName?: string | null
-    password: string
+    country?: string | null
     emailVerified?: Date | string | null
     image?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    jobApplications?: JobApplicationUncheckedCreateNestedManyWithoutUserInput
-    templates?: TemplateUncheckedCreateNestedManyWithoutUserInput
+    isPublic?: boolean
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
+    jobApplications?: JobApplicationUncheckedCreateNestedManyWithoutUserInput
+    activityLogs?: ActivityLogUncheckedCreateNestedManyWithoutUserInput
+    analytics?: AnalyticsUncheckedCreateNestedManyWithoutUserInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    goals?: GoalUncheckedCreateNestedManyWithoutUserInput
+    achievements?: AchievementUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutSessionsInput = {
@@ -17800,66 +21639,90 @@ export namespace Prisma {
 
   export type UserUpdateWithoutSessionsInput = {
     id?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
     username?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
     firstName?: NullableStringFieldUpdateOperationsInput | string | null
     lastName?: NullableStringFieldUpdateOperationsInput | string | null
-    password?: StringFieldUpdateOperationsInput | string
+    country?: NullableStringFieldUpdateOperationsInput | string | null
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     image?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    jobApplications?: JobApplicationUpdateManyWithoutUserNestedInput
-    templates?: TemplateUpdateManyWithoutUserNestedInput
+    isPublic?: BoolFieldUpdateOperationsInput | boolean
     accounts?: AccountUpdateManyWithoutUserNestedInput
+    jobApplications?: JobApplicationUpdateManyWithoutUserNestedInput
+    activityLogs?: ActivityLogUpdateManyWithoutUserNestedInput
+    analytics?: AnalyticsUpdateManyWithoutUserNestedInput
+    notifications?: NotificationUpdateManyWithoutUserNestedInput
+    goals?: GoalUpdateManyWithoutUserNestedInput
+    achievements?: AchievementUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutSessionsInput = {
     id?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
     username?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
     firstName?: NullableStringFieldUpdateOperationsInput | string | null
     lastName?: NullableStringFieldUpdateOperationsInput | string | null
-    password?: StringFieldUpdateOperationsInput | string
+    country?: NullableStringFieldUpdateOperationsInput | string | null
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     image?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    jobApplications?: JobApplicationUncheckedUpdateManyWithoutUserNestedInput
-    templates?: TemplateUncheckedUpdateManyWithoutUserNestedInput
+    isPublic?: BoolFieldUpdateOperationsInput | boolean
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
+    jobApplications?: JobApplicationUncheckedUpdateManyWithoutUserNestedInput
+    activityLogs?: ActivityLogUncheckedUpdateManyWithoutUserNestedInput
+    analytics?: AnalyticsUncheckedUpdateManyWithoutUserNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    goals?: GoalUncheckedUpdateManyWithoutUserNestedInput
+    achievements?: AchievementUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateWithoutJobApplicationsInput = {
     id?: string
-    email: string
     username: string
+    email: string
+    password: string
     firstName?: string | null
     lastName?: string | null
-    password: string
+    country?: string | null
     emailVerified?: Date | string | null
     image?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    templates?: TemplateCreateNestedManyWithoutUserInput
-    sessions?: SessionCreateNestedManyWithoutUserInput
+    isPublic?: boolean
     accounts?: AccountCreateNestedManyWithoutUserInput
+    sessions?: SessionCreateNestedManyWithoutUserInput
+    activityLogs?: ActivityLogCreateNestedManyWithoutUserInput
+    analytics?: AnalyticsCreateNestedManyWithoutUserInput
+    notifications?: NotificationCreateNestedManyWithoutUserInput
+    goals?: GoalCreateNestedManyWithoutUserInput
+    achievements?: AchievementCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutJobApplicationsInput = {
     id?: string
-    email: string
     username: string
+    email: string
+    password: string
     firstName?: string | null
     lastName?: string | null
-    password: string
+    country?: string | null
     emailVerified?: Date | string | null
     image?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    templates?: TemplateUncheckedCreateNestedManyWithoutUserInput
-    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    isPublic?: boolean
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
+    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    activityLogs?: ActivityLogUncheckedCreateNestedManyWithoutUserInput
+    analytics?: AnalyticsUncheckedCreateNestedManyWithoutUserInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    goals?: GoalUncheckedCreateNestedManyWithoutUserInput
+    achievements?: AchievementUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutJobApplicationsInput = {
@@ -17868,10 +21731,12 @@ export namespace Prisma {
   }
 
   export type JobApplicationTagCreateWithoutJobApplicationInput = {
+    id?: string
     tag: TagCreateNestedOneWithoutJobApplicationsInput
   }
 
   export type JobApplicationTagUncheckedCreateWithoutJobApplicationInput = {
+    id?: string
     tagId: string
   }
 
@@ -17886,20 +21751,18 @@ export namespace Prisma {
 
   export type ActivityLogCreateWithoutJobApplicationInput = {
     id?: string
-    userId: string
     action: string
-    description?: string | null
-    metadata?: string | null
-    createdAt?: Date | string
+    description: string
+    timestamp?: Date | string
+    user: UserCreateNestedOneWithoutActivityLogsInput
   }
 
   export type ActivityLogUncheckedCreateWithoutJobApplicationInput = {
     id?: string
     userId: string
     action: string
-    description?: string | null
-    metadata?: string | null
-    createdAt?: Date | string
+    description: string
+    timestamp?: Date | string
   }
 
   export type ActivityLogCreateOrConnectWithoutJobApplicationInput = {
@@ -17924,34 +21787,46 @@ export namespace Prisma {
 
   export type UserUpdateWithoutJobApplicationsInput = {
     id?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
     username?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
     firstName?: NullableStringFieldUpdateOperationsInput | string | null
     lastName?: NullableStringFieldUpdateOperationsInput | string | null
-    password?: StringFieldUpdateOperationsInput | string
+    country?: NullableStringFieldUpdateOperationsInput | string | null
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     image?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    templates?: TemplateUpdateManyWithoutUserNestedInput
-    sessions?: SessionUpdateManyWithoutUserNestedInput
+    isPublic?: BoolFieldUpdateOperationsInput | boolean
     accounts?: AccountUpdateManyWithoutUserNestedInput
+    sessions?: SessionUpdateManyWithoutUserNestedInput
+    activityLogs?: ActivityLogUpdateManyWithoutUserNestedInput
+    analytics?: AnalyticsUpdateManyWithoutUserNestedInput
+    notifications?: NotificationUpdateManyWithoutUserNestedInput
+    goals?: GoalUpdateManyWithoutUserNestedInput
+    achievements?: AchievementUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutJobApplicationsInput = {
     id?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
     username?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
     firstName?: NullableStringFieldUpdateOperationsInput | string | null
     lastName?: NullableStringFieldUpdateOperationsInput | string | null
-    password?: StringFieldUpdateOperationsInput | string
+    country?: NullableStringFieldUpdateOperationsInput | string | null
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     image?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    templates?: TemplateUncheckedUpdateManyWithoutUserNestedInput
-    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    isPublic?: BoolFieldUpdateOperationsInput | boolean
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
+    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    activityLogs?: ActivityLogUncheckedUpdateManyWithoutUserNestedInput
+    analytics?: AnalyticsUncheckedUpdateManyWithoutUserNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    goals?: GoalUncheckedUpdateManyWithoutUserNestedInput
+    achievements?: AchievementUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type JobApplicationTagUpsertWithWhereUniqueWithoutJobApplicationInput = {
@@ -17974,6 +21849,7 @@ export namespace Prisma {
     AND?: JobApplicationTagScalarWhereInput | JobApplicationTagScalarWhereInput[]
     OR?: JobApplicationTagScalarWhereInput[]
     NOT?: JobApplicationTagScalarWhereInput | JobApplicationTagScalarWhereInput[]
+    id?: StringFilter<"JobApplicationTag"> | string
     jobApplicationId?: StringFilter<"JobApplicationTag"> | string
     tagId?: StringFilter<"JobApplicationTag"> | string
   }
@@ -17994,24 +21870,13 @@ export namespace Prisma {
     data: XOR<ActivityLogUpdateManyMutationInput, ActivityLogUncheckedUpdateManyWithoutJobApplicationInput>
   }
 
-  export type ActivityLogScalarWhereInput = {
-    AND?: ActivityLogScalarWhereInput | ActivityLogScalarWhereInput[]
-    OR?: ActivityLogScalarWhereInput[]
-    NOT?: ActivityLogScalarWhereInput | ActivityLogScalarWhereInput[]
-    id?: StringFilter<"ActivityLog"> | string
-    userId?: StringFilter<"ActivityLog"> | string
-    jobApplicationId?: StringNullableFilter<"ActivityLog"> | string | null
-    action?: StringFilter<"ActivityLog"> | string
-    description?: StringNullableFilter<"ActivityLog"> | string | null
-    metadata?: StringNullableFilter<"ActivityLog"> | string | null
-    createdAt?: DateTimeFilter<"ActivityLog"> | Date | string
-  }
-
   export type JobApplicationTagCreateWithoutTagInput = {
+    id?: string
     jobApplication: JobApplicationCreateNestedOneWithoutTagsInput
   }
 
   export type JobApplicationTagUncheckedCreateWithoutTagInput = {
+    id?: string
     jobApplicationId: string
   }
 
@@ -18058,12 +21923,11 @@ export namespace Prisma {
     appliedDate?: Date | string
     lastUpdated?: Date | string
     user: UserCreateNestedOneWithoutJobApplicationsInput
-    activities?: ActivityLogCreateNestedManyWithoutJobApplicationInput
+    activityLogs?: ActivityLogCreateNestedManyWithoutJobApplicationInput
   }
 
   export type JobApplicationUncheckedCreateWithoutTagsInput = {
     id?: string
-    userId: string
     jobTitle: string
     company: string
     location: string
@@ -18079,7 +21943,8 @@ export namespace Prisma {
     priority?: $Enums.Priority
     appliedDate?: Date | string
     lastUpdated?: Date | string
-    activities?: ActivityLogUncheckedCreateNestedManyWithoutJobApplicationInput
+    userId: string
+    activityLogs?: ActivityLogUncheckedCreateNestedManyWithoutJobApplicationInput
   }
 
   export type JobApplicationCreateOrConnectWithoutTagsInput = {
@@ -18090,11 +21955,13 @@ export namespace Prisma {
   export type TagCreateWithoutJobApplicationsInput = {
     id?: string
     name: string
+    createdAt?: Date | string
   }
 
   export type TagUncheckedCreateWithoutJobApplicationsInput = {
     id?: string
     name: string
+    createdAt?: Date | string
   }
 
   export type TagCreateOrConnectWithoutJobApplicationsInput = {
@@ -18119,8 +21986,8 @@ export namespace Prisma {
     company?: StringFieldUpdateOperationsInput | string
     location?: StringFieldUpdateOperationsInput | string
     jobPostUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    salaryMin?: NullableIntFieldUpdateOperationsInput | number | null
-    salaryMax?: NullableIntFieldUpdateOperationsInput | number | null
+    salaryMin?: NullableFloatFieldUpdateOperationsInput | number | null
+    salaryMax?: NullableFloatFieldUpdateOperationsInput | number | null
     salaryCurrency?: NullableStringFieldUpdateOperationsInput | string | null
     contactName?: NullableStringFieldUpdateOperationsInput | string | null
     contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
@@ -18131,18 +21998,17 @@ export namespace Prisma {
     appliedDate?: DateTimeFieldUpdateOperationsInput | Date | string
     lastUpdated?: DateTimeFieldUpdateOperationsInput | Date | string
     user?: UserUpdateOneRequiredWithoutJobApplicationsNestedInput
-    activities?: ActivityLogUpdateManyWithoutJobApplicationNestedInput
+    activityLogs?: ActivityLogUpdateManyWithoutJobApplicationNestedInput
   }
 
   export type JobApplicationUncheckedUpdateWithoutTagsInput = {
     id?: StringFieldUpdateOperationsInput | string
-    userId?: StringFieldUpdateOperationsInput | string
     jobTitle?: StringFieldUpdateOperationsInput | string
     company?: StringFieldUpdateOperationsInput | string
     location?: StringFieldUpdateOperationsInput | string
     jobPostUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    salaryMin?: NullableIntFieldUpdateOperationsInput | number | null
-    salaryMax?: NullableIntFieldUpdateOperationsInput | number | null
+    salaryMin?: NullableFloatFieldUpdateOperationsInput | number | null
+    salaryMax?: NullableFloatFieldUpdateOperationsInput | number | null
     salaryCurrency?: NullableStringFieldUpdateOperationsInput | string | null
     contactName?: NullableStringFieldUpdateOperationsInput | string | null
     contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
@@ -18152,7 +22018,8 @@ export namespace Prisma {
     priority?: EnumPriorityFieldUpdateOperationsInput | $Enums.Priority
     appliedDate?: DateTimeFieldUpdateOperationsInput | Date | string
     lastUpdated?: DateTimeFieldUpdateOperationsInput | Date | string
-    activities?: ActivityLogUncheckedUpdateManyWithoutJobApplicationNestedInput
+    userId?: StringFieldUpdateOperationsInput | string
+    activityLogs?: ActivityLogUncheckedUpdateManyWithoutJobApplicationNestedInput
   }
 
   export type TagUpsertWithoutJobApplicationsInput = {
@@ -18169,14 +22036,65 @@ export namespace Prisma {
   export type TagUpdateWithoutJobApplicationsInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type TagUncheckedUpdateWithoutJobApplicationsInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type JobApplicationCreateWithoutActivitiesInput = {
+  export type UserCreateWithoutActivityLogsInput = {
+    id?: string
+    username: string
+    email: string
+    password: string
+    firstName?: string | null
+    lastName?: string | null
+    country?: string | null
+    emailVerified?: Date | string | null
+    image?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    isPublic?: boolean
+    accounts?: AccountCreateNestedManyWithoutUserInput
+    sessions?: SessionCreateNestedManyWithoutUserInput
+    jobApplications?: JobApplicationCreateNestedManyWithoutUserInput
+    analytics?: AnalyticsCreateNestedManyWithoutUserInput
+    notifications?: NotificationCreateNestedManyWithoutUserInput
+    goals?: GoalCreateNestedManyWithoutUserInput
+    achievements?: AchievementCreateNestedManyWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutActivityLogsInput = {
+    id?: string
+    username: string
+    email: string
+    password: string
+    firstName?: string | null
+    lastName?: string | null
+    country?: string | null
+    emailVerified?: Date | string | null
+    image?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    isPublic?: boolean
+    accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
+    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    jobApplications?: JobApplicationUncheckedCreateNestedManyWithoutUserInput
+    analytics?: AnalyticsUncheckedCreateNestedManyWithoutUserInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    goals?: GoalUncheckedCreateNestedManyWithoutUserInput
+    achievements?: AchievementUncheckedCreateNestedManyWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutActivityLogsInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutActivityLogsInput, UserUncheckedCreateWithoutActivityLogsInput>
+  }
+
+  export type JobApplicationCreateWithoutActivityLogsInput = {
     id?: string
     jobTitle: string
     company: string
@@ -18197,9 +22115,8 @@ export namespace Prisma {
     tags?: JobApplicationTagCreateNestedManyWithoutJobApplicationInput
   }
 
-  export type JobApplicationUncheckedCreateWithoutActivitiesInput = {
+  export type JobApplicationUncheckedCreateWithoutActivityLogsInput = {
     id?: string
-    userId: string
     jobTitle: string
     company: string
     location: string
@@ -18215,33 +22132,89 @@ export namespace Prisma {
     priority?: $Enums.Priority
     appliedDate?: Date | string
     lastUpdated?: Date | string
+    userId: string
     tags?: JobApplicationTagUncheckedCreateNestedManyWithoutJobApplicationInput
   }
 
-  export type JobApplicationCreateOrConnectWithoutActivitiesInput = {
+  export type JobApplicationCreateOrConnectWithoutActivityLogsInput = {
     where: JobApplicationWhereUniqueInput
-    create: XOR<JobApplicationCreateWithoutActivitiesInput, JobApplicationUncheckedCreateWithoutActivitiesInput>
+    create: XOR<JobApplicationCreateWithoutActivityLogsInput, JobApplicationUncheckedCreateWithoutActivityLogsInput>
   }
 
-  export type JobApplicationUpsertWithoutActivitiesInput = {
-    update: XOR<JobApplicationUpdateWithoutActivitiesInput, JobApplicationUncheckedUpdateWithoutActivitiesInput>
-    create: XOR<JobApplicationCreateWithoutActivitiesInput, JobApplicationUncheckedCreateWithoutActivitiesInput>
+  export type UserUpsertWithoutActivityLogsInput = {
+    update: XOR<UserUpdateWithoutActivityLogsInput, UserUncheckedUpdateWithoutActivityLogsInput>
+    create: XOR<UserCreateWithoutActivityLogsInput, UserUncheckedCreateWithoutActivityLogsInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutActivityLogsInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutActivityLogsInput, UserUncheckedUpdateWithoutActivityLogsInput>
+  }
+
+  export type UserUpdateWithoutActivityLogsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    firstName?: NullableStringFieldUpdateOperationsInput | string | null
+    lastName?: NullableStringFieldUpdateOperationsInput | string | null
+    country?: NullableStringFieldUpdateOperationsInput | string | null
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    isPublic?: BoolFieldUpdateOperationsInput | boolean
+    accounts?: AccountUpdateManyWithoutUserNestedInput
+    sessions?: SessionUpdateManyWithoutUserNestedInput
+    jobApplications?: JobApplicationUpdateManyWithoutUserNestedInput
+    analytics?: AnalyticsUpdateManyWithoutUserNestedInput
+    notifications?: NotificationUpdateManyWithoutUserNestedInput
+    goals?: GoalUpdateManyWithoutUserNestedInput
+    achievements?: AchievementUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutActivityLogsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    firstName?: NullableStringFieldUpdateOperationsInput | string | null
+    lastName?: NullableStringFieldUpdateOperationsInput | string | null
+    country?: NullableStringFieldUpdateOperationsInput | string | null
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    isPublic?: BoolFieldUpdateOperationsInput | boolean
+    accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
+    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    jobApplications?: JobApplicationUncheckedUpdateManyWithoutUserNestedInput
+    analytics?: AnalyticsUncheckedUpdateManyWithoutUserNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    goals?: GoalUncheckedUpdateManyWithoutUserNestedInput
+    achievements?: AchievementUncheckedUpdateManyWithoutUserNestedInput
+  }
+
+  export type JobApplicationUpsertWithoutActivityLogsInput = {
+    update: XOR<JobApplicationUpdateWithoutActivityLogsInput, JobApplicationUncheckedUpdateWithoutActivityLogsInput>
+    create: XOR<JobApplicationCreateWithoutActivityLogsInput, JobApplicationUncheckedCreateWithoutActivityLogsInput>
     where?: JobApplicationWhereInput
   }
 
-  export type JobApplicationUpdateToOneWithWhereWithoutActivitiesInput = {
+  export type JobApplicationUpdateToOneWithWhereWithoutActivityLogsInput = {
     where?: JobApplicationWhereInput
-    data: XOR<JobApplicationUpdateWithoutActivitiesInput, JobApplicationUncheckedUpdateWithoutActivitiesInput>
+    data: XOR<JobApplicationUpdateWithoutActivityLogsInput, JobApplicationUncheckedUpdateWithoutActivityLogsInput>
   }
 
-  export type JobApplicationUpdateWithoutActivitiesInput = {
+  export type JobApplicationUpdateWithoutActivityLogsInput = {
     id?: StringFieldUpdateOperationsInput | string
     jobTitle?: StringFieldUpdateOperationsInput | string
     company?: StringFieldUpdateOperationsInput | string
     location?: StringFieldUpdateOperationsInput | string
     jobPostUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    salaryMin?: NullableIntFieldUpdateOperationsInput | number | null
-    salaryMax?: NullableIntFieldUpdateOperationsInput | number | null
+    salaryMin?: NullableFloatFieldUpdateOperationsInput | number | null
+    salaryMax?: NullableFloatFieldUpdateOperationsInput | number | null
     salaryCurrency?: NullableStringFieldUpdateOperationsInput | string | null
     contactName?: NullableStringFieldUpdateOperationsInput | string | null
     contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
@@ -18255,15 +22228,14 @@ export namespace Prisma {
     tags?: JobApplicationTagUpdateManyWithoutJobApplicationNestedInput
   }
 
-  export type JobApplicationUncheckedUpdateWithoutActivitiesInput = {
+  export type JobApplicationUncheckedUpdateWithoutActivityLogsInput = {
     id?: StringFieldUpdateOperationsInput | string
-    userId?: StringFieldUpdateOperationsInput | string
     jobTitle?: StringFieldUpdateOperationsInput | string
     company?: StringFieldUpdateOperationsInput | string
     location?: StringFieldUpdateOperationsInput | string
     jobPostUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    salaryMin?: NullableIntFieldUpdateOperationsInput | number | null
-    salaryMax?: NullableIntFieldUpdateOperationsInput | number | null
+    salaryMin?: NullableFloatFieldUpdateOperationsInput | number | null
+    salaryMax?: NullableFloatFieldUpdateOperationsInput | number | null
     salaryCurrency?: NullableStringFieldUpdateOperationsInput | string | null
     contactName?: NullableStringFieldUpdateOperationsInput | string | null
     contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
@@ -18273,87 +22245,444 @@ export namespace Prisma {
     priority?: EnumPriorityFieldUpdateOperationsInput | $Enums.Priority
     appliedDate?: DateTimeFieldUpdateOperationsInput | Date | string
     lastUpdated?: DateTimeFieldUpdateOperationsInput | Date | string
+    userId?: StringFieldUpdateOperationsInput | string
     tags?: JobApplicationTagUncheckedUpdateManyWithoutJobApplicationNestedInput
   }
 
-  export type UserCreateWithoutTemplatesInput = {
+  export type UserCreateWithoutAnalyticsInput = {
     id?: string
-    email: string
     username: string
+    email: string
+    password: string
     firstName?: string | null
     lastName?: string | null
-    password: string
+    country?: string | null
     emailVerified?: Date | string | null
     image?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    jobApplications?: JobApplicationCreateNestedManyWithoutUserInput
-    sessions?: SessionCreateNestedManyWithoutUserInput
+    isPublic?: boolean
     accounts?: AccountCreateNestedManyWithoutUserInput
+    sessions?: SessionCreateNestedManyWithoutUserInput
+    jobApplications?: JobApplicationCreateNestedManyWithoutUserInput
+    activityLogs?: ActivityLogCreateNestedManyWithoutUserInput
+    notifications?: NotificationCreateNestedManyWithoutUserInput
+    goals?: GoalCreateNestedManyWithoutUserInput
+    achievements?: AchievementCreateNestedManyWithoutUserInput
   }
 
-  export type UserUncheckedCreateWithoutTemplatesInput = {
+  export type UserUncheckedCreateWithoutAnalyticsInput = {
     id?: string
-    email: string
     username: string
+    email: string
+    password: string
     firstName?: string | null
     lastName?: string | null
-    password: string
+    country?: string | null
     emailVerified?: Date | string | null
     image?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    jobApplications?: JobApplicationUncheckedCreateNestedManyWithoutUserInput
-    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    isPublic?: boolean
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
+    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    jobApplications?: JobApplicationUncheckedCreateNestedManyWithoutUserInput
+    activityLogs?: ActivityLogUncheckedCreateNestedManyWithoutUserInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    goals?: GoalUncheckedCreateNestedManyWithoutUserInput
+    achievements?: AchievementUncheckedCreateNestedManyWithoutUserInput
   }
 
-  export type UserCreateOrConnectWithoutTemplatesInput = {
+  export type UserCreateOrConnectWithoutAnalyticsInput = {
     where: UserWhereUniqueInput
-    create: XOR<UserCreateWithoutTemplatesInput, UserUncheckedCreateWithoutTemplatesInput>
+    create: XOR<UserCreateWithoutAnalyticsInput, UserUncheckedCreateWithoutAnalyticsInput>
   }
 
-  export type UserUpsertWithoutTemplatesInput = {
-    update: XOR<UserUpdateWithoutTemplatesInput, UserUncheckedUpdateWithoutTemplatesInput>
-    create: XOR<UserCreateWithoutTemplatesInput, UserUncheckedCreateWithoutTemplatesInput>
+  export type UserUpsertWithoutAnalyticsInput = {
+    update: XOR<UserUpdateWithoutAnalyticsInput, UserUncheckedUpdateWithoutAnalyticsInput>
+    create: XOR<UserCreateWithoutAnalyticsInput, UserUncheckedCreateWithoutAnalyticsInput>
     where?: UserWhereInput
   }
 
-  export type UserUpdateToOneWithWhereWithoutTemplatesInput = {
+  export type UserUpdateToOneWithWhereWithoutAnalyticsInput = {
     where?: UserWhereInput
-    data: XOR<UserUpdateWithoutTemplatesInput, UserUncheckedUpdateWithoutTemplatesInput>
+    data: XOR<UserUpdateWithoutAnalyticsInput, UserUncheckedUpdateWithoutAnalyticsInput>
   }
 
-  export type UserUpdateWithoutTemplatesInput = {
+  export type UserUpdateWithoutAnalyticsInput = {
     id?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
     username?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
     firstName?: NullableStringFieldUpdateOperationsInput | string | null
     lastName?: NullableStringFieldUpdateOperationsInput | string | null
-    password?: StringFieldUpdateOperationsInput | string
+    country?: NullableStringFieldUpdateOperationsInput | string | null
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     image?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    jobApplications?: JobApplicationUpdateManyWithoutUserNestedInput
-    sessions?: SessionUpdateManyWithoutUserNestedInput
+    isPublic?: BoolFieldUpdateOperationsInput | boolean
     accounts?: AccountUpdateManyWithoutUserNestedInput
+    sessions?: SessionUpdateManyWithoutUserNestedInput
+    jobApplications?: JobApplicationUpdateManyWithoutUserNestedInput
+    activityLogs?: ActivityLogUpdateManyWithoutUserNestedInput
+    notifications?: NotificationUpdateManyWithoutUserNestedInput
+    goals?: GoalUpdateManyWithoutUserNestedInput
+    achievements?: AchievementUpdateManyWithoutUserNestedInput
   }
 
-  export type UserUncheckedUpdateWithoutTemplatesInput = {
+  export type UserUncheckedUpdateWithoutAnalyticsInput = {
     id?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
     username?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
     firstName?: NullableStringFieldUpdateOperationsInput | string | null
     lastName?: NullableStringFieldUpdateOperationsInput | string | null
-    password?: StringFieldUpdateOperationsInput | string
+    country?: NullableStringFieldUpdateOperationsInput | string | null
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     image?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    jobApplications?: JobApplicationUncheckedUpdateManyWithoutUserNestedInput
-    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    isPublic?: BoolFieldUpdateOperationsInput | boolean
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
+    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    jobApplications?: JobApplicationUncheckedUpdateManyWithoutUserNestedInput
+    activityLogs?: ActivityLogUncheckedUpdateManyWithoutUserNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    goals?: GoalUncheckedUpdateManyWithoutUserNestedInput
+    achievements?: AchievementUncheckedUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserCreateWithoutNotificationsInput = {
+    id?: string
+    username: string
+    email: string
+    password: string
+    firstName?: string | null
+    lastName?: string | null
+    country?: string | null
+    emailVerified?: Date | string | null
+    image?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    isPublic?: boolean
+    accounts?: AccountCreateNestedManyWithoutUserInput
+    sessions?: SessionCreateNestedManyWithoutUserInput
+    jobApplications?: JobApplicationCreateNestedManyWithoutUserInput
+    activityLogs?: ActivityLogCreateNestedManyWithoutUserInput
+    analytics?: AnalyticsCreateNestedManyWithoutUserInput
+    goals?: GoalCreateNestedManyWithoutUserInput
+    achievements?: AchievementCreateNestedManyWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutNotificationsInput = {
+    id?: string
+    username: string
+    email: string
+    password: string
+    firstName?: string | null
+    lastName?: string | null
+    country?: string | null
+    emailVerified?: Date | string | null
+    image?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    isPublic?: boolean
+    accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
+    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    jobApplications?: JobApplicationUncheckedCreateNestedManyWithoutUserInput
+    activityLogs?: ActivityLogUncheckedCreateNestedManyWithoutUserInput
+    analytics?: AnalyticsUncheckedCreateNestedManyWithoutUserInput
+    goals?: GoalUncheckedCreateNestedManyWithoutUserInput
+    achievements?: AchievementUncheckedCreateNestedManyWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutNotificationsInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutNotificationsInput, UserUncheckedCreateWithoutNotificationsInput>
+  }
+
+  export type UserUpsertWithoutNotificationsInput = {
+    update: XOR<UserUpdateWithoutNotificationsInput, UserUncheckedUpdateWithoutNotificationsInput>
+    create: XOR<UserCreateWithoutNotificationsInput, UserUncheckedCreateWithoutNotificationsInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutNotificationsInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutNotificationsInput, UserUncheckedUpdateWithoutNotificationsInput>
+  }
+
+  export type UserUpdateWithoutNotificationsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    firstName?: NullableStringFieldUpdateOperationsInput | string | null
+    lastName?: NullableStringFieldUpdateOperationsInput | string | null
+    country?: NullableStringFieldUpdateOperationsInput | string | null
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    isPublic?: BoolFieldUpdateOperationsInput | boolean
+    accounts?: AccountUpdateManyWithoutUserNestedInput
+    sessions?: SessionUpdateManyWithoutUserNestedInput
+    jobApplications?: JobApplicationUpdateManyWithoutUserNestedInput
+    activityLogs?: ActivityLogUpdateManyWithoutUserNestedInput
+    analytics?: AnalyticsUpdateManyWithoutUserNestedInput
+    goals?: GoalUpdateManyWithoutUserNestedInput
+    achievements?: AchievementUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutNotificationsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    firstName?: NullableStringFieldUpdateOperationsInput | string | null
+    lastName?: NullableStringFieldUpdateOperationsInput | string | null
+    country?: NullableStringFieldUpdateOperationsInput | string | null
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    isPublic?: BoolFieldUpdateOperationsInput | boolean
+    accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
+    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    jobApplications?: JobApplicationUncheckedUpdateManyWithoutUserNestedInput
+    activityLogs?: ActivityLogUncheckedUpdateManyWithoutUserNestedInput
+    analytics?: AnalyticsUncheckedUpdateManyWithoutUserNestedInput
+    goals?: GoalUncheckedUpdateManyWithoutUserNestedInput
+    achievements?: AchievementUncheckedUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserCreateWithoutGoalsInput = {
+    id?: string
+    username: string
+    email: string
+    password: string
+    firstName?: string | null
+    lastName?: string | null
+    country?: string | null
+    emailVerified?: Date | string | null
+    image?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    isPublic?: boolean
+    accounts?: AccountCreateNestedManyWithoutUserInput
+    sessions?: SessionCreateNestedManyWithoutUserInput
+    jobApplications?: JobApplicationCreateNestedManyWithoutUserInput
+    activityLogs?: ActivityLogCreateNestedManyWithoutUserInput
+    analytics?: AnalyticsCreateNestedManyWithoutUserInput
+    notifications?: NotificationCreateNestedManyWithoutUserInput
+    achievements?: AchievementCreateNestedManyWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutGoalsInput = {
+    id?: string
+    username: string
+    email: string
+    password: string
+    firstName?: string | null
+    lastName?: string | null
+    country?: string | null
+    emailVerified?: Date | string | null
+    image?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    isPublic?: boolean
+    accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
+    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    jobApplications?: JobApplicationUncheckedCreateNestedManyWithoutUserInput
+    activityLogs?: ActivityLogUncheckedCreateNestedManyWithoutUserInput
+    analytics?: AnalyticsUncheckedCreateNestedManyWithoutUserInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    achievements?: AchievementUncheckedCreateNestedManyWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutGoalsInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutGoalsInput, UserUncheckedCreateWithoutGoalsInput>
+  }
+
+  export type UserUpsertWithoutGoalsInput = {
+    update: XOR<UserUpdateWithoutGoalsInput, UserUncheckedUpdateWithoutGoalsInput>
+    create: XOR<UserCreateWithoutGoalsInput, UserUncheckedCreateWithoutGoalsInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutGoalsInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutGoalsInput, UserUncheckedUpdateWithoutGoalsInput>
+  }
+
+  export type UserUpdateWithoutGoalsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    firstName?: NullableStringFieldUpdateOperationsInput | string | null
+    lastName?: NullableStringFieldUpdateOperationsInput | string | null
+    country?: NullableStringFieldUpdateOperationsInput | string | null
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    isPublic?: BoolFieldUpdateOperationsInput | boolean
+    accounts?: AccountUpdateManyWithoutUserNestedInput
+    sessions?: SessionUpdateManyWithoutUserNestedInput
+    jobApplications?: JobApplicationUpdateManyWithoutUserNestedInput
+    activityLogs?: ActivityLogUpdateManyWithoutUserNestedInput
+    analytics?: AnalyticsUpdateManyWithoutUserNestedInput
+    notifications?: NotificationUpdateManyWithoutUserNestedInput
+    achievements?: AchievementUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutGoalsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    firstName?: NullableStringFieldUpdateOperationsInput | string | null
+    lastName?: NullableStringFieldUpdateOperationsInput | string | null
+    country?: NullableStringFieldUpdateOperationsInput | string | null
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    isPublic?: BoolFieldUpdateOperationsInput | boolean
+    accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
+    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    jobApplications?: JobApplicationUncheckedUpdateManyWithoutUserNestedInput
+    activityLogs?: ActivityLogUncheckedUpdateManyWithoutUserNestedInput
+    analytics?: AnalyticsUncheckedUpdateManyWithoutUserNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    achievements?: AchievementUncheckedUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserCreateWithoutAchievementsInput = {
+    id?: string
+    username: string
+    email: string
+    password: string
+    firstName?: string | null
+    lastName?: string | null
+    country?: string | null
+    emailVerified?: Date | string | null
+    image?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    isPublic?: boolean
+    accounts?: AccountCreateNestedManyWithoutUserInput
+    sessions?: SessionCreateNestedManyWithoutUserInput
+    jobApplications?: JobApplicationCreateNestedManyWithoutUserInput
+    activityLogs?: ActivityLogCreateNestedManyWithoutUserInput
+    analytics?: AnalyticsCreateNestedManyWithoutUserInput
+    notifications?: NotificationCreateNestedManyWithoutUserInput
+    goals?: GoalCreateNestedManyWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutAchievementsInput = {
+    id?: string
+    username: string
+    email: string
+    password: string
+    firstName?: string | null
+    lastName?: string | null
+    country?: string | null
+    emailVerified?: Date | string | null
+    image?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    isPublic?: boolean
+    accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
+    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    jobApplications?: JobApplicationUncheckedCreateNestedManyWithoutUserInput
+    activityLogs?: ActivityLogUncheckedCreateNestedManyWithoutUserInput
+    analytics?: AnalyticsUncheckedCreateNestedManyWithoutUserInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    goals?: GoalUncheckedCreateNestedManyWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutAchievementsInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutAchievementsInput, UserUncheckedCreateWithoutAchievementsInput>
+  }
+
+  export type UserUpsertWithoutAchievementsInput = {
+    update: XOR<UserUpdateWithoutAchievementsInput, UserUncheckedUpdateWithoutAchievementsInput>
+    create: XOR<UserCreateWithoutAchievementsInput, UserUncheckedCreateWithoutAchievementsInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutAchievementsInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutAchievementsInput, UserUncheckedUpdateWithoutAchievementsInput>
+  }
+
+  export type UserUpdateWithoutAchievementsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    firstName?: NullableStringFieldUpdateOperationsInput | string | null
+    lastName?: NullableStringFieldUpdateOperationsInput | string | null
+    country?: NullableStringFieldUpdateOperationsInput | string | null
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    isPublic?: BoolFieldUpdateOperationsInput | boolean
+    accounts?: AccountUpdateManyWithoutUserNestedInput
+    sessions?: SessionUpdateManyWithoutUserNestedInput
+    jobApplications?: JobApplicationUpdateManyWithoutUserNestedInput
+    activityLogs?: ActivityLogUpdateManyWithoutUserNestedInput
+    analytics?: AnalyticsUpdateManyWithoutUserNestedInput
+    notifications?: NotificationUpdateManyWithoutUserNestedInput
+    goals?: GoalUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutAchievementsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    firstName?: NullableStringFieldUpdateOperationsInput | string | null
+    lastName?: NullableStringFieldUpdateOperationsInput | string | null
+    country?: NullableStringFieldUpdateOperationsInput | string | null
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    isPublic?: BoolFieldUpdateOperationsInput | boolean
+    accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
+    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    jobApplications?: JobApplicationUncheckedUpdateManyWithoutUserNestedInput
+    activityLogs?: ActivityLogUncheckedUpdateManyWithoutUserNestedInput
+    analytics?: AnalyticsUncheckedUpdateManyWithoutUserNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    goals?: GoalUncheckedUpdateManyWithoutUserNestedInput
+  }
+
+  export type AccountCreateManyUserInput = {
+    id?: string
+    type: string
+    provider: string
+    providerAccountId: string
+    refresh_token?: string | null
+    access_token?: string | null
+    expires_at?: number | null
+    token_type?: string | null
+    scope?: string | null
+    id_token?: string | null
+    session_state?: string | null
+  }
+
+  export type SessionCreateManyUserInput = {
+    id?: string
+    sessionToken: string
+    expires: Date | string
   }
 
   export type JobApplicationCreateManyUserInput = {
@@ -18375,147 +22704,54 @@ export namespace Prisma {
     lastUpdated?: Date | string
   }
 
-  export type TemplateCreateManyUserInput = {
+  export type ActivityLogCreateManyUserInput = {
     id?: string
-    name: string
-    type: $Enums.TemplateType
-    fileName: string
-    fileSize: number
-    mimeType: string
-    fileData: string
-    uploadDate?: Date | string
+    jobApplicationId: string
+    action: string
+    description: string
+    timestamp?: Date | string
   }
 
-  export type SessionCreateManyUserInput = {
+  export type AnalyticsCreateManyUserInput = {
     id?: string
-    sessionToken: string
-    expires: Date | string
+    period: string
+    date: Date | string
+    totalApps?: number
+    responsesRate?: number
+    interviewRate?: number
+    offerRate?: number
+    avgResponseTime?: number
+    createdAt?: Date | string
   }
 
-  export type AccountCreateManyUserInput = {
+  export type NotificationCreateManyUserInput = {
     id?: string
-    type: string
-    provider: string
-    providerAccountId: string
-    refresh_token?: string | null
-    access_token?: string | null
-    expires_at?: number | null
-    token_type?: string | null
-    scope?: string | null
-    id_token?: string | null
-    session_state?: string | null
+    title: string
+    message: string
+    type: $Enums.NotificationType
+    isRead?: boolean
+    createdAt?: Date | string
   }
 
-  export type JobApplicationUpdateWithoutUserInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    jobTitle?: StringFieldUpdateOperationsInput | string
-    company?: StringFieldUpdateOperationsInput | string
-    location?: StringFieldUpdateOperationsInput | string
-    jobPostUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    salaryMin?: NullableIntFieldUpdateOperationsInput | number | null
-    salaryMax?: NullableIntFieldUpdateOperationsInput | number | null
-    salaryCurrency?: NullableStringFieldUpdateOperationsInput | string | null
-    contactName?: NullableStringFieldUpdateOperationsInput | string | null
-    contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
-    contactPhone?: NullableStringFieldUpdateOperationsInput | string | null
-    notes?: NullableStringFieldUpdateOperationsInput | string | null
-    status?: EnumJobStatusFieldUpdateOperationsInput | $Enums.JobStatus
-    priority?: EnumPriorityFieldUpdateOperationsInput | $Enums.Priority
-    appliedDate?: DateTimeFieldUpdateOperationsInput | Date | string
-    lastUpdated?: DateTimeFieldUpdateOperationsInput | Date | string
-    tags?: JobApplicationTagUpdateManyWithoutJobApplicationNestedInput
-    activities?: ActivityLogUpdateManyWithoutJobApplicationNestedInput
+  export type GoalCreateManyUserInput = {
+    id?: string
+    type: $Enums.GoalType
+    target: number
+    period: $Enums.GoalPeriod
+    startDate: Date | string
+    endDate: Date | string
+    achieved?: number
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
   }
 
-  export type JobApplicationUncheckedUpdateWithoutUserInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    jobTitle?: StringFieldUpdateOperationsInput | string
-    company?: StringFieldUpdateOperationsInput | string
-    location?: StringFieldUpdateOperationsInput | string
-    jobPostUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    salaryMin?: NullableIntFieldUpdateOperationsInput | number | null
-    salaryMax?: NullableIntFieldUpdateOperationsInput | number | null
-    salaryCurrency?: NullableStringFieldUpdateOperationsInput | string | null
-    contactName?: NullableStringFieldUpdateOperationsInput | string | null
-    contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
-    contactPhone?: NullableStringFieldUpdateOperationsInput | string | null
-    notes?: NullableStringFieldUpdateOperationsInput | string | null
-    status?: EnumJobStatusFieldUpdateOperationsInput | $Enums.JobStatus
-    priority?: EnumPriorityFieldUpdateOperationsInput | $Enums.Priority
-    appliedDate?: DateTimeFieldUpdateOperationsInput | Date | string
-    lastUpdated?: DateTimeFieldUpdateOperationsInput | Date | string
-    tags?: JobApplicationTagUncheckedUpdateManyWithoutJobApplicationNestedInput
-    activities?: ActivityLogUncheckedUpdateManyWithoutJobApplicationNestedInput
-  }
-
-  export type JobApplicationUncheckedUpdateManyWithoutUserInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    jobTitle?: StringFieldUpdateOperationsInput | string
-    company?: StringFieldUpdateOperationsInput | string
-    location?: StringFieldUpdateOperationsInput | string
-    jobPostUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    salaryMin?: NullableIntFieldUpdateOperationsInput | number | null
-    salaryMax?: NullableIntFieldUpdateOperationsInput | number | null
-    salaryCurrency?: NullableStringFieldUpdateOperationsInput | string | null
-    contactName?: NullableStringFieldUpdateOperationsInput | string | null
-    contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
-    contactPhone?: NullableStringFieldUpdateOperationsInput | string | null
-    notes?: NullableStringFieldUpdateOperationsInput | string | null
-    status?: EnumJobStatusFieldUpdateOperationsInput | $Enums.JobStatus
-    priority?: EnumPriorityFieldUpdateOperationsInput | $Enums.Priority
-    appliedDate?: DateTimeFieldUpdateOperationsInput | Date | string
-    lastUpdated?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type TemplateUpdateWithoutUserInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    type?: EnumTemplateTypeFieldUpdateOperationsInput | $Enums.TemplateType
-    fileName?: StringFieldUpdateOperationsInput | string
-    fileSize?: IntFieldUpdateOperationsInput | number
-    mimeType?: StringFieldUpdateOperationsInput | string
-    fileData?: StringFieldUpdateOperationsInput | string
-    uploadDate?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type TemplateUncheckedUpdateWithoutUserInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    type?: EnumTemplateTypeFieldUpdateOperationsInput | $Enums.TemplateType
-    fileName?: StringFieldUpdateOperationsInput | string
-    fileSize?: IntFieldUpdateOperationsInput | number
-    mimeType?: StringFieldUpdateOperationsInput | string
-    fileData?: StringFieldUpdateOperationsInput | string
-    uploadDate?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type TemplateUncheckedUpdateManyWithoutUserInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    type?: EnumTemplateTypeFieldUpdateOperationsInput | $Enums.TemplateType
-    fileName?: StringFieldUpdateOperationsInput | string
-    fileSize?: IntFieldUpdateOperationsInput | number
-    mimeType?: StringFieldUpdateOperationsInput | string
-    fileData?: StringFieldUpdateOperationsInput | string
-    uploadDate?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type SessionUpdateWithoutUserInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    sessionToken?: StringFieldUpdateOperationsInput | string
-    expires?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type SessionUncheckedUpdateWithoutUserInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    sessionToken?: StringFieldUpdateOperationsInput | string
-    expires?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type SessionUncheckedUpdateManyWithoutUserInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    sessionToken?: StringFieldUpdateOperationsInput | string
-    expires?: DateTimeFieldUpdateOperationsInput | Date | string
+  export type AchievementCreateManyUserInput = {
+    id?: string
+    type: $Enums.AchievementType
+    title: string
+    description: string
+    unlockedAt?: Date | string
   }
 
   export type AccountUpdateWithoutUserInput = {
@@ -18560,7 +22796,237 @@ export namespace Prisma {
     session_state?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
+  export type SessionUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    sessionToken?: StringFieldUpdateOperationsInput | string
+    expires?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SessionUncheckedUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    sessionToken?: StringFieldUpdateOperationsInput | string
+    expires?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SessionUncheckedUpdateManyWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    sessionToken?: StringFieldUpdateOperationsInput | string
+    expires?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type JobApplicationUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    jobTitle?: StringFieldUpdateOperationsInput | string
+    company?: StringFieldUpdateOperationsInput | string
+    location?: StringFieldUpdateOperationsInput | string
+    jobPostUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    salaryMin?: NullableFloatFieldUpdateOperationsInput | number | null
+    salaryMax?: NullableFloatFieldUpdateOperationsInput | number | null
+    salaryCurrency?: NullableStringFieldUpdateOperationsInput | string | null
+    contactName?: NullableStringFieldUpdateOperationsInput | string | null
+    contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    contactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumJobStatusFieldUpdateOperationsInput | $Enums.JobStatus
+    priority?: EnumPriorityFieldUpdateOperationsInput | $Enums.Priority
+    appliedDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    lastUpdated?: DateTimeFieldUpdateOperationsInput | Date | string
+    tags?: JobApplicationTagUpdateManyWithoutJobApplicationNestedInput
+    activityLogs?: ActivityLogUpdateManyWithoutJobApplicationNestedInput
+  }
+
+  export type JobApplicationUncheckedUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    jobTitle?: StringFieldUpdateOperationsInput | string
+    company?: StringFieldUpdateOperationsInput | string
+    location?: StringFieldUpdateOperationsInput | string
+    jobPostUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    salaryMin?: NullableFloatFieldUpdateOperationsInput | number | null
+    salaryMax?: NullableFloatFieldUpdateOperationsInput | number | null
+    salaryCurrency?: NullableStringFieldUpdateOperationsInput | string | null
+    contactName?: NullableStringFieldUpdateOperationsInput | string | null
+    contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    contactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumJobStatusFieldUpdateOperationsInput | $Enums.JobStatus
+    priority?: EnumPriorityFieldUpdateOperationsInput | $Enums.Priority
+    appliedDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    lastUpdated?: DateTimeFieldUpdateOperationsInput | Date | string
+    tags?: JobApplicationTagUncheckedUpdateManyWithoutJobApplicationNestedInput
+    activityLogs?: ActivityLogUncheckedUpdateManyWithoutJobApplicationNestedInput
+  }
+
+  export type JobApplicationUncheckedUpdateManyWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    jobTitle?: StringFieldUpdateOperationsInput | string
+    company?: StringFieldUpdateOperationsInput | string
+    location?: StringFieldUpdateOperationsInput | string
+    jobPostUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    salaryMin?: NullableFloatFieldUpdateOperationsInput | number | null
+    salaryMax?: NullableFloatFieldUpdateOperationsInput | number | null
+    salaryCurrency?: NullableStringFieldUpdateOperationsInput | string | null
+    contactName?: NullableStringFieldUpdateOperationsInput | string | null
+    contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    contactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumJobStatusFieldUpdateOperationsInput | $Enums.JobStatus
+    priority?: EnumPriorityFieldUpdateOperationsInput | $Enums.Priority
+    appliedDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    lastUpdated?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ActivityLogUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    action?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    timestamp?: DateTimeFieldUpdateOperationsInput | Date | string
+    jobApplication?: JobApplicationUpdateOneRequiredWithoutActivityLogsNestedInput
+  }
+
+  export type ActivityLogUncheckedUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    jobApplicationId?: StringFieldUpdateOperationsInput | string
+    action?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    timestamp?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ActivityLogUncheckedUpdateManyWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    jobApplicationId?: StringFieldUpdateOperationsInput | string
+    action?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    timestamp?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AnalyticsUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    period?: StringFieldUpdateOperationsInput | string
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    totalApps?: IntFieldUpdateOperationsInput | number
+    responsesRate?: FloatFieldUpdateOperationsInput | number
+    interviewRate?: FloatFieldUpdateOperationsInput | number
+    offerRate?: FloatFieldUpdateOperationsInput | number
+    avgResponseTime?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AnalyticsUncheckedUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    period?: StringFieldUpdateOperationsInput | string
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    totalApps?: IntFieldUpdateOperationsInput | number
+    responsesRate?: FloatFieldUpdateOperationsInput | number
+    interviewRate?: FloatFieldUpdateOperationsInput | number
+    offerRate?: FloatFieldUpdateOperationsInput | number
+    avgResponseTime?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AnalyticsUncheckedUpdateManyWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    period?: StringFieldUpdateOperationsInput | string
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    totalApps?: IntFieldUpdateOperationsInput | number
+    responsesRate?: FloatFieldUpdateOperationsInput | number
+    interviewRate?: FloatFieldUpdateOperationsInput | number
+    offerRate?: FloatFieldUpdateOperationsInput | number
+    avgResponseTime?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type NotificationUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    message?: StringFieldUpdateOperationsInput | string
+    type?: EnumNotificationTypeFieldUpdateOperationsInput | $Enums.NotificationType
+    isRead?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type NotificationUncheckedUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    message?: StringFieldUpdateOperationsInput | string
+    type?: EnumNotificationTypeFieldUpdateOperationsInput | $Enums.NotificationType
+    isRead?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type NotificationUncheckedUpdateManyWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    message?: StringFieldUpdateOperationsInput | string
+    type?: EnumNotificationTypeFieldUpdateOperationsInput | $Enums.NotificationType
+    isRead?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type GoalUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: EnumGoalTypeFieldUpdateOperationsInput | $Enums.GoalType
+    target?: IntFieldUpdateOperationsInput | number
+    period?: EnumGoalPeriodFieldUpdateOperationsInput | $Enums.GoalPeriod
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    endDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    achieved?: IntFieldUpdateOperationsInput | number
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type GoalUncheckedUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: EnumGoalTypeFieldUpdateOperationsInput | $Enums.GoalType
+    target?: IntFieldUpdateOperationsInput | number
+    period?: EnumGoalPeriodFieldUpdateOperationsInput | $Enums.GoalPeriod
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    endDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    achieved?: IntFieldUpdateOperationsInput | number
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type GoalUncheckedUpdateManyWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: EnumGoalTypeFieldUpdateOperationsInput | $Enums.GoalType
+    target?: IntFieldUpdateOperationsInput | number
+    period?: EnumGoalPeriodFieldUpdateOperationsInput | $Enums.GoalPeriod
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    endDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    achieved?: IntFieldUpdateOperationsInput | number
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AchievementUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: EnumAchievementTypeFieldUpdateOperationsInput | $Enums.AchievementType
+    title?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    unlockedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AchievementUncheckedUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: EnumAchievementTypeFieldUpdateOperationsInput | $Enums.AchievementType
+    title?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    unlockedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AchievementUncheckedUpdateManyWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: EnumAchievementTypeFieldUpdateOperationsInput | $Enums.AchievementType
+    title?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    unlockedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type JobApplicationTagCreateManyJobApplicationInput = {
+    id?: string
     tagId: string
   }
 
@@ -18568,63 +23034,66 @@ export namespace Prisma {
     id?: string
     userId: string
     action: string
-    description?: string | null
-    metadata?: string | null
-    createdAt?: Date | string
+    description: string
+    timestamp?: Date | string
   }
 
   export type JobApplicationTagUpdateWithoutJobApplicationInput = {
+    id?: StringFieldUpdateOperationsInput | string
     tag?: TagUpdateOneRequiredWithoutJobApplicationsNestedInput
   }
 
   export type JobApplicationTagUncheckedUpdateWithoutJobApplicationInput = {
+    id?: StringFieldUpdateOperationsInput | string
     tagId?: StringFieldUpdateOperationsInput | string
   }
 
   export type JobApplicationTagUncheckedUpdateManyWithoutJobApplicationInput = {
+    id?: StringFieldUpdateOperationsInput | string
     tagId?: StringFieldUpdateOperationsInput | string
   }
 
   export type ActivityLogUpdateWithoutJobApplicationInput = {
     id?: StringFieldUpdateOperationsInput | string
-    userId?: StringFieldUpdateOperationsInput | string
     action?: StringFieldUpdateOperationsInput | string
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    metadata?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    description?: StringFieldUpdateOperationsInput | string
+    timestamp?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutActivityLogsNestedInput
   }
 
   export type ActivityLogUncheckedUpdateWithoutJobApplicationInput = {
     id?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
     action?: StringFieldUpdateOperationsInput | string
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    metadata?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    description?: StringFieldUpdateOperationsInput | string
+    timestamp?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type ActivityLogUncheckedUpdateManyWithoutJobApplicationInput = {
     id?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
     action?: StringFieldUpdateOperationsInput | string
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    metadata?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    description?: StringFieldUpdateOperationsInput | string
+    timestamp?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type JobApplicationTagCreateManyTagInput = {
+    id?: string
     jobApplicationId: string
   }
 
   export type JobApplicationTagUpdateWithoutTagInput = {
+    id?: StringFieldUpdateOperationsInput | string
     jobApplication?: JobApplicationUpdateOneRequiredWithoutTagsNestedInput
   }
 
   export type JobApplicationTagUncheckedUpdateWithoutTagInput = {
+    id?: StringFieldUpdateOperationsInput | string
     jobApplicationId?: StringFieldUpdateOperationsInput | string
   }
 
   export type JobApplicationTagUncheckedUpdateManyWithoutTagInput = {
+    id?: StringFieldUpdateOperationsInput | string
     jobApplicationId?: StringFieldUpdateOperationsInput | string
   }
 

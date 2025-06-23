@@ -5,7 +5,7 @@ import { JobsService } from '@/services/jobs.service'
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions)
@@ -17,7 +17,8 @@ export async function GET(
       )
     }
 
-    const job = await JobsService.getJobApplication(session.user.id, params.id)
+    const { id } = await params
+    const job = await JobsService.getJobApplication(session.user.id, id)
 
     return NextResponse.json(job)
   } catch (error) {
@@ -37,7 +38,7 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions)
@@ -49,10 +50,11 @@ export async function PUT(
       )
     }
 
+    const { id } = await params
     const body = await request.json()
     
     const job = await JobsService.updateJobApplication(session.user.id, {
-      id: params.id,
+      id,
       ...body
     })
 
@@ -74,7 +76,7 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions)
@@ -86,7 +88,8 @@ export async function DELETE(
       )
     }
 
-    await JobsService.deleteJobApplication(session.user.id, params.id)
+    const { id } = await params
+    await JobsService.deleteJobApplication(session.user.id, id)
 
     return NextResponse.json({ success: true })
   } catch (error) {
