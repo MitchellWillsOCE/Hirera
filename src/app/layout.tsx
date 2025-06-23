@@ -14,13 +14,13 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "💼 JobTracker Pro - Manage Your Career Journey",
+  title: "💼 JobTracker  - Manage Your Career Journey",
   description: "A comprehensive job application tracking system to help you manage your job search efficiently. Track applications, analyze progress, and organize your career materials.",
   keywords: ["job tracker", "career management", "job search", "application tracker"],
-  authors: [{ name: "JobTracker Pro Team" }],
-  creator: "JobTracker Pro",
+  authors: [{ name: "JobTracker  Team" }],
+  creator: "JobTracker ",
   openGraph: {
-    title: "💼 JobTracker Pro",
+    title: "💼 JobTracker ",
     description: "Track and manage your job applications with ease",
     type: "website",
   },

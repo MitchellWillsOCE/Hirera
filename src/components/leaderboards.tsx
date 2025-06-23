@@ -53,7 +53,7 @@ export function Leaderboards() {
   const [loading, setLoading] = useState(true)
   const [metric, setMetric] = useState('applications')
   const [period, setPeriod] = useState('month')
-  const [country, setCountry] = useState('')
+  const [country, setCountry] = useState('all')
 
   useEffect(() => {
     fetchLeaderboard()
@@ -65,7 +65,7 @@ export function Leaderboards() {
       const params = new URLSearchParams({
         metric,
         period,
-        ...(country && { country })
+        ...(country && country !== 'all' && { country })
       })
       
       const response = await fetch(`/api/leaderboards?${params}`)
@@ -179,7 +179,7 @@ export function Leaderboards() {
                   <SelectValue placeholder="All Countries" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">🌍 All Countries</SelectItem>
+                  <SelectItem value="all">🌍 All Countries</SelectItem>
                   <SelectItem value="US">🇺🇸 United States</SelectItem>
                   <SelectItem value="CA">🇨🇦 Canada</SelectItem>
                   <SelectItem value="GB">🇬🇧 United Kingdom</SelectItem>

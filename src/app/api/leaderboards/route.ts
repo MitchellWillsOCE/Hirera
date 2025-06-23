@@ -67,7 +67,7 @@ export async function GET(request: NextRequest) {
     const users = await prisma.user.findMany({
       where: {
         isPublic: true,
-        ...(country && { country })
+        ...(country && country !== 'all' && { country })
       },
       select: {
         id: true,

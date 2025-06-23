@@ -37,16 +37,16 @@ const jobFormSchema = z.object({
   company: z.string().min(1, 'Company is required'),
   location: z.string().min(1, 'Location is required'),
   jobPostUrl: z.string().url('Invalid URL').optional().or(z.literal('')),
-  salaryMin: z.string().optional(),
-  salaryMax: z.string().optional(),
-  salaryCurrency: z.string(),
+  salaryMin: z.number().min(0, 'Salary must be positive').optional(),
+  salaryMax: z.number().min(0, 'Salary must be positive').optional(),
+  salaryCurrency: z.string().optional(),
   contactName: z.string().optional(),
   contactEmail: z.string().email('Invalid email').optional().or(z.literal('')),
   contactPhone: z.string().optional(),
   notes: z.string().optional(),
-  status: z.enum(['applied', 'screening', 'interview', 'offer', 'rejected', 'withdrawn']),
-  priority: z.enum(['low', 'medium', 'high']),
-  tags: z.string().optional(),
+  status: z.enum(['APPLIED', 'SCREENING', 'INTERVIEW', 'OFFER', 'REJECTED', 'WITHDRAWN']),
+  priority: z.enum(['LOW', 'MEDIUM', 'HIGH']),
+  tags: z.array(z.string()).optional(),
 });
 
 type JobFormValues = z.infer<typeof jobFormSchema>;
@@ -66,16 +66,16 @@ export function JobForm({ open, onClose, onSubmit, editingJob }: JobFormProps) {
       company: '',
       location: '',
       jobPostUrl: '',
-      salaryMin: '',
-      salaryMax: '',
+      salaryMin: undefined,
+      salaryMax: undefined,
       salaryCurrency: 'USD',
       contactName: '',
       contactEmail: '',
       contactPhone: '',
       notes: '',
-      status: 'applied',
-      priority: 'medium',
-      tags: '',
+      status: 'APPLIED',
+      priority: 'MEDIUM',
+      tags: [],
     },
   });
 
@@ -89,8 +89,8 @@ export function JobForm({ open, onClose, onSubmit, editingJob }: JobFormProps) {
         company: editingJob.company,
         location: editingJob.location,
         jobPostUrl: editingJob.jobPostUrl || '',
-        salaryMin: editingJob.salary?.min?.toString() || '',
-        salaryMax: editingJob.salary?.max?.toString() || '',
+        salaryMin: editingJob.salary?.min,
+        salaryMax: editingJob.salary?.max,
         salaryCurrency: editingJob.salary?.currency || 'USD',
         contactName: editingJob.contactInfo?.name || '',
         contactEmail: editingJob.contactInfo?.email || '',
@@ -98,7 +98,7 @@ export function JobForm({ open, onClose, onSubmit, editingJob }: JobFormProps) {
         notes: editingJob.notes || '',
         status: editingJob.status,
         priority: editingJob.priority,
-        tags: editingJob.tags.join(', '),
+        tags: editingJob.tags,
       });
       setTags(editingJob.tags);
     } else {
@@ -115,9 +115,9 @@ export function JobForm({ open, onClose, onSubmit, editingJob }: JobFormProps) {
       location: values.location,
       jobPostUrl: values.jobPostUrl || undefined,
       salary: values.salaryMin || values.salaryMax ? {
-        min: values.salaryMin ? parseFloat(values.salaryMin) : undefined,
-        max: values.salaryMax ? parseFloat(values.salaryMax) : undefined,
-        currency: values.salaryCurrency,
+        min: values.salaryMin,
+        max: values.salaryMax,
+        currency: values.salaryCurrency || 'USD',
       } : undefined,
       contactInfo: values.contactName || values.contactEmail || values.contactPhone ? {
         name: values.contactName || undefined,
@@ -127,7 +127,7 @@ export function JobForm({ open, onClose, onSubmit, editingJob }: JobFormProps) {
       notes: values.notes || undefined,
       status: values.status,
       priority: values.priority,
-      tags: tags,
+      tags: values.tags || [],
     };
 
     onSubmit(formattedData);
@@ -260,12 +260,12 @@ export function JobForm({ open, onClose, onSubmit, editingJob }: JobFormProps) {
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          <SelectItem value="applied">📝 Applied</SelectItem>
-                          <SelectItem value="screening">📞 Screening</SelectItem>
-                          <SelectItem value="interview">🎤 Interview</SelectItem>
-                          <SelectItem value="offer">🎉 Offer</SelectItem>
-                          <SelectItem value="rejected">❌ Rejected</SelectItem>
-                          <SelectItem value="withdrawn">🚫 Withdrawn</SelectItem>
+                          <SelectItem value="APPLIED">📝 Applied</SelectItem>
+                          <SelectItem value="SCREENING">📞 Screening</SelectItem>
+                          <SelectItem value="INTERVIEW">🎤 Interview</SelectItem>
+                          <SelectItem value="OFFER">🎉 Offer</SelectItem>
+                          <SelectItem value="REJECTED">❌ Rejected</SelectItem>
+                          <SelectItem value="WITHDRAWN">🚫 Withdrawn</SelectItem>
                         </SelectContent>
                       </Select>
                       <FormMessage />
@@ -289,9 +289,9 @@ export function JobForm({ open, onClose, onSubmit, editingJob }: JobFormProps) {
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          <SelectItem value="low">🟢 Low</SelectItem>
-                          <SelectItem value="medium">🟡 Medium</SelectItem>
-                          <SelectItem value="high">🔴 High</SelectItem>
+                          <SelectItem value="LOW">🟢 Low</SelectItem>
+                          <SelectItem value="MEDIUM">🟡 Medium</SelectItem>
+                          <SelectItem value="HIGH">🔴 High</SelectItem>
                         </SelectContent>
                       </Select>
                       <FormMessage />
@@ -344,7 +344,7 @@ export function JobForm({ open, onClose, onSubmit, editingJob }: JobFormProps) {
                       <Select onValueChange={field.onChange} defaultValue={field.value}>
                         <FormControl>
                           <SelectTrigger className="h-12 sm:h-10 text-base sm:text-sm">
-                            <SelectValue />
+                            <SelectValue placeholder="Select currency" />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>

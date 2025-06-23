@@ -40,14 +40,22 @@ export function AnalyticsPanel({ jobs }: AnalyticsPanelProps) {
 
     // Calculate average response time
     const respondedJobs = jobs.filter(job => 
-      ['screening', 'interview', 'offer', 'rejected'].includes(job.status)
+      ['SCREENING', 'INTERVIEW', 'OFFER', 'REJECTED'].includes(job.status)
     );
     
     let averageResponseTime = 0;
     if (respondedJobs.length > 0) {
       const totalDays = respondedJobs.reduce((sum, job) => {
+        const lastUpdatedDate = new Date(job.lastUpdated);
+        const appliedDate = new Date(job.appliedDate);
+        
+        // Check if dates are valid
+        if (isNaN(lastUpdatedDate.getTime()) || isNaN(appliedDate.getTime())) {
+          return sum; // Skip invalid dates
+        }
+        
         const daysDiff = Math.floor(
-          (job.lastUpdated.getTime() - job.appliedDate.getTime()) / (1000 * 60 * 60 * 24)
+          (lastUpdatedDate.getTime() - appliedDate.getTime()) / (1000 * 60 * 60 * 24)
         );
         return sum + daysDiff;
       }, 0);

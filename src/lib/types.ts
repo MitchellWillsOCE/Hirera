@@ -15,11 +15,11 @@ export interface JobApplication {
     phone?: string;
   };
   notes?: string;
-  status: 'applied' | 'screening' | 'interview' | 'offer' | 'rejected' | 'withdrawn';
+  status: 'APPLIED' | 'SCREENING' | 'INTERVIEW' | 'OFFER' | 'REJECTED' | 'WITHDRAWN';
   tags: string[];
   appliedDate: Date;
   lastUpdated: Date;
-  priority: 'low' | 'medium' | 'high';
+  priority: 'LOW' | 'MEDIUM' | 'HIGH';
 }
 
 export interface Template {

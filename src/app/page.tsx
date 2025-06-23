@@ -47,7 +47,7 @@ export default function HomePage() {
               <div className="p-2 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl shadow-lg">
                 <Briefcase className="h-6 w-6 text-white" />
               </div>
-              <h1 className="text-2xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">JobTracker Pro</h1>
+              <h1 className="text-2xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">JobTracker </h1>
             </div>
             <div className="flex items-center space-x-4">
               {session ? (
@@ -282,7 +282,7 @@ export default function HomePage() {
             Ready to Transform Your Job Search?
           </h2>
           <p className="text-xl text-gray-600 mb-8">
-            Join thousands of professionals who have found their dream jobs with JobTracker Pro
+            Join thousands of professionals who have found their dream jobs with JobTracker 
           </p>
           <Link href="/auth/signup">
             <Button size="lg" className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-lg px-8 py-4 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
@@ -301,13 +301,13 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="flex items-center justify-center space-x-2 mb-4">
             <Briefcase className="h-6 w-6 text-blue-400" />
-            <span className="text-xl font-bold">JobTracker Pro</span>
+            <span className="text-xl font-bold">JobTracker </span>
           </div>
           <p className="text-gray-400 mb-4">
             Empowering careers, one application at a time.
           </p>
           <p className="text-gray-500 text-sm">
-            © 2024 JobTracker Pro. Made with ❤️ by Mitchell Wills
+            © 2024 JobTracker . Made with ❤️ by Mitchell Wills
           </p>
         </div>
       </footer>

@@ -110,21 +110,21 @@ export function Dashboard() {
 
   const getStatusColor = (status: JobApplication['status']) => {
     const statusColors = {
-      applied: 'bg-blue-100 text-blue-800 border-blue-200',
-      screening: 'bg-yellow-100 text-yellow-800 border-yellow-200',
-      interview: 'bg-purple-100 text-purple-800 border-purple-200',
-      offer: 'bg-green-100 text-green-800 border-green-200',
-      rejected: 'bg-red-100 text-red-800 border-red-200',
-      withdrawn: 'bg-gray-100 text-gray-800 border-gray-200',
+      APPLIED: 'bg-blue-100 text-blue-800 border-blue-200',
+      SCREENING: 'bg-yellow-100 text-yellow-800 border-yellow-200',
+      INTERVIEW: 'bg-purple-100 text-purple-800 border-purple-200',
+      OFFER: 'bg-green-100 text-green-800 border-green-200',
+      REJECTED: 'bg-red-100 text-red-800 border-red-200',
+      WITHDRAWN: 'bg-gray-100 text-gray-800 border-gray-200',
     };
     return statusColors[status];
   };
 
   const getPriorityColor = (priority: JobApplication['priority']) => {
     const priorityColors = {
-      low: 'bg-green-100 text-green-800',
-      medium: 'bg-yellow-100 text-yellow-800',
-      high: 'bg-red-100 text-red-800',
+      LOW: 'bg-green-100 text-green-800',
+      MEDIUM: 'bg-yellow-100 text-yellow-800',
+      HIGH: 'bg-red-100 text-red-800',
     };
     return priorityColors[priority];
   };
@@ -141,14 +141,14 @@ export function Dashboard() {
       },
       {
         title: 'Active Applications',
-        value: jobs.filter(job => ['applied', 'screening', 'interview'].includes(job.status)).length,
+        value: jobs.filter(job => ['APPLIED', 'SCREENING', 'INTERVIEW'].includes(job.status)).length,
         icon: TrendingUp,
         color: 'text-purple-600',
         bgColor: 'bg-purple-50'
       },
       {
         title: 'Offers Received',
-        value: analytics.applicationsByStatus.offer || 0,
+        value: analytics.applicationsByStatus.OFFER || 0,
         icon: Users,
         color: 'text-green-600',
         bgColor: 'bg-green-50'

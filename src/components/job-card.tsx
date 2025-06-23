@@ -29,6 +29,13 @@ import {
   DropdownMenuTrigger,
   DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 interface JobCardProps {
   job: JobApplication;
@@ -82,7 +89,7 @@ export function JobCard({
   };
 
   const statusOptions: JobApplication['status'][] = [
-    'applied', 'screening', 'interview', 'offer', 'rejected', 'withdrawn'
+    'APPLIED', 'SCREENING', 'INTERVIEW', 'OFFER', 'REJECTED', 'WITHDRAWN'
   ];
 
   const getDaysAgo = (date: Date | string | null | undefined) => {
@@ -99,17 +106,17 @@ export function JobCard({
     return diffDays;
   };
 
-  const getStatusEmoji = (status: JobApplication['status']) => {
-    const statusEmojis = {
-      applied: '📝',
-      screening: '📞',
-      interview: '🎤',
-      offer: '🎉',
-      rejected: '❌',
-      withdrawn: '🚫'
-    };
-    return statusEmojis[status];
-  };
+  const getStatusIcon = (status: JobApplication['status']) => {
+    const icons = {
+      APPLIED: '📝',
+      SCREENING: '📞', 
+      INTERVIEW: '🎤',
+      OFFER: '🎉',
+      REJECTED: '❌',
+      WITHDRAWN: '🚫'
+    }
+    return icons[status] || '📝'
+  }
 
   const formatDate = (date: Date | string | null | undefined, formatString: string) => {
     if (!date) return 'N/A';
@@ -138,7 +145,7 @@ export function JobCard({
     >
       <Card className="h-full shadow-lg hover:shadow-2xl transition-all duration-300 border-0 bg-white dark:bg-slate-800 overflow-hidden relative">
         {/* Priority Indicator */}
-        <div className={`absolute top-0 left-0 w-full h-1 ${job.priority === 'high' ? 'bg-red-500' : job.priority === 'medium' ? 'bg-yellow-500' : 'bg-green-500'}`} />
+        <div className={`absolute top-0 left-0 w-full h-1 ${job.priority === 'HIGH' ? 'bg-red-500' : job.priority === 'MEDIUM' ? 'bg-yellow-500' : 'bg-green-500'}`} />
         
         <CardHeader className="pb-3">
           <div className="flex items-start justify-between">
@@ -166,30 +173,19 @@ export function JobCard({
         <CardContent className="space-y-4">
           {/* Status Badge */}
           <div className="flex items-center justify-between">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className={`${getStatusColor(job.status)} hover:opacity-80 cursor-pointer transition-all duration-200 hover:scale-105`}
-                >
-                  <span className="mr-2">{getStatusEmoji(job.status)}</span>
-                  {job.status.charAt(0).toUpperCase() + job.status.slice(1)}
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent>
-                {statusOptions.map((status) => (
-                  <DropdownMenuItem
-                    key={status}
-                    onClick={() => onStatusUpdate(job.id, status)}
-                    className={job.status === status ? 'bg-slate-100 dark:bg-slate-700' : ''}
-                  >
-                    <span className="mr-2">{getStatusEmoji(status)}</span>
-                    {status.charAt(0).toUpperCase() + status.slice(1)}
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <Select value={job.status} onValueChange={(value) => onStatusUpdate(job.id, value as JobApplication['status'])}>
+              <SelectTrigger className="w-full">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="APPLIED">📝 Applied</SelectItem>
+                <SelectItem value="SCREENING">📞 Screening</SelectItem>
+                <SelectItem value="INTERVIEW">🎤 Interview</SelectItem>
+                <SelectItem value="OFFER">🎉 Offer</SelectItem>
+                <SelectItem value="REJECTED">❌ Rejected</SelectItem>
+                <SelectItem value="WITHDRAWN">🚫 Withdrawn</SelectItem>
+              </SelectContent>
+            </Select>
             
             <div className="flex items-center text-xs text-slate-500">
               <Clock className="h-3 w-3 mr-1" />

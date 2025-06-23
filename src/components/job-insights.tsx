@@ -144,7 +144,7 @@ export function JobInsights() {
               <label className="text-sm font-medium text-gray-700 mb-2 block">Location</label>
               <Select value={location} onValueChange={setLocation}>
                 <SelectTrigger>
-                  <SelectValue />
+                  <SelectValue placeholder="Select location" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="remote">Remote</SelectItem>
@@ -160,7 +160,7 @@ export function JobInsights() {
               <label className="text-sm font-medium text-gray-700 mb-2 block">Experience</label>
               <Select value={experience} onValueChange={setExperience}>
                 <SelectTrigger>
-                  <SelectValue />
+                  <SelectValue placeholder="Select experience level" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="entry">Entry Level (0-2 years)</SelectItem>

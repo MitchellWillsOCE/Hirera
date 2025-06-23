@@ -31,7 +31,7 @@ export default function DashboardPage() {
           <div className="flex items-center justify-center mb-6">
             <Briefcase className="h-16 w-16 text-blue-600 animate-pulse" />
           </div>
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">💼 JobTracker Pro</h1>
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">💼 JobTracker </h1>
           <div className="flex items-center justify-center space-x-2">
             <Loader2 className="h-6 w-6 animate-spin text-blue-600" />
             <p className="text-gray-600">Loading your dashboard...</p>

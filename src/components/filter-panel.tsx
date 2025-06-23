@@ -26,10 +26,10 @@ export function FilterPanel({
   jobs,
 }: FilterPanelProps) {
   const statusOptions: JobApplication['status'][] = [
-    'applied', 'screening', 'interview', 'offer', 'rejected', 'withdrawn'
+    'APPLIED', 'SCREENING', 'INTERVIEW', 'OFFER', 'REJECTED', 'WITHDRAWN'
   ];
 
-  const priorityOptions: JobApplication['priority'][] = ['low', 'medium', 'high'];
+  const priorityOptions: JobApplication['priority'][] = ['LOW', 'MEDIUM', 'HIGH'];
 
   const toggleStatusFilter = (status: JobApplication['status']) => {
     const currentStatuses = filters.status || [];
@@ -62,21 +62,21 @@ export function FilterPanel({
 
   const getStatusEmoji = (status: JobApplication['status']) => {
     const statusEmojis = {
-      applied: '📝',
-      screening: '📞',
-      interview: '🎤',
-      offer: '🎉',
-      rejected: '❌',
-      withdrawn: '🚫'
+      APPLIED: '📝',
+      SCREENING: '📞',
+      INTERVIEW: '🎤',
+      OFFER: '🎉',
+      REJECTED: '❌',
+      WITHDRAWN: '🚫'
     };
     return statusEmojis[status];
   };
 
   const getPriorityEmoji = (priority: JobApplication['priority']) => {
     const priorityEmojis = {
-      low: '🟢',
-      medium: '🟡',
-      high: '🔴'
+      LOW: '🟢',
+      MEDIUM: '🟡',
+      HIGH: '🔴'
     };
     return priorityEmojis[priority];
   };

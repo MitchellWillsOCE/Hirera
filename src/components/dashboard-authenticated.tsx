@@ -218,21 +218,21 @@ export function Dashboard({ user }: DashboardProps) {
 
   const getStatusColor = (status: JobApplication['status']) => {
     const colors = {
-      applied: 'bg-blue-100 text-blue-800',
-      screening: 'bg-yellow-100 text-yellow-800',
-      interview: 'bg-purple-100 text-purple-800',
-      offer: 'bg-green-100 text-green-800',
-      rejected: 'bg-red-100 text-red-800',
-      withdrawn: 'bg-gray-100 text-gray-800'
+      APPLIED: 'bg-blue-100 text-blue-800',
+      SCREENING: 'bg-yellow-100 text-yellow-800',
+      INTERVIEW: 'bg-purple-100 text-purple-800',
+      OFFER: 'bg-green-100 text-green-800',
+      REJECTED: 'bg-red-100 text-red-800',
+      WITHDRAWN: 'bg-gray-100 text-gray-800'
     }
     return colors[status]
   }
 
   const getPriorityColor = (priority: JobApplication['priority']) => {
     const colors = {
-      low: 'bg-green-100 text-green-800',
-      medium: 'bg-yellow-100 text-yellow-800',
-      high: 'bg-red-100 text-red-800'
+      LOW: 'bg-green-100 text-green-800',
+      MEDIUM: 'bg-yellow-100 text-yellow-800',
+      HIGH: 'bg-red-100 text-red-800'
     }
     return colors[priority]
   }
