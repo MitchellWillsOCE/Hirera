@@ -5,16 +5,16 @@ import { prisma } from '@/lib/prisma'
 // Helper function to create sample job applications
 async function createSampleJobApplications(userId: string) {
   const sampleJobs = [
-    { company: 'Google', position: 'Software Engineer', status: 'APPLIED', salary: 180000, location: 'Mountain View, CA' },
-    { company: 'Microsoft', position: 'Senior Developer', status: 'INTERVIEW', salary: 170000, location: 'Seattle, WA' },
-    { company: 'Apple', position: 'iOS Developer', status: 'OFFER', salary: 190000, location: 'Cupertino, CA' },
-    { company: 'Meta', position: 'Frontend Engineer', status: 'REJECTED', salary: 175000, location: 'Menlo Park, CA' },
-    { company: 'Amazon', position: 'Full Stack Developer', status: 'APPLIED', salary: 165000, location: 'Seattle, WA' },
-    { company: 'Netflix', position: 'Senior Software Engineer', status: 'SCREENING', salary: 200000, location: 'Los Gatos, CA' },
-    { company: 'Tesla', position: 'Software Engineer', status: 'INTERVIEW', salary: 155000, location: 'Austin, TX' },
-    { company: 'Spotify', position: 'Backend Engineer', status: 'APPLIED', salary: 160000, location: 'New York, NY' },
-    { company: 'Uber', position: 'Software Engineer', status: 'REJECTED', salary: 170000, location: 'San Francisco, CA' },
-    { company: 'Airbnb', position: 'Full Stack Engineer', status: 'SCREENING', salary: 185000, location: 'San Francisco, CA' },
+    { company: 'Google', jobTitle: 'Software Engineer', status: 'APPLIED', salaryMin: 170000, salaryMax: 190000, location: 'Mountain View, CA' },
+    { company: 'Microsoft', jobTitle: 'Senior Developer', status: 'INTERVIEW', salaryMin: 160000, salaryMax: 180000, location: 'Seattle, WA' },
+    { company: 'Apple', jobTitle: 'iOS Developer', status: 'OFFER', salaryMin: 180000, salaryMax: 200000, location: 'Cupertino, CA' },
+    { company: 'Meta', jobTitle: 'Frontend Engineer', status: 'REJECTED', salaryMin: 165000, salaryMax: 185000, location: 'Menlo Park, CA' },
+    { company: 'Amazon', jobTitle: 'Full Stack Developer', status: 'APPLIED', salaryMin: 155000, salaryMax: 175000, location: 'Seattle, WA' },
+    { company: 'Netflix', jobTitle: 'Senior Software Engineer', status: 'SCREENING', salaryMin: 190000, salaryMax: 210000, location: 'Los Gatos, CA' },
+    { company: 'Tesla', jobTitle: 'Software Engineer', status: 'INTERVIEW', salaryMin: 145000, salaryMax: 165000, location: 'Austin, TX' },
+    { company: 'Spotify', jobTitle: 'Backend Engineer', status: 'APPLIED', salaryMin: 150000, salaryMax: 170000, location: 'New York, NY' },
+    { company: 'Uber', jobTitle: 'Software Engineer', status: 'REJECTED', salaryMin: 160000, salaryMax: 180000, location: 'San Francisco, CA' },
+    { company: 'Airbnb', jobTitle: 'Full Stack Engineer', status: 'SCREENING', salaryMin: 175000, salaryMax: 195000, location: 'San Francisco, CA' },
   ]
 
   // Check if user already has applications
@@ -37,17 +37,16 @@ async function createSampleJobApplications(userId: string) {
       return {
         userId,
         company: job.company,
-        position: job.position,
-        jobTitle: job.position,
+        jobTitle: job.jobTitle,
         location: job.location,
-        salary: job.salary,
+        salaryMin: job.salaryMin,
+        salaryMax: job.salaryMax,
+        salaryCurrency: 'USD',
         status: job.status as 'APPLIED' | 'SCREENING' | 'INTERVIEW' | 'OFFER' | 'REJECTED' | 'WITHDRAWN',
-        description: `${job.position} role at ${job.company}. Great opportunity to work on cutting-edge technology.`,
-        requirements: 'Bachelor\'s degree in Computer Science or related field, 3+ years experience',
+        notes: `${job.jobTitle} role at ${job.company}. Great opportunity to work on cutting-edge technology.`,
         appliedDate,
         lastUpdated,
-        priority: ['LOW', 'MEDIUM', 'HIGH'][Math.floor(Math.random() * 3)] as 'LOW' | 'MEDIUM' | 'HIGH',
-        currency: 'USD'
+        priority: ['LOW', 'MEDIUM', 'HIGH'][Math.floor(Math.random() * 3)] as 'LOW' | 'MEDIUM' | 'HIGH'
       }
     })
 
@@ -109,20 +108,20 @@ async function createMockLeaderboardUsers() {
           lastUpdated.setDate(appliedDate.getDate() + Math.floor(Math.random() * 21) + 1)
         }
 
+        const salaryBase = Math.floor(Math.random() * 100000) + 80000 // 80k-180k base
         applications.push({
           userId: mockUser.id,
           company: companies[Math.floor(Math.random() * companies.length)],
-          position: positions[Math.floor(Math.random() * positions.length)],
           jobTitle: positions[Math.floor(Math.random() * positions.length)],
           location: 'Remote',
-          salary: Math.floor(Math.random() * 100000) + 80000, // 80k-180k
+          salaryMin: salaryBase,
+          salaryMax: salaryBase + 20000, // 20k range
+          salaryCurrency: 'USD',
           status: status as 'APPLIED' | 'SCREENING' | 'INTERVIEW' | 'OFFER' | 'REJECTED' | 'WITHDRAWN',
-          description: 'Sample job application for leaderboard testing',
-          requirements: 'Sample requirements',
+          notes: 'Sample job application for leaderboard testing',
           appliedDate,
           lastUpdated,
-          priority: ['LOW', 'MEDIUM', 'HIGH'][Math.floor(Math.random() * 3)] as 'LOW' | 'MEDIUM' | 'HIGH',
-          currency: 'USD'
+          priority: ['LOW', 'MEDIUM', 'HIGH'][Math.floor(Math.random() * 3)] as 'LOW' | 'MEDIUM' | 'HIGH'
         })
       }
 
