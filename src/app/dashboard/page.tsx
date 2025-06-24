@@ -3,7 +3,7 @@
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
-import { Dashboard } from '@/components/dashboard-authenticated'
+import { DashboardAuthenticated } from '@/components/dashboard-authenticated'
 import { Loader2, Briefcase } from 'lucide-react'
 
 export default function DashboardPage() {
@@ -45,5 +45,5 @@ export default function DashboardPage() {
     return null // This shouldn't happen due to the redirect above, but just in case
   }
 
-  return <Dashboard user={session.user} />
+  return <DashboardAuthenticated user={session.user} />
 } 

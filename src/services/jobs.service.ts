@@ -6,11 +6,8 @@ export interface CreateJobApplicationData {
   company: string
   location: string
   jobPostUrl?: string
-  salary?: {
-    min?: number
-    max?: number
-    currency?: string
-  }
+  salary?: number
+  salaryCurrency?: string
   contactInfo?: {
     name?: string
     email?: string
@@ -47,92 +44,102 @@ export interface JobsSortOptions {
 }
 
 export class JobsService {
+  private static transformJobApplication(jobApplication: any): JobApplication {
+    return {
+      ...jobApplication,
+      tags: jobApplication.tags.map((t: any) => t.tag.name),
+      salary: jobApplication.salary,
+      salaryCurrency: jobApplication.salaryCurrency,
+      contactInfo: {
+        name: jobApplication.contactName,
+        email: jobApplication.contactEmail,
+        phone: jobApplication.contactPhone,
+      },
+    };
+  }
+
   static async createJobApplication(userId: string, data: CreateJobApplicationData) {
-    const { tags, salary, contactInfo, ...jobData } = data
-    
-    const jobApplication = await prisma.jobApplication.create({
+    const { tags, salary, salaryCurrency, contactInfo, ...jobData } = data;
+
+    const newJob = await prisma.jobApplication.create({
       data: {
         ...jobData,
-        salaryMin: salary?.min,
-        salaryMax: salary?.max,
-        salaryCurrency: salary?.currency || 'USD',
+        userId,
+        salary,
+        salaryCurrency,
         contactName: contactInfo?.name,
         contactEmail: contactInfo?.email,
         contactPhone: contactInfo?.phone,
-        userId,
-        tags: tags ? {
-          create: tags.map(tagName => ({
+        tags: {
+          create: (tags || []).map((tagName) => ({
             tag: {
               connectOrCreate: {
                 where: { name: tagName },
-                create: { name: tagName }
-              }
-            }
-          }))
-        } : undefined
+                create: { name: tagName },
+              },
+            },
+          })),
+        },
       },
       include: {
-        tags: {
-          include: {
-            tag: true
-          }
-        }
-      }
-    })
+        tags: { include: { tag: true } },
+      },
+    });
 
-    // Log activity
-    await this.logActivity(userId, jobApplication.id, 'CREATE', 'Job application created')
-    
-    return this.transformJobApplication(jobApplication)
+    await this.logActivity(userId, newJob.id, 'CREATE', `Created job application: ${data.jobTitle}`)
+
+    return this.transformJobApplication(newJob);
   }
 
   static async updateJobApplication(userId: string, data: UpdateJobApplicationData) {
-    const { id, tags, salary, contactInfo, ...updateData } = data
-    
-    // Verify ownership
+    const { id, tags, salary, salaryCurrency, contactInfo, ...updateData } = data;
+
     const existingJob = await prisma.jobApplication.findFirst({
-      where: { id, userId }
-    })
-    
+      where: { id, userId },
+    });
+
     if (!existingJob) {
-      throw new Error('Job application not found or access denied')
+      throw new Error('Job application not found or access denied');
     }
 
     const jobApplication = await prisma.jobApplication.update({
       where: { id },
       data: {
         ...updateData,
-        salaryMin: salary?.min,
-        salaryMax: salary?.max,
-        salaryCurrency: salary?.currency || 'USD',
-        contactName: contactInfo?.name,
-        contactEmail: contactInfo?.email,
-        contactPhone: contactInfo?.phone,
-        tags: tags ? {
-          deleteMany: {},
-          create: tags.map(tagName => ({
-            tag: {
-              connectOrCreate: {
-                where: { name: tagName },
-                create: { name: tagName }
-              }
-            }
-          }))
-        } : undefined
+        salary,
+        salaryCurrency,
+        lastUpdated: new Date(),
+        ...(contactInfo && {
+          contactName: contactInfo.name,
+          contactEmail: contactInfo.email,
+          contactPhone: contactInfo.phone,
+        }),
+        ...(tags && {
+          tags: {
+            deleteMany: {},
+            create: tags.map((tagName) => ({
+              tag: {
+                connectOrCreate: {
+                  where: { name: tagName },
+                  create: { name:tagName },
+                },
+              },
+            })),
+          },
+        }),
       },
       include: {
         tags: {
           include: {
-            tag: true
-          }
-        }
-      }
-    })
+            tag: true,
+          },
+        },
+      },
+    });
 
-    // Log activity
-    await this.logActivity(userId, id, 'UPDATE', 'Job application updated')
-    
-    return this.transformJobApplication(jobApplication)
+    await this.logActivity(userId, id, 'UPDATE', 'Job application updated');
+
+    return this.transformJobApplication(jobApplication);
   }
 
   static async deleteJobApplication(userId: string, id: string) {
@@ -245,32 +252,6 @@ export class JobsService {
     }
 
     return this.transformJobApplication(jobApplication)
-  }
-
-  private static transformJobApplication(jobApplication: any) {
-    return {
-      id: jobApplication.id,
-      jobTitle: jobApplication.jobTitle,
-      company: jobApplication.company,
-      location: jobApplication.location,
-      jobPostUrl: jobApplication.jobPostUrl,
-      salary: jobApplication.salaryMin || jobApplication.salaryMax ? {
-        min: jobApplication.salaryMin,
-        max: jobApplication.salaryMax,
-        currency: jobApplication.salaryCurrency || 'USD'
-      } : undefined,
-      contactInfo: jobApplication.contactName || jobApplication.contactEmail || jobApplication.contactPhone ? {
-        name: jobApplication.contactName,
-        email: jobApplication.contactEmail,
-        phone: jobApplication.contactPhone
-      } : undefined,
-      notes: jobApplication.notes,
-      status: jobApplication.status.toLowerCase(),
-      priority: jobApplication.priority.toLowerCase(),
-      tags: jobApplication.tags?.map((t: any) => t.tag.name) || [],
-      appliedDate: jobApplication.appliedDate,
-      lastUpdated: jobApplication.lastUpdated
-    }
   }
 
   private static async logActivity(userId: string, jobApplicationId: string, action: string, description: string) {

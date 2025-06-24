@@ -21,6 +21,7 @@ import {
   Users
 } from 'lucide-react';
 import { JobApplication } from '@/lib/types';
+import { JobStatus } from '@/generated/prisma';
 import { format } from 'date-fns';
 import {
   DropdownMenu,
@@ -36,14 +37,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { getCountryFlag } from '@/lib/countries';
+import { getCurrencySymbol } from '@/lib/currencies';
 
 interface JobCardProps {
   job: JobApplication;
   onEdit: (job: JobApplication) => void;
   onDelete: (id: string) => void;
   onStatusUpdate: (id: string, status: JobApplication['status']) => void;
-  getStatusColor: (status: JobApplication['status']) => string;
-  getPriorityColor: (priority: JobApplication['priority']) => string;
 }
 
 export function JobCard({ 
@@ -51,45 +52,13 @@ export function JobCard({
   onEdit, 
   onDelete, 
   onStatusUpdate, 
-  getStatusColor, 
-  getPriorityColor 
 }: JobCardProps) {
-  const formatSalary = (job: JobApplication) => {
-    // Handle new schema with salaryMin/salaryMax
-    if ((job as any).salaryMin || (job as any).salaryMax) {
-      const min = (job as any).salaryMin;
-      const max = (job as any).salaryMax;
-      const currency = (job as any).salaryCurrency || 'USD';
-      const symbol = currency === 'USD' ? '$' : currency;
-      
-      if (min && max) {
-        return `${symbol}${min.toLocaleString()} - ${symbol}${max.toLocaleString()}`;
-      } else if (min) {
-        return `From ${symbol}${min.toLocaleString()}`;
-      } else if (max) {
-        return `Up to ${symbol}${max.toLocaleString()}`;
-      }
-    }
-    
-    // Handle old schema with single salary field
-    if (job.salary) {
-      const { min, max, currency } = job.salary;
-      const symbol = currency === 'USD' ? '$' : currency;
-      
-      if (min && max) {
-        return `${symbol}${min.toLocaleString()} - ${symbol}${max.toLocaleString()}`;
-      } else if (min) {
-        return `From ${symbol}${min.toLocaleString()}`;
-      } else if (max) {
-        return `Up to ${symbol}${max.toLocaleString()}`;
-      }
-    }
-    
-    return null;
+  const handleStatusChange = (newStatus: JobStatus) => {
+    onStatusUpdate(job.id, newStatus);
   };
 
   const statusOptions: JobApplication['status'][] = [
-    'APPLIED', 'SCREENING', 'INTERVIEW', 'OFFER', 'REJECTED', 'WITHDRAWN'
+    'APPLIED', 'SCREENING', 'INTERVIEW', 'OFFER', 'REJECTED', 'WITHDRAWN', 'EMPLOYED'
   ];
 
   const getDaysAgo = (date: Date | string | null | undefined) => {
@@ -113,7 +82,8 @@ export function JobCard({
       INTERVIEW: '🎤',
       OFFER: '🎉',
       REJECTED: '❌',
-      WITHDRAWN: '🚫'
+      WITHDRAWN: '🚫',
+      EMPLOYED: '💼'
     }
     return icons[status] || '📝'
   }
@@ -158,7 +128,7 @@ export function JobCard({
                 <span className="font-medium">{job.company}</span>
               </div>
             </div>
-            <Badge className={`${getPriorityColor(job.priority)} text-xs font-medium ml-2 animate-pulse`}>
+            <Badge className={`text-xs font-medium ml-2 ${job.priority === 'HIGH' ? 'bg-red-100 text-red-800' : job.priority === 'MEDIUM' ? 'bg-yellow-100 text-yellow-800' : 'bg-green-100 text-green-800'}`}>
               <Flag className="h-3 w-3 mr-1" />
               {job.priority}
             </Badge>
@@ -194,18 +164,17 @@ export function JobCard({
           </div>
 
           {/* Salary */}
-          {(job.salary || (job as any).salaryMin || (job as any).salaryMax) && formatSalary(job) && (
-            <motion.div 
-              className="flex items-center text-sm text-slate-700 dark:text-slate-300"
-              whileHover={{ scale: 1.05 }}
-            >
+          {typeof job.salary === 'number' && (
+            <div className="flex items-center text-sm text-slate-700 dark:text-slate-300">
               <DollarSign className="h-4 w-4 mr-1 text-green-600" />
-              <span className="font-semibold">{formatSalary(job)}</span>
-            </motion.div>
+              <span className="font-semibold">
+                {getCurrencySymbol(job.salaryCurrency || 'USD')}{job.salary.toLocaleString()}
+              </span>
+            </div>
           )}
 
           {/* Tags */}
-          {job.tags.length > 0 && (
+          {job.tags && job.tags.length > 0 && (
             <div className="space-y-2">
               <div className="flex items-center text-xs text-slate-600 dark:text-slate-400">
                 <Tag className="h-3 w-3 mr-1" />

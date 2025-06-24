@@ -109,15 +109,16 @@ export function Dashboard() {
   };
 
   const getStatusColor = (status: JobApplication['status']) => {
-    const statusColors = {
-      APPLIED: 'bg-blue-100 text-blue-800 border-blue-200',
-      SCREENING: 'bg-yellow-100 text-yellow-800 border-yellow-200',
-      INTERVIEW: 'bg-purple-100 text-purple-800 border-purple-200',
-      OFFER: 'bg-green-100 text-green-800 border-green-200',
-      REJECTED: 'bg-red-100 text-red-800 border-red-200',
-      WITHDRAWN: 'bg-gray-100 text-gray-800 border-gray-200',
+    const colors = {
+      APPLIED: 'bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-300',
+      SCREENING: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/50 dark:text-yellow-300',
+      INTERVIEW: 'bg-purple-100 text-purple-800 dark:bg-purple-900/50 dark:text-purple-300',
+      OFFER: 'bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300',
+      REJECTED: 'bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-300',
+      WITHDRAWN: 'bg-gray-100 text-gray-800 dark:bg-gray-700/50 dark:text-gray-300',
+      EMPLOYED: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/50 dark:text-emerald-300',
     };
-    return statusColors[status];
+    return colors[status] || colors.APPLIED;
   };
 
   const getPriorityColor = (priority: JobApplication['priority']) => {
@@ -322,36 +323,19 @@ export function Dashboard() {
               animate={{ opacity: 1 }}
               transition={{ duration: 0.5, delay: 0.3 }}
             >
-              {filteredJobs.length === 0 ? (
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  className="text-center py-12"
-                >
-                  <div className="text-6xl mb-4">🔍</div>
-                  <h3 className="text-xl font-semibold text-slate-900 dark:text-slate-100 mb-2">
-                    No applications found
-                  </h3>
-                  <p className="text-slate-600 dark:text-slate-400 mb-4">
-                    Try adjusting your filters or add your first job application
-                  </p>
-                  <Button onClick={() => setShowJobForm(true)}>
-                    <Plus className="h-4 w-4 mr-2" />
-                    Add Your First Application
-                  </Button>
-                </motion.div>
-              ) : viewMode === 'card' ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  <AnimatePresence>
-                    {filteredJobs.map((job, index) => (
-                      <motion.div
-                        key={job.id}
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -20 }}
-                        transition={{ duration: 0.3, delay: index * 0.05 }}
-                      >
+              {filteredJobs.length > 0 ? (
+                <AnimatePresence>
+                  {viewMode === 'card' ? (
+                    <motion.div
+                      key="card-view"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+                    >
+                      {filteredJobs.map((job, index) => (
                         <JobCard
+                          key={job.id}
                           job={job}
                           onEdit={handleEditJob}
                           onDelete={handleDeleteJob}
@@ -359,27 +343,32 @@ export function Dashboard() {
                           getStatusColor={getStatusColor}
                           getPriorityColor={getPriorityColor}
                         />
-                      </motion.div>
-                    ))}
-                  </AnimatePresence>
-                </div>
+                      ))}
+                    </motion.div>
+                  ) : (
+                    <motion.div
+                      key="table-view"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                    >
+                      <JobTable
+                        jobs={filteredJobs}
+                        onEdit={handleEditJob}
+                        onDelete={handleDeleteJob}
+                        onStatusUpdate={handleStatusUpdate}
+                        sortOptions={sortOptions}
+                        onSortChange={setSortOptions}
+                        getStatusColor={getStatusColor}
+                        getPriorityColor={getPriorityColor}
+                      />
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               ) : (
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <JobTable
-                    jobs={filteredJobs}
-                    onEdit={handleEditJob}
-                    onDelete={handleDeleteJob}
-                    onStatusUpdate={handleStatusUpdate}
-                    sortOptions={sortOptions}
-                    onSortChange={setSortOptions}
-                    getStatusColor={getStatusColor}
-                    getPriorityColor={getPriorityColor}
-                  />
-                </motion.div>
+                <div className="text-center py-12">
+                  <p className="text-slate-500 dark:text-slate-400">No matching jobs found.</p>
+                </div>
               )}
             </motion.div>
           </TabsContent>

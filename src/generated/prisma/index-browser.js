@@ -166,8 +166,7 @@ exports.Prisma.JobApplicationScalarFieldEnum = {
   company: 'company',
   location: 'location',
   jobPostUrl: 'jobPostUrl',
-  salaryMin: 'salaryMin',
-  salaryMax: 'salaryMax',
+  salary: 'salary',
   salaryCurrency: 'salaryCurrency',
   contactName: 'contactName',
   contactEmail: 'contactEmail',
@@ -271,7 +270,8 @@ exports.JobStatus = exports.$Enums.JobStatus = {
   INTERVIEW: 'INTERVIEW',
   OFFER: 'OFFER',
   REJECTED: 'REJECTED',
-  WITHDRAWN: 'WITHDRAWN'
+  WITHDRAWN: 'WITHDRAWN',
+  EMPLOYED: 'EMPLOYED'
 };
 
 exports.Priority = exports.$Enums.Priority = {

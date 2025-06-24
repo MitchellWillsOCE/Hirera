@@ -89,7 +89,8 @@ export namespace $Enums {
   INTERVIEW: 'INTERVIEW',
   OFFER: 'OFFER',
   REJECTED: 'REJECTED',
-  WITHDRAWN: 'WITHDRAWN'
+  WITHDRAWN: 'WITHDRAWN',
+  EMPLOYED: 'EMPLOYED'
 };
 
 export type JobStatus = (typeof JobStatus)[keyof typeof JobStatus]
@@ -6794,13 +6795,11 @@ export namespace Prisma {
   }
 
   export type JobApplicationAvgAggregateOutputType = {
-    salaryMin: number | null
-    salaryMax: number | null
+    salary: number | null
   }
 
   export type JobApplicationSumAggregateOutputType = {
-    salaryMin: number | null
-    salaryMax: number | null
+    salary: number | null
   }
 
   export type JobApplicationMinAggregateOutputType = {
@@ -6809,8 +6808,7 @@ export namespace Prisma {
     company: string | null
     location: string | null
     jobPostUrl: string | null
-    salaryMin: number | null
-    salaryMax: number | null
+    salary: number | null
     salaryCurrency: string | null
     contactName: string | null
     contactEmail: string | null
@@ -6829,8 +6827,7 @@ export namespace Prisma {
     company: string | null
     location: string | null
     jobPostUrl: string | null
-    salaryMin: number | null
-    salaryMax: number | null
+    salary: number | null
     salaryCurrency: string | null
     contactName: string | null
     contactEmail: string | null
@@ -6849,8 +6846,7 @@ export namespace Prisma {
     company: number
     location: number
     jobPostUrl: number
-    salaryMin: number
-    salaryMax: number
+    salary: number
     salaryCurrency: number
     contactName: number
     contactEmail: number
@@ -6866,13 +6862,11 @@ export namespace Prisma {
 
 
   export type JobApplicationAvgAggregateInputType = {
-    salaryMin?: true
-    salaryMax?: true
+    salary?: true
   }
 
   export type JobApplicationSumAggregateInputType = {
-    salaryMin?: true
-    salaryMax?: true
+    salary?: true
   }
 
   export type JobApplicationMinAggregateInputType = {
@@ -6881,8 +6875,7 @@ export namespace Prisma {
     company?: true
     location?: true
     jobPostUrl?: true
-    salaryMin?: true
-    salaryMax?: true
+    salary?: true
     salaryCurrency?: true
     contactName?: true
     contactEmail?: true
@@ -6901,8 +6894,7 @@ export namespace Prisma {
     company?: true
     location?: true
     jobPostUrl?: true
-    salaryMin?: true
-    salaryMax?: true
+    salary?: true
     salaryCurrency?: true
     contactName?: true
     contactEmail?: true
@@ -6921,8 +6913,7 @@ export namespace Prisma {
     company?: true
     location?: true
     jobPostUrl?: true
-    salaryMin?: true
-    salaryMax?: true
+    salary?: true
     salaryCurrency?: true
     contactName?: true
     contactEmail?: true
@@ -7028,8 +7019,7 @@ export namespace Prisma {
     company: string
     location: string
     jobPostUrl: string | null
-    salaryMin: number | null
-    salaryMax: number | null
+    salary: number | null
     salaryCurrency: string | null
     contactName: string | null
     contactEmail: string | null
@@ -7067,8 +7057,7 @@ export namespace Prisma {
     company?: boolean
     location?: boolean
     jobPostUrl?: boolean
-    salaryMin?: boolean
-    salaryMax?: boolean
+    salary?: boolean
     salaryCurrency?: boolean
     contactName?: boolean
     contactEmail?: boolean
@@ -7091,8 +7080,7 @@ export namespace Prisma {
     company?: boolean
     location?: boolean
     jobPostUrl?: boolean
-    salaryMin?: boolean
-    salaryMax?: boolean
+    salary?: boolean
     salaryCurrency?: boolean
     contactName?: boolean
     contactEmail?: boolean
@@ -7112,8 +7100,7 @@ export namespace Prisma {
     company?: boolean
     location?: boolean
     jobPostUrl?: boolean
-    salaryMin?: boolean
-    salaryMax?: boolean
+    salary?: boolean
     salaryCurrency?: boolean
     contactName?: boolean
     contactEmail?: boolean
@@ -7133,8 +7120,7 @@ export namespace Prisma {
     company?: boolean
     location?: boolean
     jobPostUrl?: boolean
-    salaryMin?: boolean
-    salaryMax?: boolean
+    salary?: boolean
     salaryCurrency?: boolean
     contactName?: boolean
     contactEmail?: boolean
@@ -7147,7 +7133,7 @@ export namespace Prisma {
     userId?: boolean
   }
 
-  export type JobApplicationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "jobTitle" | "company" | "location" | "jobPostUrl" | "salaryMin" | "salaryMax" | "salaryCurrency" | "contactName" | "contactEmail" | "contactPhone" | "notes" | "status" | "priority" | "appliedDate" | "lastUpdated" | "userId", ExtArgs["result"]["jobApplication"]>
+  export type JobApplicationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "jobTitle" | "company" | "location" | "jobPostUrl" | "salary" | "salaryCurrency" | "contactName" | "contactEmail" | "contactPhone" | "notes" | "status" | "priority" | "appliedDate" | "lastUpdated" | "userId", ExtArgs["result"]["jobApplication"]>
   export type JobApplicationInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
     tags?: boolean | JobApplication$tagsArgs<ExtArgs>
@@ -7174,8 +7160,7 @@ export namespace Prisma {
       company: string
       location: string
       jobPostUrl: string | null
-      salaryMin: number | null
-      salaryMax: number | null
+      salary: number | null
       salaryCurrency: string | null
       contactName: string | null
       contactEmail: string | null
@@ -7617,8 +7602,7 @@ export namespace Prisma {
     readonly company: FieldRef<"JobApplication", 'String'>
     readonly location: FieldRef<"JobApplication", 'String'>
     readonly jobPostUrl: FieldRef<"JobApplication", 'String'>
-    readonly salaryMin: FieldRef<"JobApplication", 'Float'>
-    readonly salaryMax: FieldRef<"JobApplication", 'Float'>
+    readonly salary: FieldRef<"JobApplication", 'Float'>
     readonly salaryCurrency: FieldRef<"JobApplication", 'String'>
     readonly contactName: FieldRef<"JobApplication", 'String'>
     readonly contactEmail: FieldRef<"JobApplication", 'String'>
@@ -16818,8 +16802,7 @@ export namespace Prisma {
     company: 'company',
     location: 'location',
     jobPostUrl: 'jobPostUrl',
-    salaryMin: 'salaryMin',
-    salaryMax: 'salaryMax',
+    salary: 'salary',
     salaryCurrency: 'salaryCurrency',
     contactName: 'contactName',
     contactEmail: 'contactEmail',
@@ -17349,8 +17332,7 @@ export namespace Prisma {
     company?: StringFilter<"JobApplication"> | string
     location?: StringFilter<"JobApplication"> | string
     jobPostUrl?: StringNullableFilter<"JobApplication"> | string | null
-    salaryMin?: FloatNullableFilter<"JobApplication"> | number | null
-    salaryMax?: FloatNullableFilter<"JobApplication"> | number | null
+    salary?: FloatNullableFilter<"JobApplication"> | number | null
     salaryCurrency?: StringNullableFilter<"JobApplication"> | string | null
     contactName?: StringNullableFilter<"JobApplication"> | string | null
     contactEmail?: StringNullableFilter<"JobApplication"> | string | null
@@ -17372,8 +17354,7 @@ export namespace Prisma {
     company?: SortOrder
     location?: SortOrder
     jobPostUrl?: SortOrderInput | SortOrder
-    salaryMin?: SortOrderInput | SortOrder
-    salaryMax?: SortOrderInput | SortOrder
+    salary?: SortOrderInput | SortOrder
     salaryCurrency?: SortOrderInput | SortOrder
     contactName?: SortOrderInput | SortOrder
     contactEmail?: SortOrderInput | SortOrder
@@ -17398,8 +17379,7 @@ export namespace Prisma {
     company?: StringFilter<"JobApplication"> | string
     location?: StringFilter<"JobApplication"> | string
     jobPostUrl?: StringNullableFilter<"JobApplication"> | string | null
-    salaryMin?: FloatNullableFilter<"JobApplication"> | number | null
-    salaryMax?: FloatNullableFilter<"JobApplication"> | number | null
+    salary?: FloatNullableFilter<"JobApplication"> | number | null
     salaryCurrency?: StringNullableFilter<"JobApplication"> | string | null
     contactName?: StringNullableFilter<"JobApplication"> | string | null
     contactEmail?: StringNullableFilter<"JobApplication"> | string | null
@@ -17421,8 +17401,7 @@ export namespace Prisma {
     company?: SortOrder
     location?: SortOrder
     jobPostUrl?: SortOrderInput | SortOrder
-    salaryMin?: SortOrderInput | SortOrder
-    salaryMax?: SortOrderInput | SortOrder
+    salary?: SortOrderInput | SortOrder
     salaryCurrency?: SortOrderInput | SortOrder
     contactName?: SortOrderInput | SortOrder
     contactEmail?: SortOrderInput | SortOrder
@@ -17449,8 +17428,7 @@ export namespace Prisma {
     company?: StringWithAggregatesFilter<"JobApplication"> | string
     location?: StringWithAggregatesFilter<"JobApplication"> | string
     jobPostUrl?: StringNullableWithAggregatesFilter<"JobApplication"> | string | null
-    salaryMin?: FloatNullableWithAggregatesFilter<"JobApplication"> | number | null
-    salaryMax?: FloatNullableWithAggregatesFilter<"JobApplication"> | number | null
+    salary?: FloatNullableWithAggregatesFilter<"JobApplication"> | number | null
     salaryCurrency?: StringNullableWithAggregatesFilter<"JobApplication"> | string | null
     contactName?: StringNullableWithAggregatesFilter<"JobApplication"> | string | null
     contactEmail?: StringNullableWithAggregatesFilter<"JobApplication"> | string | null
@@ -18309,8 +18287,7 @@ export namespace Prisma {
     company: string
     location: string
     jobPostUrl?: string | null
-    salaryMin?: number | null
-    salaryMax?: number | null
+    salary?: number | null
     salaryCurrency?: string | null
     contactName?: string | null
     contactEmail?: string | null
@@ -18331,8 +18308,7 @@ export namespace Prisma {
     company: string
     location: string
     jobPostUrl?: string | null
-    salaryMin?: number | null
-    salaryMax?: number | null
+    salary?: number | null
     salaryCurrency?: string | null
     contactName?: string | null
     contactEmail?: string | null
@@ -18353,8 +18329,7 @@ export namespace Prisma {
     company?: StringFieldUpdateOperationsInput | string
     location?: StringFieldUpdateOperationsInput | string
     jobPostUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    salaryMin?: NullableFloatFieldUpdateOperationsInput | number | null
-    salaryMax?: NullableFloatFieldUpdateOperationsInput | number | null
+    salary?: NullableFloatFieldUpdateOperationsInput | number | null
     salaryCurrency?: NullableStringFieldUpdateOperationsInput | string | null
     contactName?: NullableStringFieldUpdateOperationsInput | string | null
     contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
@@ -18375,8 +18350,7 @@ export namespace Prisma {
     company?: StringFieldUpdateOperationsInput | string
     location?: StringFieldUpdateOperationsInput | string
     jobPostUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    salaryMin?: NullableFloatFieldUpdateOperationsInput | number | null
-    salaryMax?: NullableFloatFieldUpdateOperationsInput | number | null
+    salary?: NullableFloatFieldUpdateOperationsInput | number | null
     salaryCurrency?: NullableStringFieldUpdateOperationsInput | string | null
     contactName?: NullableStringFieldUpdateOperationsInput | string | null
     contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
@@ -18397,8 +18371,7 @@ export namespace Prisma {
     company: string
     location: string
     jobPostUrl?: string | null
-    salaryMin?: number | null
-    salaryMax?: number | null
+    salary?: number | null
     salaryCurrency?: string | null
     contactName?: string | null
     contactEmail?: string | null
@@ -18417,8 +18390,7 @@ export namespace Prisma {
     company?: StringFieldUpdateOperationsInput | string
     location?: StringFieldUpdateOperationsInput | string
     jobPostUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    salaryMin?: NullableFloatFieldUpdateOperationsInput | number | null
-    salaryMax?: NullableFloatFieldUpdateOperationsInput | number | null
+    salary?: NullableFloatFieldUpdateOperationsInput | number | null
     salaryCurrency?: NullableStringFieldUpdateOperationsInput | string | null
     contactName?: NullableStringFieldUpdateOperationsInput | string | null
     contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
@@ -18436,8 +18408,7 @@ export namespace Prisma {
     company?: StringFieldUpdateOperationsInput | string
     location?: StringFieldUpdateOperationsInput | string
     jobPostUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    salaryMin?: NullableFloatFieldUpdateOperationsInput | number | null
-    salaryMax?: NullableFloatFieldUpdateOperationsInput | number | null
+    salary?: NullableFloatFieldUpdateOperationsInput | number | null
     salaryCurrency?: NullableStringFieldUpdateOperationsInput | string | null
     contactName?: NullableStringFieldUpdateOperationsInput | string | null
     contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
@@ -19408,8 +19379,7 @@ export namespace Prisma {
     company?: SortOrder
     location?: SortOrder
     jobPostUrl?: SortOrder
-    salaryMin?: SortOrder
-    salaryMax?: SortOrder
+    salary?: SortOrder
     salaryCurrency?: SortOrder
     contactName?: SortOrder
     contactEmail?: SortOrder
@@ -19423,8 +19393,7 @@ export namespace Prisma {
   }
 
   export type JobApplicationAvgOrderByAggregateInput = {
-    salaryMin?: SortOrder
-    salaryMax?: SortOrder
+    salary?: SortOrder
   }
 
   export type JobApplicationMaxOrderByAggregateInput = {
@@ -19433,8 +19402,7 @@ export namespace Prisma {
     company?: SortOrder
     location?: SortOrder
     jobPostUrl?: SortOrder
-    salaryMin?: SortOrder
-    salaryMax?: SortOrder
+    salary?: SortOrder
     salaryCurrency?: SortOrder
     contactName?: SortOrder
     contactEmail?: SortOrder
@@ -19453,8 +19421,7 @@ export namespace Prisma {
     company?: SortOrder
     location?: SortOrder
     jobPostUrl?: SortOrder
-    salaryMin?: SortOrder
-    salaryMax?: SortOrder
+    salary?: SortOrder
     salaryCurrency?: SortOrder
     contactName?: SortOrder
     contactEmail?: SortOrder
@@ -19468,8 +19435,7 @@ export namespace Prisma {
   }
 
   export type JobApplicationSumOrderByAggregateInput = {
-    salaryMin?: SortOrder
-    salaryMax?: SortOrder
+    salary?: SortOrder
   }
 
   export type FloatNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -21034,8 +21000,7 @@ export namespace Prisma {
     company: string
     location: string
     jobPostUrl?: string | null
-    salaryMin?: number | null
-    salaryMax?: number | null
+    salary?: number | null
     salaryCurrency?: string | null
     contactName?: string | null
     contactEmail?: string | null
@@ -21055,8 +21020,7 @@ export namespace Prisma {
     company: string
     location: string
     jobPostUrl?: string | null
-    salaryMin?: number | null
-    salaryMax?: number | null
+    salary?: number | null
     salaryCurrency?: string | null
     contactName?: string | null
     contactEmail?: string | null
@@ -21309,8 +21273,7 @@ export namespace Prisma {
     company?: StringFilter<"JobApplication"> | string
     location?: StringFilter<"JobApplication"> | string
     jobPostUrl?: StringNullableFilter<"JobApplication"> | string | null
-    salaryMin?: FloatNullableFilter<"JobApplication"> | number | null
-    salaryMax?: FloatNullableFilter<"JobApplication"> | number | null
+    salary?: FloatNullableFilter<"JobApplication"> | number | null
     salaryCurrency?: StringNullableFilter<"JobApplication"> | string | null
     contactName?: StringNullableFilter<"JobApplication"> | string | null
     contactEmail?: StringNullableFilter<"JobApplication"> | string | null
@@ -21911,8 +21874,7 @@ export namespace Prisma {
     company: string
     location: string
     jobPostUrl?: string | null
-    salaryMin?: number | null
-    salaryMax?: number | null
+    salary?: number | null
     salaryCurrency?: string | null
     contactName?: string | null
     contactEmail?: string | null
@@ -21932,8 +21894,7 @@ export namespace Prisma {
     company: string
     location: string
     jobPostUrl?: string | null
-    salaryMin?: number | null
-    salaryMax?: number | null
+    salary?: number | null
     salaryCurrency?: string | null
     contactName?: string | null
     contactEmail?: string | null
@@ -21986,8 +21947,7 @@ export namespace Prisma {
     company?: StringFieldUpdateOperationsInput | string
     location?: StringFieldUpdateOperationsInput | string
     jobPostUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    salaryMin?: NullableFloatFieldUpdateOperationsInput | number | null
-    salaryMax?: NullableFloatFieldUpdateOperationsInput | number | null
+    salary?: NullableFloatFieldUpdateOperationsInput | number | null
     salaryCurrency?: NullableStringFieldUpdateOperationsInput | string | null
     contactName?: NullableStringFieldUpdateOperationsInput | string | null
     contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
@@ -22007,8 +21967,7 @@ export namespace Prisma {
     company?: StringFieldUpdateOperationsInput | string
     location?: StringFieldUpdateOperationsInput | string
     jobPostUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    salaryMin?: NullableFloatFieldUpdateOperationsInput | number | null
-    salaryMax?: NullableFloatFieldUpdateOperationsInput | number | null
+    salary?: NullableFloatFieldUpdateOperationsInput | number | null
     salaryCurrency?: NullableStringFieldUpdateOperationsInput | string | null
     contactName?: NullableStringFieldUpdateOperationsInput | string | null
     contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
@@ -22100,8 +22059,7 @@ export namespace Prisma {
     company: string
     location: string
     jobPostUrl?: string | null
-    salaryMin?: number | null
-    salaryMax?: number | null
+    salary?: number | null
     salaryCurrency?: string | null
     contactName?: string | null
     contactEmail?: string | null
@@ -22121,8 +22079,7 @@ export namespace Prisma {
     company: string
     location: string
     jobPostUrl?: string | null
-    salaryMin?: number | null
-    salaryMax?: number | null
+    salary?: number | null
     salaryCurrency?: string | null
     contactName?: string | null
     contactEmail?: string | null
@@ -22213,8 +22170,7 @@ export namespace Prisma {
     company?: StringFieldUpdateOperationsInput | string
     location?: StringFieldUpdateOperationsInput | string
     jobPostUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    salaryMin?: NullableFloatFieldUpdateOperationsInput | number | null
-    salaryMax?: NullableFloatFieldUpdateOperationsInput | number | null
+    salary?: NullableFloatFieldUpdateOperationsInput | number | null
     salaryCurrency?: NullableStringFieldUpdateOperationsInput | string | null
     contactName?: NullableStringFieldUpdateOperationsInput | string | null
     contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
@@ -22234,8 +22190,7 @@ export namespace Prisma {
     company?: StringFieldUpdateOperationsInput | string
     location?: StringFieldUpdateOperationsInput | string
     jobPostUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    salaryMin?: NullableFloatFieldUpdateOperationsInput | number | null
-    salaryMax?: NullableFloatFieldUpdateOperationsInput | number | null
+    salary?: NullableFloatFieldUpdateOperationsInput | number | null
     salaryCurrency?: NullableStringFieldUpdateOperationsInput | string | null
     contactName?: NullableStringFieldUpdateOperationsInput | string | null
     contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
@@ -22691,8 +22646,7 @@ export namespace Prisma {
     company: string
     location: string
     jobPostUrl?: string | null
-    salaryMin?: number | null
-    salaryMax?: number | null
+    salary?: number | null
     salaryCurrency?: string | null
     contactName?: string | null
     contactEmail?: string | null
@@ -22820,8 +22774,7 @@ export namespace Prisma {
     company?: StringFieldUpdateOperationsInput | string
     location?: StringFieldUpdateOperationsInput | string
     jobPostUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    salaryMin?: NullableFloatFieldUpdateOperationsInput | number | null
-    salaryMax?: NullableFloatFieldUpdateOperationsInput | number | null
+    salary?: NullableFloatFieldUpdateOperationsInput | number | null
     salaryCurrency?: NullableStringFieldUpdateOperationsInput | string | null
     contactName?: NullableStringFieldUpdateOperationsInput | string | null
     contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
@@ -22841,8 +22794,7 @@ export namespace Prisma {
     company?: StringFieldUpdateOperationsInput | string
     location?: StringFieldUpdateOperationsInput | string
     jobPostUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    salaryMin?: NullableFloatFieldUpdateOperationsInput | number | null
-    salaryMax?: NullableFloatFieldUpdateOperationsInput | number | null
+    salary?: NullableFloatFieldUpdateOperationsInput | number | null
     salaryCurrency?: NullableStringFieldUpdateOperationsInput | string | null
     contactName?: NullableStringFieldUpdateOperationsInput | string | null
     contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
@@ -22862,8 +22814,7 @@ export namespace Prisma {
     company?: StringFieldUpdateOperationsInput | string
     location?: StringFieldUpdateOperationsInput | string
     jobPostUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    salaryMin?: NullableFloatFieldUpdateOperationsInput | number | null
-    salaryMax?: NullableFloatFieldUpdateOperationsInput | number | null
+    salary?: NullableFloatFieldUpdateOperationsInput | number | null
     salaryCurrency?: NullableStringFieldUpdateOperationsInput | string | null
     contactName?: NullableStringFieldUpdateOperationsInput | string | null
     contactEmail?: NullableStringFieldUpdateOperationsInput | string | null

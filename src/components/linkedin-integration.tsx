@@ -121,7 +121,7 @@ export function LinkedInIntegration() {
 
     try {
       // In a real implementation, you'd use LinkedIn's sharing API
-      const shareText = `🎉 Exciting news! I just ${achievement} on JobTracker Pro! 💼 #JobSearch #CareerGrowth #Achievement`
+      const shareText = `🎉 Exciting news! I just ${achievement} on Hirera! 💼 #JobSearch #CareerGrowth #Achievement`
       
       // For now, we'll open LinkedIn in a new tab with pre-filled content
       const linkedinShareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(window.location.origin)}&summary=${encodeURIComponent(shareText)}`
@@ -353,10 +353,10 @@ export function LinkedInIntegration() {
             </CardHeader>
             <CardContent>
               <div className="space-y-3 text-sm text-blue-800">
-                <p><strong>1.</strong> Click "Connect LinkedIn" to authorize the connection</p>
-                <p><strong>2.</strong> You'll be redirected to LinkedIn to grant permissions</p>
-                <p><strong>3.</strong> Once connected, you can share achievements directly from JobTracker Pro</p>
-                <p><strong>4.</strong> Your LinkedIn profile information will be imported to enhance your experience</p>
+                <p><strong>1.</strong> Click the "Connect to LinkedIn" button below</p>
+                <p><strong>2.</strong> Authorize the application to access your LinkedIn profile</p>
+                <p><strong>3.</strong> Once connected, you can share achievements directly from Hirera</p>
+                <p><strong>4.</strong> Your shared posts will appear on your LinkedIn feed</p>
               </div>
               
               <div className="mt-4 p-3 bg-white rounded-lg border border-blue-200">

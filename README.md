@@ -1,8 +1,8 @@
-# 💼 JobTracker Pro
+# Hirera
 
-A comprehensive job application tracking system built with Next.js, TypeScript, and modern web technologies. Track your job applications, analyze your progress, and manage your job search with powerful analytics and insights.
+Welcome to Hirera, your all-in-one solution for managing job applications and tracking your career progress. Built with the latest technologies, this dashboard provides a seamless and intuitive experience for job seekers.
 
-![JobTracker Pro](https://img.shields.io/badge/Next.js-14-black?style=for-the-badge&logo=next.js)
+![Hirera](https://img.shields.io/badge/Next.js-14-black?style=for-the-badge&logo=next.js)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?style=for-the-badge&logo=typescript)
 ![Prisma](https://img.shields.io/badge/Prisma-5.0-2D3748?style=for-the-badge&logo=prisma)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.0-06B6D4?style=for-the-badge&logo=tailwind-css)
@@ -44,19 +44,18 @@ A comprehensive job application tracking system built with Next.js, TypeScript, 
 ## 🚀 Quick Start
 
 ### Prerequisites
-- Node.js 18+ installed
-- npm or yarn package manager
-- Git for version control
+- Node.js (v18 or later)
+- npm or yarn
 
 ### Installation
 
-1. **Clone the repository**
+1. Clone the repository:
    ```bash
-   git clone https://github.com/MitchellWillsOCE/JOBSOFT.git
-   cd JOBSOFT
+   git clone https://github.com/your-repo/hirera.git
+   cd hirera
    ```
 
-2. **Install dependencies**
+2. Install dependencies:
    ```bash
    npm install
    # or

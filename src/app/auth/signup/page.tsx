@@ -240,7 +240,7 @@ export default function SignUpPage() {
             animate={{ opacity: 1 }}
             transition={{ delay: 0.3 }}
           >
-            💼 JobTracker Pro
+            Hirera
           </motion.h1>
           <motion.p 
             className="text-gray-600 mt-2 text-sm sm:text-base"

@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Calendar, Clock, Building, User, MapPin, DollarSign, Filter, ZoomIn, ZoomOut } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { JobApplication } from '@/lib/types'
+import { getCurrencySymbol } from '@/lib/currencies'
 
 interface TimelineProps {
   jobs: JobApplication[]
@@ -32,10 +33,14 @@ export function ApplicationTimeline({ jobs }: TimelineProps) {
     const events: TimelineEvent[] = []
 
     jobs.forEach(job => {
+      // Ensure dates are Date objects
+      const appliedDate = new Date(job.appliedDate);
+      const lastUpdated = new Date(job.lastUpdated);
+
       // Add application event
       events.push({
         id: `${job.id}-applied`,
-        date: job.appliedDate,
+        date: appliedDate,
         type: 'application',
         job,
         title: `Applied to ${job.company}`,
@@ -43,37 +48,42 @@ export function ApplicationTimeline({ jobs }: TimelineProps) {
       })
 
       // Add status update events based on current status
-      if (job.status !== 'applied') {
-        const statusDate = job.lastUpdated
+      if (job.status !== 'APPLIED') {
+        const statusDate = lastUpdated
         let eventType: TimelineEvent['type'] = 'update'
         let title = ''
         let description = ''
 
         switch (job.status) {
-          case 'screening':
+          case 'SCREENING':
             eventType = 'update'
             title = 'Screening Stage'
             description = `Moved to screening for ${job.jobTitle}`
             break
-          case 'interview':
+          case 'INTERVIEW':
             eventType = 'interview'
             title = 'Interview Scheduled'
             description = `Interview for ${job.jobTitle} at ${job.company}`
             break
-          case 'offer':
+          case 'OFFER':
             eventType = 'offer'
             title = 'Job Offer Received!'
             description = `Received offer for ${job.jobTitle}`
             break
-          case 'rejected':
+          case 'REJECTED':
             eventType = 'rejection'
             title = 'Application Declined'
             description = `${job.company} declined application`
             break
-          case 'withdrawn':
+          case 'WITHDRAWN':
             eventType = 'update'
             title = 'Application Withdrawn'
             description = `Withdrew application for ${job.jobTitle}`
+            break
+          case 'EMPLOYED':
+            eventType = 'offer'
+            title = "You're Hired!"
+            description = `Started a new role at ${job.company}`
             break
         }
 
@@ -178,6 +188,19 @@ export function ApplicationTimeline({ jobs }: TimelineProps) {
     if (diffInDays < 30) return `${Math.floor(diffInDays / 7)} weeks ago`
     if (diffInDays < 365) return `${Math.floor(diffInDays / 30)} months ago`
     return `${Math.floor(diffInDays / 365)} years ago`
+  }
+
+  const getPriorityColorClass = (priority: 'LOW' | 'MEDIUM' | 'HIGH') => {
+    switch (priority) {
+      case 'HIGH':
+        return 'bg-red-500'
+      case 'MEDIUM':
+        return 'bg-yellow-500'
+      case 'LOW':
+        return 'bg-green-500'
+      default:
+        return 'bg-gray-500'
+    }
   }
 
   return (
@@ -289,11 +312,9 @@ export function ApplicationTimeline({ jobs }: TimelineProps) {
                             <div className="flex items-center space-x-1">
                               <DollarSign className="h-3 w-3" />
                               <span>
-                                {event.job.salary.min && event.job.salary.max
-                                  ? `$${event.job.salary.min}k - $${event.job.salary.max}k`
-                                  : event.job.salary.min
-                                  ? `$${event.job.salary.min}k+`
-                                  : `$${event.job.salary.max}k`}
+                                {typeof event.job.salary === 'number' 
+                                  ? `${getCurrencySymbol(event.job.salaryCurrency || 'USD')}${event.job.salary}k` 
+                                  : event.job.salary}
                               </span>
                             </div>
                           )}
@@ -317,10 +338,7 @@ export function ApplicationTimeline({ jobs }: TimelineProps) {
                     {/* Priority Indicator */}
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-2">
-                        <span className={`w-2 h-2 rounded-full ${
-                          event.job.priority === 'high' ? 'bg-red-500' :
-                          event.job.priority === 'medium' ? 'bg-yellow-500' : 'bg-green-500'
-                        }`} />
+                        <span className={`w-2 h-2 rounded-full ${getPriorityColorClass(event.job.priority)}`} />
                         <span className="text-xs text-gray-500 capitalize">{event.job.priority} Priority</span>
                       </div>
 

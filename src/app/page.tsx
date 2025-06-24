@@ -21,7 +21,7 @@ export default function HomePage() {
           <div className="flex items-center justify-center mb-6">
             <Briefcase className="h-16 w-16 text-blue-600 animate-pulse" />
           </div>
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">💼 JobTracker</h1>
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">Hirera</h1>
           <div className="flex items-center justify-center space-x-2">
             <Loader2 className="h-6 w-6 animate-spin text-blue-600" />
             <p className="text-gray-600">Loading your dashboard...</p>
@@ -47,7 +47,7 @@ export default function HomePage() {
               <div className="p-2 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl shadow-lg">
                 <Briefcase className="h-6 w-6 text-white" />
               </div>
-              <h1 className="text-2xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">JobTracker </h1>
+              <h1 className="text-2xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">Hirera </h1>
             </div>
             <div className="flex items-center space-x-4">
               {session ? (
@@ -282,7 +282,7 @@ export default function HomePage() {
             Ready to Transform Your Job Search?
           </h2>
           <p className="text-xl text-gray-600 mb-8">
-            Join thousands of professionals who have found their dream jobs with JobTracker 
+            Join thousands of professionals who have found their dream jobs with Hirera 
           </p>
           <Link href="/auth/signup">
             <Button size="lg" className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-lg px-8 py-4 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
@@ -297,18 +297,22 @@ export default function HomePage() {
       </section>
 
       {/* Footer */}
-      <footer className="bg-gray-900 text-white py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className="flex items-center justify-center space-x-2 mb-4">
-            <Briefcase className="h-6 w-6 text-blue-400" />
-            <span className="text-xl font-bold">JobTracker </span>
+      <footer className="bg-gray-800 text-white py-8">
+        <div className="container mx-auto px-6">
+          <div className="flex flex-col md:flex-row justify-between items-center">
+            <div className="mb-4 md:mb-0">
+              <span className="text-xl font-bold">Hirera</span>
+              <p className="text-sm text-gray-400">Your personal career assistant</p>
+            </div>
+            <div className="flex space-x-4 mb-4 md:mb-0">
+              <Link href="/features" className="hover:text-gray-300">Features</Link>
+              <Link href="/pricing" className="hover:text-gray-300">Pricing</Link>
+              <Link href="/contact" className="hover:text-gray-300">Contact</Link>
+            </div>
+            <div>
+              <p className="text-sm text-gray-400">© 2024 Hirera. Made with ❤️ by Mitchell Wills</p>
+            </div>
           </div>
-          <p className="text-gray-400 mb-4">
-            Empowering careers, one application at a time.
-          </p>
-          <p className="text-gray-500 text-sm">
-            © 2024 JobTracker . Made with ❤️ by Mitchell Wills
-          </p>
         </div>
       </footer>
     </div>

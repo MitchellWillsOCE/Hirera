@@ -1,21 +1,23 @@
+import { Prisma } from '@prisma/client';
+
+export type JobStatus = Prisma.JobStatus;
+export type Priority = Prisma.Priority;
+
 export interface JobApplication {
   id: string;
   jobTitle: string;
   company: string;
   location: string;
   jobPostUrl?: string;
-  salary?: {
-    min?: number;
-    max?: number;
-    currency: string;
-  };
+  salary?: number;
+  salaryCurrency?: string;
   contactInfo?: {
     name?: string;
     email?: string;
     phone?: string;
   };
   notes?: string;
-  status: 'APPLIED' | 'SCREENING' | 'INTERVIEW' | 'OFFER' | 'REJECTED' | 'WITHDRAWN';
+  status: 'APPLIED' | 'SCREENING' | 'INTERVIEW' | 'OFFER' | 'REJECTED' | 'WITHDRAWN' | 'EMPLOYED';
   tags: string[];
   appliedDate: Date;
   lastUpdated: Date;

@@ -31,14 +31,14 @@ import {
 } from '@/components/ui/select';
 import { JobApplication } from '@/lib/types';
 import { X, Plus, DollarSign, User, Mail, Phone, Link, MapPin, Building, Briefcase, Flag } from 'lucide-react';
+import { currencies, getCurrencySymbol } from '@/lib/currencies';
 
 const jobFormSchema = z.object({
   jobTitle: z.string().min(1, 'Job title is required'),
   company: z.string().min(1, 'Company is required'),
   location: z.string().min(1, 'Location is required'),
   jobPostUrl: z.string().url('Invalid URL').optional().or(z.literal('')),
-  salaryMin: z.number().min(0, 'Salary must be positive').optional(),
-  salaryMax: z.number().min(0, 'Salary must be positive').optional(),
+  salary: z.number().min(0, 'Salary must be positive').optional(),
   salaryCurrency: z.string().optional(),
   contactName: z.string().optional(),
   contactEmail: z.string().email('Invalid email').optional().or(z.literal('')),
@@ -66,8 +66,7 @@ export function JobForm({ open, onClose, onSubmit, editingJob }: JobFormProps) {
       company: '',
       location: '',
       jobPostUrl: '',
-      salaryMin: undefined,
-      salaryMax: undefined,
+      salary: undefined,
       salaryCurrency: 'USD',
       contactName: '',
       contactEmail: '',
@@ -89,8 +88,7 @@ export function JobForm({ open, onClose, onSubmit, editingJob }: JobFormProps) {
         company: editingJob.company,
         location: editingJob.location,
         jobPostUrl: editingJob.jobPostUrl || '',
-        salaryMin: editingJob.salary?.min,
-        salaryMax: editingJob.salary?.max,
+        salary: editingJob.salary?.min,
         salaryCurrency: editingJob.salary?.currency || 'USD',
         contactName: editingJob.contactInfo?.name || '',
         contactEmail: editingJob.contactInfo?.email || '',
@@ -114,9 +112,9 @@ export function JobForm({ open, onClose, onSubmit, editingJob }: JobFormProps) {
       company: values.company,
       location: values.location,
       jobPostUrl: values.jobPostUrl || undefined,
-      salary: values.salaryMin || values.salaryMax ? {
-        min: values.salaryMin,
-        max: values.salaryMax,
+      salary: values.salary ? {
+        min: values.salary,
+        max: values.salary,
         currency: values.salaryCurrency || 'USD',
       } : undefined,
       contactInfo: values.contactName || values.contactEmail || values.contactPhone ? {
@@ -308,52 +306,46 @@ export function JobForm({ open, onClose, onSubmit, editingJob }: JobFormProps) {
                 Salary Information
               </h3>
               
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <FormField
                   control={form.control}
-                  name="salaryMin"
+                  name="salary"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-sm font-medium">Minimum Salary</FormLabel>
+                      <FormLabel>Salary</FormLabel>
                       <FormControl>
-                        <Input placeholder="80000" type="number" className="h-12 sm:h-10 text-base sm:text-sm" {...field} />
+                        <Input 
+                          type="number" 
+                          placeholder="e.g., 95000" 
+                          {...field} 
+                          onChange={e => field.onChange(parseFloat(e.target.value))}
+                        />
                       </FormControl>
+                      <FormMessage />
                     </FormItem>
                   )}
                 />
-
-                <FormField
-                  control={form.control}
-                  name="salaryMax"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-sm font-medium">Maximum Salary</FormLabel>
-                      <FormControl>
-                        <Input placeholder="120000" type="number" className="h-12 sm:h-10 text-base sm:text-sm" {...field} />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
-
                 <FormField
                   control={form.control}
                   name="salaryCurrency"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-sm font-medium">Currency</FormLabel>
+                      <FormLabel>Currency</FormLabel>
                       <Select onValueChange={field.onChange} defaultValue={field.value}>
                         <FormControl>
-                          <SelectTrigger className="h-12 sm:h-10 text-base sm:text-sm">
+                          <SelectTrigger>
                             <SelectValue placeholder="Select currency" />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          <SelectItem value="USD">USD ($)</SelectItem>
-                          <SelectItem value="EUR">EUR (€)</SelectItem>
-                          <SelectItem value="GBP">GBP (£)</SelectItem>
-                          <SelectItem value="CAD">CAD ($)</SelectItem>
+                          {currencies.map(c => (
+                            <SelectItem key={c.code} value={c.code}>
+                              {c.code} - {c.name}
+                            </SelectItem>
+                          ))}
                         </SelectContent>
                       </Select>
+                      <FormMessage />
                     </FormItem>
                   )}
                 />

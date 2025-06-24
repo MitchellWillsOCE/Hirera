@@ -92,32 +92,11 @@ export default function SignInPage() {
         className="w-full max-w-md relative z-10"
       >
         <div className="text-center mb-6 sm:mb-8">
-          <motion.div 
-            className="flex items-center justify-center mb-3 sm:mb-4"
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
-          >
-            <div className="p-3 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl shadow-lg">
-              <Briefcase className="h-10 w-10 sm:h-12 sm:w-12 text-white" />
-            </div>
-          </motion.div>
-          <motion.h1 
-            className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.3 }}
-          >
-            💼 JobTracker
-          </motion.h1>
-          <motion.p 
-            className="text-gray-600 mt-2 text-sm sm:text-base"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.4 }}
-          >
-            Sign in to your account
-          </motion.p>
+          <div className="flex items-center justify-center mb-3 sm:mb-4">
+            <Briefcase className="h-10 w-10 sm:h-12 sm:w-12 text-blue-600" />
+          </div>
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Hirera</h1>
+          <p className="text-gray-600 mt-2 text-sm sm:text-base">Sign in to your account</p>
         </div>
 
         <motion.div

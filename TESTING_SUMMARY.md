@@ -1,4 +1,4 @@
-# JobTracker Pro - Testing Summary and Fixes Applied
+# Hirera - Testing Summary and Fixes Applied
 
 ## 🔧 Critical Issues Fixed
 

@@ -90,8 +90,7 @@ model JobApplication {
   company        String
   location       String
   jobPostUrl     String?
-  salaryMin      Float?
-  salaryMax      Float?
+  salary         Float?
   salaryCurrency String?   @default("USD")
   contactName    String?
   contactEmail   String?
@@ -200,6 +199,7 @@ enum JobStatus {
   OFFER
   REJECTED
   WITHDRAWN
+  EMPLOYED
 }
 
 enum Priority {

@@ -5,18 +5,22 @@ import { motion } from 'framer-motion';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { ArrowUpDown, ArrowUp, ArrowDown, Edit, Trash2, ExternalLink } from 'lucide-react';
-import { JobApplication, SortOptions } from '@/lib/types';
+import { Edit, Trash2, ExternalLink } from 'lucide-react';
+import { JobApplication, JobStatus } from '@/lib/types';
+import { 
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { getCurrencySymbol } from '@/lib/currencies';
 
 interface JobTableProps {
   jobs: JobApplication[];
   onEdit: (job: JobApplication) => void;
   onDelete: (id: string) => void;
   onStatusUpdate: (id: string, status: JobApplication['status']) => void;
-  sortOptions: SortOptions;
-  onSortChange: (options: SortOptions) => void;
-  getStatusColor: (status: JobApplication['status']) => string;
-  getPriorityColor: (priority: JobApplication['priority']) => string;
 }
 
 export function JobTable({
@@ -24,42 +28,9 @@ export function JobTable({
   onEdit,
   onDelete,
   onStatusUpdate,
-  sortOptions,
-  onSortChange,
-  getStatusColor,
-  getPriorityColor,
 }: JobTableProps) {
-  const handleSort = (field: keyof JobApplication) => {
-    const newDirection = 
-      sortOptions.field === field && sortOptions.direction === 'asc' 
-        ? 'desc' 
-        : 'asc';
-    
-    onSortChange({ field, direction: newDirection });
-  };
-
-  const getSortIcon = (field: keyof JobApplication) => {
-    if (sortOptions.field !== field) {
-      return <ArrowUpDown className="h-4 w-4" />;
-    }
-    return sortOptions.direction === 'asc' 
-      ? <ArrowUp className="h-4 w-4" />
-      : <ArrowDown className="h-4 w-4" />;
-  };
-
-  const formatSalary = (salary?: JobApplication['salary']) => {
-    if (!salary) return 'Not specified';
-    const { min, max, currency } = salary;
-    if (min && max) {
-      return `$${min.toLocaleString()} - $${max.toLocaleString()}`;
-    }
-    if (min) {
-      return `$${min.toLocaleString()}+`;
-    }
-    if (max) {
-      return `Up to $${max.toLocaleString()}`;
-    }
-    return 'Not specified';
+  const handleStatusChange = (job: JobApplication, newStatus: JobStatus) => {
+    onStatusUpdate(job.id, newStatus);
   };
 
   return (
@@ -73,66 +44,54 @@ export function JobTable({
                   <Button
                     variant="ghost"
                     size="sm"
-                    onClick={() => handleSort('jobTitle')}
                     className="h-auto p-0 font-semibold text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-100"
                   >
                     Job Title
-                    {getSortIcon('jobTitle')}
                   </Button>
                 </th>
                 <th className="px-6 py-4 text-left">
                   <Button
                     variant="ghost"
                     size="sm"
-                    onClick={() => handleSort('company')}
                     className="h-auto p-0 font-semibold text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-100"
                   >
                     Company
-                    {getSortIcon('company')}
                   </Button>
                 </th>
                 <th className="px-6 py-4 text-left">
                   <Button
                     variant="ghost"
                     size="sm"
-                    onClick={() => handleSort('location')}
                     className="h-auto p-0 font-semibold text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-100"
                   >
                     Location
-                    {getSortIcon('location')}
                   </Button>
                 </th>
                 <th className="px-6 py-4 text-left">
                   <Button
                     variant="ghost"
                     size="sm"
-                    onClick={() => handleSort('status')}
                     className="h-auto p-0 font-semibold text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-100"
                   >
                     Status
-                    {getSortIcon('status')}
                   </Button>
                 </th>
                 <th className="px-6 py-4 text-left">
                   <Button
                     variant="ghost"
                     size="sm"
-                    onClick={() => handleSort('priority')}
                     className="h-auto p-0 font-semibold text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-100"
                   >
                     Priority
-                    {getSortIcon('priority')}
                   </Button>
                 </th>
                 <th className="px-6 py-4 text-left">
                   <Button
                     variant="ghost"
                     size="sm"
-                    onClick={() => handleSort('appliedDate')}
                     className="h-auto p-0 font-semibold text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-100"
                   >
                     Applied Date
-                    {getSortIcon('appliedDate')}
                   </Button>
                 </th>
                 <th className="px-6 py-4 text-left">
@@ -197,38 +156,45 @@ export function JobTable({
                     </div>
                   </td>
                   <td className="px-6 py-4">
-                    <select
-                      value={job.status}
-                      onChange={(e) => onStatusUpdate(job.id, e.target.value as JobApplication['status'])}
-                      className={`px-3 py-1 rounded-full text-xs font-medium border-0 cursor-pointer ${getStatusColor(job.status)}`}
-                    >
-                      <option value="applied">Applied</option>
-                      <option value="screening">Screening</option>
-                      <option value="interview">Interview</option>
-                      <option value="offer">Offer</option>
-                      <option value="rejected">Rejected</option>
-                      <option value="withdrawn">Withdrawn</option>
-                    </select>
+                    <Select value={job.status} onValueChange={(value) => handleStatusChange(job, value as JobStatus)}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select status" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="APPLIED">Applied</SelectItem>
+                        <SelectItem value="SCREENING">Screening</SelectItem>
+                        <SelectItem value="INTERVIEW">Interview</SelectItem>
+                        <SelectItem value="OFFER">Offer</SelectItem>
+                        <SelectItem value="REJECTED">Rejected</SelectItem>
+                        <SelectItem value="WITHDRAWN">Withdrawn</SelectItem>
+                        <SelectItem value="EMPLOYED">Employed</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </td>
                   <td className="px-6 py-4">
                     <Badge
                       variant="outline"
-                      className={`${getPriorityColor(job.priority)} border`}
                     >
                       {job.priority}
                     </Badge>
                   </td>
                   <td className="px-6 py-4">
                     <div className="text-sm text-slate-700 dark:text-slate-300">
-                      {job.appliedDate.toLocaleDateString()}
+                      {new Date(job.appliedDate).toLocaleDateString()}
                     </div>
                     <div className="text-xs text-slate-500 dark:text-slate-400">
-                      Updated: {job.lastUpdated.toLocaleDateString()}
+                      Updated: {new Date(job.lastUpdated).toLocaleDateString()}
                     </div>
                   </td>
                   <td className="px-6 py-4">
-                    <div className="text-sm text-slate-700 dark:text-slate-300">
-                      {formatSalary(job.salary)}
+                    <div className="flex items-center">
+                      {job.salary ? (
+                        <span className="text-green-600 dark:text-green-400">
+                          {getCurrencySymbol(job.salaryCurrency || 'USD')}{job.salary.toLocaleString()}
+                        </span>
+                      ) : (
+                        <span className="text-gray-400">N/A</span>
+                      )}
                     </div>
                   </td>
                   <td className="px-6 py-4">
