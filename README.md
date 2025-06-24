@@ -1,4 +1,4 @@
-# 💼 JobTracker Pro
+# Hirera
 
 A comprehensive job application tracking system built with Next.js, TypeScript, and modern web technologies. Track your job applications, analyze your progress, and manage your job search with powerful analytics and insights.
 
