@@ -1,14 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getServerSession } from 'next-auth/next'
-import { authOptions } from '@/lib/auth'
+import { auth } from '@/lib/auth'
+import { v4 as uuidv4 } from 'uuid'
 
 const LINKEDIN_CLIENT_ID = process.env.LINKEDIN_CLIENT_ID
 const LINKEDIN_CLIENT_SECRET = process.env.LINKEDIN_CLIENT_SECRET
-const LINKEDIN_REDIRECT_URI = process.env.NEXTAUTH_URL + '/api/linkedin/callback'
+const LINKEDIN_CALLBACK_URL = process.env.NEXT_PUBLIC_BASE_URL
+  ? `${process.env.NEXT_PUBLIC_BASE_URL}/api/linkedin/callback`
+  : 'http://localhost:3000/api/linkedin/callback'
 
 export async function GET(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions)
+    const session = await auth()
     
     if (!session?.user?.id) {
       return NextResponse.json(
@@ -25,7 +27,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Generate state parameter for security
-    const state = Math.random().toString(36).substring(2, 15)
+    const state = uuidv4()
     
     // Store state in session/database for verification
     // In production, you'd want to store this securely
@@ -34,7 +36,7 @@ export async function GET(request: NextRequest) {
     const authUrl = `https://www.linkedin.com/oauth/v2/authorization?` +
       `response_type=code&` +
       `client_id=${LINKEDIN_CLIENT_ID}&` +
-      `redirect_uri=${encodeURIComponent(LINKEDIN_REDIRECT_URI)}&` +
+      `redirect_uri=${encodeURIComponent(LINKEDIN_CALLBACK_URL)}&` +
       `state=${state}&` +
       `scope=${encodeURIComponent(scope)}`
 

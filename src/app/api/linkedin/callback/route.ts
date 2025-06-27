@@ -1,15 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getServerSession } from 'next-auth/next'
-import { authOptions } from '@/lib/auth'
+import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 
 const LINKEDIN_CLIENT_ID = process.env.LINKEDIN_CLIENT_ID
 const LINKEDIN_CLIENT_SECRET = process.env.LINKEDIN_CLIENT_SECRET
-const LINKEDIN_REDIRECT_URI = process.env.NEXTAUTH_URL + '/api/linkedin/callback'
+const LINKEDIN_CALLBACK_URL = process.env.NEXT_PUBLIC_BASE_URL
+  ? `${process.env.NEXT_PUBLIC_BASE_URL}/api/linkedin/callback`
+  : 'http://localhost:3000/api/linkedin/callback'
 
 export async function GET(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions)
+    const session = await auth()
     
     if (!session?.user?.id) {
       return NextResponse.redirect('/auth/signin')
@@ -39,7 +40,7 @@ export async function GET(request: NextRequest) {
         code,
         client_id: LINKEDIN_CLIENT_ID!,
         client_secret: LINKEDIN_CLIENT_SECRET!,
-        redirect_uri: LINKEDIN_REDIRECT_URI,
+        redirect_uri: LINKEDIN_CALLBACK_URL,
       }),
     })
 

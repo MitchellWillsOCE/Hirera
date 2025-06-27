@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getServerSession } from 'next-auth/next'
-import { authOptions } from '@/lib/auth'
+import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 
 interface LeaderboardUser {
@@ -20,7 +19,7 @@ interface LeaderboardUser {
 
 export async function GET(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions)
+    const session = await auth()
     
     if (!session?.user?.id) {
       return NextResponse.json(
@@ -30,10 +29,10 @@ export async function GET(request: NextRequest) {
     }
 
     const { searchParams } = new URL(request.url)
-    const metric = searchParams.get('metric') || 'applications'
-    const period = searchParams.get('period') || 'all'
+    const metric = searchParams.get('metric') || 'totalApps'
+    const period = searchParams.get('period') || 'monthly'
     const country = searchParams.get('country')
-    const limit = parseInt(searchParams.get('limit') || '50')
+    const limit = parseInt(searchParams.get('limit') || '10')
 
     // Calculate date filter based on period
     let dateFilter = {}
@@ -156,19 +155,19 @@ export async function GET(request: NextRequest) {
     // Sort based on metric
     leaderboardData.sort((a, b) => {
       switch (metric) {
-        case 'applications':
+        case 'totalApps':
           return b.totalApplications - a.totalApplications
         case 'success':
           if (b.successRate === a.successRate) {
             return b.totalApplications - a.totalApplications // Tiebreaker
           }
           return b.successRate - a.successRate
-        case 'interviews':
+        case 'interviewRate':
           if (b.interviewRate === a.interviewRate) {
             return b.totalApplications - a.totalApplications
           }
           return b.interviewRate - a.interviewRate
-        case 'offers':
+        case 'offerRate':
           if (b.offerCount === a.offerCount) {
             return b.totalApplications - a.totalApplications
           }

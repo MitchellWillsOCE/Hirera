@@ -1,16 +1,14 @@
-import { getServerSession } from "next-auth/next"
-import { authOptions } from "@/lib/auth"
-import { prisma } from "@/lib/prisma"
-import { NextResponse } from "next/server"
+import { NextRequest, NextResponse } from 'next/server'
+import { auth } from '@/lib/auth'
+import { prisma } from '@/lib/prisma'
 
-export async function GET(req: Request) {
-  const session = await getServerSession(authOptions)
-
-  if (!session?.user?.id) {
-    return NextResponse.json({ message: "Unauthorized" }, { status: 401 })
-  }
-
+export async function GET(request: NextRequest) {
   try {
+    const session = await auth()
+    if (!session?.user?.id) {
+      return NextResponse.json({ message: "Unauthorized" }, { status: 401 })
+    }
+
     const user = await prisma.user.findUnique({
       where: { id: session.user.id },
       select: {
@@ -36,15 +34,14 @@ export async function GET(req: Request) {
   }
 }
 
-export async function PUT(req: Request) {
-  const session = await getServerSession(authOptions)
-
-  if (!session?.user?.id) {
-    return NextResponse.json({ message: "Unauthorized" }, { status: 401 })
-  }
-
+export async function PUT(request: NextRequest) {
   try {
-    const body = await req.json()
+    const session = await auth()
+    if (!session?.user?.id) {
+      return NextResponse.json({ message: "Unauthorized" }, { status: 401 })
+    }
+
+    const body = await request.json()
     const { firstName, lastName, country, isPublic } = body
 
     const updatedUser = await prisma.user.update({

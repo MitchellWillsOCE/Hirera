@@ -119,4 +119,26 @@
   body {
     @apply bg-background text-foreground;
   }
+  
+  /* Fix for sectioned h1 elements */
+  h1 {
+    font-size: 2rem;
+    margin-top: 0;
+    margin-bottom: 1rem;
+    font-weight: 600;
+    line-height: 1.2;
+  }
+  
+  /* Responsive h1 sizing */
+  @media (min-width: 768px) {
+    h1 {
+      font-size: 2.5rem;
+    }
+  }
+  
+  @media (min-width: 1024px) {
+    h1 {
+      font-size: 3rem;
+    }
+  }
 }

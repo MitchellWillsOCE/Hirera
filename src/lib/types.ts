@@ -1,27 +1,40 @@
-import { Prisma } from '@prisma/client';
+export const JobStatus = {
+  APPLIED: 'APPLIED',
+  SCREENING: 'SCREENING', 
+  INTERVIEW: 'INTERVIEW',
+  OFFER: 'OFFER',
+  REJECTED: 'REJECTED',
+  WITHDRAWN: 'WITHDRAWN',
+  EMPLOYED: 'EMPLOYED'
+} as const;
 
-export type JobStatus = Prisma.JobStatus;
-export type Priority = Prisma.Priority;
+export const Priority = {
+  LOW: 'LOW',
+  MEDIUM: 'MEDIUM',
+  HIGH: 'HIGH'
+} as const;
+
+export type JobStatus = typeof JobStatus[keyof typeof JobStatus];
+export type Priority = typeof Priority[keyof typeof Priority];
 
 export interface JobApplication {
   id: string;
   jobTitle: string;
   company: string;
   location: string;
-  jobPostUrl?: string;
-  salary?: number;
-  salaryCurrency?: string;
-  contactInfo?: {
-    name?: string;
-    email?: string;
-    phone?: string;
-  };
-  notes?: string;
-  status: 'APPLIED' | 'SCREENING' | 'INTERVIEW' | 'OFFER' | 'REJECTED' | 'WITHDRAWN' | 'EMPLOYED';
-  tags: string[];
+  jobPostUrl?: string | null;
+  salary?: number | null;
+  salaryCurrency?: string | null;
+  contactName?: string | null;
+  contactEmail?: string | null;
+  contactPhone?: string | null;
+  notes?: string | null;
+  status: JobStatus;
+  tags: { tag: { name: string; id: string } }[];
   appliedDate: Date;
   lastUpdated: Date;
-  priority: 'LOW' | 'MEDIUM' | 'HIGH';
+  priority: Priority;
+  userId: string;
 }
 
 export interface Template {

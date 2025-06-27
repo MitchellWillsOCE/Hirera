@@ -578,19 +578,33 @@ export function DashboardAuthenticated({ user }: DashboardAuthenticatedProps) {
   const [sortOptions, setSortOptions] = useState<SortOptions>({ field: 'lastUpdated', direction: 'desc' })
   const [filters, setFilters] = useState<FilterOptions>({})
 
-  // Load initial data
+  // Load initial data when component mounts and user is available
   useEffect(() => {
-    loadJobs()
-    loadGoals()
-  }, [])
+    if (user) {
+      loadJobs()
+      loadGoals()
+    }
+  }, [user])
 
   const loadJobs = async () => {
     try {
-      const response = await fetch('/api/jobs')
+      const response = await fetch('/api/jobs', {
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
       if (response.ok) {
         const data = await response.json()
-        setJobs(data)
-        setFilteredJobs(data)
+        // API now returns { items, pagination } structure
+        const jobsArray = data.items || data
+        setJobs(jobsArray)
+        setFilteredJobs(jobsArray)
+      } else if (response.status === 401) {
+        console.error('Unauthorized access to jobs - user may need to re-authenticate')
+        // Optionally redirect to login or show error message
+      } else {
+        console.error('Failed to load jobs:', response.status, response.statusText)
       }
     } catch (error) {
       console.error('Failed to load jobs:', error)
@@ -845,13 +859,25 @@ export function DashboardAuthenticated({ user }: DashboardAuthenticatedProps) {
                   </Button>
                 </div>
 
-                <Button
-                  onClick={() => setShowJobForm(true)}
-                  className="h-9 sm:h-10 px-3 sm:px-4 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+                <motion.div
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 17 }}
                 >
-                  <Plus className="h-4 w-4" />
-                  <span className="ml-1 sm:ml-2 hidden sm:inline">Add Job</span>
-                </Button>
+                  <Button
+                    onClick={() => setShowJobForm(true)}
+                    className="h-9 sm:h-10 px-3 sm:px-4 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+                  >
+                    <motion.div
+                      initial={{ rotate: 0 }}
+                      whileHover={{ rotate: 90 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <Plus className="h-4 w-4" />
+                    </motion.div>
+                    <span className="ml-1 sm:ml-2 hidden sm:inline">Add Job</span>
+                  </Button>
+                </motion.div>
               </div>
             </div>
 
@@ -883,23 +909,44 @@ export function DashboardAuthenticated({ user }: DashboardAuthenticatedProps) {
                   >
                     {viewMode === 'card' ? (
                       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                        {filteredJobs.map(job => (
-                          <JobCard
+                        {filteredJobs.map((job, index) => (
+                          <motion.div
                             key={job.id}
-                            job={job}
-                            onEdit={handleEditJob}
-                            onDelete={handleJobDelete}
-                            onStatusUpdate={handleStatusUpdate}
-                          />
+                            initial={{ opacity: 0, scale: 0.8, y: 20 }}
+                            animate={{ opacity: 1, scale: 1, y: 0 }}
+                            exit={{ opacity: 0, scale: 0.8, y: -20 }}
+                            transition={{ 
+                              duration: 0.4,
+                              delay: index * 0.1,
+                              type: "spring",
+                              stiffness: 260,
+                              damping: 20
+                            }}
+                            layout
+                          >
+                            <JobCard
+                              job={job}
+                              onEdit={handleEditJob}
+                              onDelete={handleJobDelete}
+                              onStatusUpdate={handleStatusUpdate}
+                            />
+                          </motion.div>
                         ))}
                       </div>
                     ) : (
-                      <JobTable
-                        jobs={filteredJobs}
-                        onEdit={handleEditJob}
-                        onDelete={handleJobDelete}
-                        onStatusUpdate={handleStatusUpdate}
-                      />
+                      <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -20 }}
+                        transition={{ duration: 0.3 }}
+                      >
+                        <JobTable
+                          jobs={filteredJobs}
+                          onEdit={handleEditJob}
+                          onDelete={handleJobDelete}
+                          onStatusUpdate={handleStatusUpdate}
+                        />
+                      </motion.div>
                     )}
                   </motion.div>
                 </AnimatePresence>

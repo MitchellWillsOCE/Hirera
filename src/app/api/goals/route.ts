@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getServerSession } from 'next-auth/next'
-import { authOptions } from '@/lib/auth'
+import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
+import { GoalType, GoalPeriod } from '@/generated/prisma/client'
 
 export async function GET(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions)
+    const session = await auth()
     
     if (!session?.user?.id) {
       return NextResponse.json(
@@ -14,9 +14,15 @@ export async function GET(request: NextRequest) {
       )
     }
 
+    const { searchParams } = new URL(request.url)
+    const type = searchParams.get('type')
+    const period = searchParams.get('period')
+
     const goals = await prisma.goal.findMany({
-      where: { 
+      where: {
         userId: session.user.id,
+        ...(type && { type: type.toUpperCase() as GoalType }),
+        ...(period && { period: period.toUpperCase() as GoalPeriod }),
         isActive: true
       },
       orderBy: { createdAt: 'desc' }
@@ -34,7 +40,7 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions)
+    const session = await auth()
     
     if (!session?.user?.id) {
       return NextResponse.json(
@@ -44,47 +50,39 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json()
-    const { type, target, period, startDate, endDate } = body
+    const { type, target, period, description } = body
 
-    // Validate required fields
-    if (!type || !target || !period || !startDate || !endDate) {
+    if (!type || !target || !period) {
       return NextResponse.json(
         { error: 'Missing required fields' },
         { status: 400 }
       )
     }
 
-    // Check if user already has an active goal of this type and period
-    const existingGoal = await prisma.goal.findFirst({
+    // Deactivate existing similar goals
+    await prisma.goal.updateMany({
       where: {
         userId: session.user.id,
-        type,
-        period,
+        type: type.toUpperCase() as GoalType,
+        period: period.toUpperCase() as GoalPeriod,
         isActive: true,
-        startDate: { lte: new Date(endDate) },
-        endDate: { gte: new Date(startDate) }
+      },
+      data: {
+        isActive: false
       }
     })
 
-    if (existingGoal) {
-      return NextResponse.json(
-        { error: 'You already have an active goal of this type for this period' },
-        { status: 400 }
-      )
-    }
-
-    const goal = await prisma.goal.create({
+    const newGoal = await prisma.goal.create({
       data: {
         userId: session.user.id,
-        type,
-        target: parseInt(target),
-        period,
-        startDate: new Date(startDate),
-        endDate: new Date(endDate)
+        type: type.toUpperCase() as GoalType,
+        target: Number(target),
+        period: period.toUpperCase() as GoalPeriod,
+        description,
       }
     })
 
-    return NextResponse.json(goal, { status: 201 })
+    return NextResponse.json(newGoal, { status: 201 })
   } catch (error) {
     console.error('Error creating goal:', error)
     return NextResponse.json(
@@ -96,7 +94,7 @@ export async function POST(request: NextRequest) {
 
 export async function PUT(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions)
+    const session = await auth()
     
     if (!session?.user?.id) {
       return NextResponse.json(
@@ -105,8 +103,7 @@ export async function PUT(request: NextRequest) {
       )
     }
 
-    const body = await request.json()
-    const { id, achieved } = body
+    const { id, ...data } = await request.json()
 
     if (!id) {
       return NextResponse.json(
@@ -129,7 +126,11 @@ export async function PUT(request: NextRequest) {
 
     const updatedGoal = await prisma.goal.update({
       where: { id },
-      data: { achieved: parseInt(achieved) }
+      data: {
+        ...data,
+        ...(data.type && { type: data.type.toUpperCase() as GoalType }),
+        ...(data.period && { period: data.period.toUpperCase() as GoalPeriod }),
+      },
     })
 
     // Check if goal is completed and create achievement

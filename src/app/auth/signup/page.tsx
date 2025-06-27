@@ -7,12 +7,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { CountryInput } from '@/components/ui/country-input'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Progress } from '@/components/ui/progress'
 import { Loader2, Mail, Lock, User, Briefcase, CheckCircle, AlertCircle, Eye, EyeOff, Globe } from 'lucide-react'
 import { motion } from 'framer-motion'
-import { countries } from '@/lib/countries'
+import { getCountryName } from '@/lib/countries'
 
 interface PasswordStrength {
   score: number
@@ -394,26 +394,14 @@ export default function SignUpPage() {
 
                 <div className="space-y-2">
                   <Label htmlFor="country" className="text-sm font-medium">Country</Label>
-                  <div className="relative">
-                    <Globe className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 z-10" />
-                    <Select value={formData.country} onValueChange={handleCountryChange} disabled={loading}>
-                      <SelectTrigger className={`pl-10 h-12 text-base transition-all duration-200 ${
-                        validationErrors.country ? 'border-red-300' : ''
-                      }`}>
-                        <SelectValue placeholder="Select your country" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {countries.map((country) => (
-                          <SelectItem key={country.code} value={country.code}>
-                            <div className="flex items-center space-x-2">
-                              <span>{country.flag}</span>
-                              <span>{country.name}</span>
-                            </div>
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
+                  <CountryInput
+                    value={formData.country}
+                    onValueChange={handleCountryChange}
+                    placeholder="Search for your country..."
+                    disabled={loading}
+                    error={!!validationErrors.country}
+                    className={validationErrors.country ? 'border-red-300' : ''}
+                  />
                   {validationErrors.country && (
                     <p className="text-xs text-red-600">{validationErrors.country}</p>
                   )}

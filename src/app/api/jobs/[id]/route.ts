@@ -1,14 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getServerSession } from 'next-auth/next'
-import { authOptions } from '@/lib/auth'
-import { JobsService } from '@/services/jobs.service'
+import { auth } from '@/lib/auth'
+import { jobApplicationsService } from '@/services/job-applications.service'
+import { prisma } from '@/lib/prisma'
 
 export async function GET(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
-    const session = await getServerSession(authOptions)
+    const session = await auth()
     
     if (!session?.user?.id) {
       return NextResponse.json(
@@ -18,9 +18,18 @@ export async function GET(
     }
 
     const { id } = params
-    const job = await JobsService.getJobApplication(session.user.id, id)
+    const jobApplication = await prisma.jobApplication.findUnique({
+      where: {
+        id,
+        userId: session.user.id,
+      },
+    })
 
-    return NextResponse.json(job)
+    if (!jobApplication) {
+      return NextResponse.json({ error: 'Job application not found' }, { status: 404 })
+    }
+
+    return NextResponse.json(jobApplication)
   } catch (error) {
     console.error('Error fetching job:', error)
     if (error instanceof Error && error.message.includes('not found')) {
@@ -41,7 +50,7 @@ export async function PUT(
   { params }: { params: { id: string } }
 ) {
   try {
-    const session = await getServerSession(authOptions)
+    const session = await auth()
     
     if (!session?.user?.id) {
       return NextResponse.json(
@@ -53,20 +62,21 @@ export async function PUT(
     const { id } = params
     const body = await request.json()
     
-    const job = await JobsService.updateJobApplication(session.user.id, {
-      id,
-      ...body
-    })
-
-    return NextResponse.json(job)
-  } catch (error) {
-    console.error('Error updating job:', error)
-    if (error instanceof Error && error.message.includes('not found')) {
+    // Filter out fields that shouldn't be in the update data
+    const { tags, ...updateData } = body
+    
+    const result = await jobApplicationsService.update(session.user.id, id, updateData)
+    
+    if (!result.success) {
       return NextResponse.json(
-        { error: 'Job not found' },
-        { status: 404 }
+        { error: result.error },
+        { status: result.code === 'NOT_FOUND' ? 404 : 400 }
       )
     }
+
+    return NextResponse.json(result.data)
+  } catch (error) {
+    console.error('Error updating job:', error)
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -79,7 +89,7 @@ export async function DELETE(
   { params }: { params: { id: string } }
 ) {
   try {
-    const session = await getServerSession(authOptions)
+    const session = await auth()
     
     if (!session?.user?.id) {
       return NextResponse.json(
@@ -89,9 +99,14 @@ export async function DELETE(
     }
 
     const { id } = params
-    await JobsService.deleteJobApplication(session.user.id, id)
+    await prisma.jobApplication.delete({
+      where: {
+        id,
+        userId: session.user.id,
+      },
+    })
 
-    return NextResponse.json({ success: true })
+    return NextResponse.json({ message: 'Job application deleted successfully' })
   } catch (error) {
     console.error('Error deleting job:', error)
     if (error instanceof Error && error.message.includes('not found')) {

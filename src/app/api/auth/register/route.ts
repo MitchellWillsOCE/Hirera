@@ -4,6 +4,15 @@ import { prisma } from '@/lib/prisma'
 
 export async function POST(request: NextRequest) {
   try {
+    // Environment Check: Ensure the database is configured.
+    if (!process.env.DATABASE_URL) {
+      console.error('CRITICAL: DATABASE_URL is not set.');
+      return NextResponse.json(
+        { error: 'Service is not configured correctly. Please contact support.' },
+        { status: 503 } // 503 Service Unavailable
+      );
+    }
+
     const body = await request.json()
     const { firstName, lastName, username, email, password, country } = body
 
@@ -51,7 +60,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    if (!/^[A-Z]{2}$/.test(country)) {
+    if (!country || country.length !== 2) {
       return NextResponse.json(
         { error: 'Please select a valid country' },
         { status: 400 }
@@ -61,10 +70,7 @@ export async function POST(request: NextRequest) {
     // Check if user already exists
     const existingUser = await prisma.user.findFirst({
       where: {
-        OR: [
-          { email: email.toLowerCase() },
-          { username: username.toLowerCase() }
-        ]
+        OR: [{ email: email.toLowerCase() }, { username: username.toLowerCase() }]
       }
     })
 
@@ -94,7 +100,7 @@ export async function POST(request: NextRequest) {
         email: email.toLowerCase().trim(),
         password: hashedPassword,
         country: country.toUpperCase(),
-        isPublic: true, // Default to public profile
+        isPublic: true // Default to public profile
       },
       select: {
         id: true,
@@ -103,7 +109,7 @@ export async function POST(request: NextRequest) {
         firstName: true,
         lastName: true,
         country: true,
-        createdAt: true,
+        createdAt: true
       }
     })
 
@@ -112,12 +118,12 @@ export async function POST(request: NextRequest) {
       data: {
         userId: user.id,
         period: 'monthly',
-        date: new Date(),
+        date: new Date()
       }
     })
 
     return NextResponse.json(
-      { 
+      {
         message: 'Account created successfully',
         user: {
           id: user.id,
@@ -130,22 +136,26 @@ export async function POST(request: NextRequest) {
       },
       { status: 201 }
     )
-
   } catch (error) {
-    console.error('Registration error:', error)
-    
-    // Handle Prisma-specific errors
-    if (error instanceof Error) {
-      if (error.message.includes('Unique constraint')) {
-        return NextResponse.json(
-          { error: 'An account with this email or username already exists' },
-          { status: 400 }
-        )
-      }
+    console.error('Registration API Error:', error)
+
+    if (error instanceof SyntaxError) {
+      return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 });
+    }
+
+    // Handle Prisma-specific errors or other database issues
+    if (error instanceof Error && error.message.includes('Prisma')) {
+       return NextResponse.json(
+        { error: 'Database operation failed. Please try again later.' },
+        { status: 503 }
+      );
     }
     
     return NextResponse.json(
-      { error: 'An unexpected error occurred. Please try again.' },
+      {
+        error: 'An unexpected error occurred.',
+        details: process.env.NODE_ENV === 'development' ? (error instanceof Error ? error.message : String(error)) : undefined
+      },
       { status: 500 }
     )
   }

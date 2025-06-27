@@ -14517,8 +14517,7 @@ export namespace Prisma {
     type: $Enums.GoalType | null
     target: number | null
     period: $Enums.GoalPeriod | null
-    startDate: Date | null
-    endDate: Date | null
+    description: string | null
     achieved: number | null
     isActive: boolean | null
     createdAt: Date | null
@@ -14531,8 +14530,7 @@ export namespace Prisma {
     type: $Enums.GoalType | null
     target: number | null
     period: $Enums.GoalPeriod | null
-    startDate: Date | null
-    endDate: Date | null
+    description: string | null
     achieved: number | null
     isActive: boolean | null
     createdAt: Date | null
@@ -14545,8 +14543,7 @@ export namespace Prisma {
     type: number
     target: number
     period: number
-    startDate: number
-    endDate: number
+    description: number
     achieved: number
     isActive: number
     createdAt: number
@@ -14571,8 +14568,7 @@ export namespace Prisma {
     type?: true
     target?: true
     period?: true
-    startDate?: true
-    endDate?: true
+    description?: true
     achieved?: true
     isActive?: true
     createdAt?: true
@@ -14585,8 +14581,7 @@ export namespace Prisma {
     type?: true
     target?: true
     period?: true
-    startDate?: true
-    endDate?: true
+    description?: true
     achieved?: true
     isActive?: true
     createdAt?: true
@@ -14599,8 +14594,7 @@ export namespace Prisma {
     type?: true
     target?: true
     period?: true
-    startDate?: true
-    endDate?: true
+    description?: true
     achieved?: true
     isActive?: true
     createdAt?: true
@@ -14700,8 +14694,7 @@ export namespace Prisma {
     type: $Enums.GoalType
     target: number
     period: $Enums.GoalPeriod
-    startDate: Date
-    endDate: Date
+    description: string | null
     achieved: number
     isActive: boolean
     createdAt: Date
@@ -14733,8 +14726,7 @@ export namespace Prisma {
     type?: boolean
     target?: boolean
     period?: boolean
-    startDate?: boolean
-    endDate?: boolean
+    description?: boolean
     achieved?: boolean
     isActive?: boolean
     createdAt?: boolean
@@ -14748,8 +14740,7 @@ export namespace Prisma {
     type?: boolean
     target?: boolean
     period?: boolean
-    startDate?: boolean
-    endDate?: boolean
+    description?: boolean
     achieved?: boolean
     isActive?: boolean
     createdAt?: boolean
@@ -14763,8 +14754,7 @@ export namespace Prisma {
     type?: boolean
     target?: boolean
     period?: boolean
-    startDate?: boolean
-    endDate?: boolean
+    description?: boolean
     achieved?: boolean
     isActive?: boolean
     createdAt?: boolean
@@ -14778,15 +14768,14 @@ export namespace Prisma {
     type?: boolean
     target?: boolean
     period?: boolean
-    startDate?: boolean
-    endDate?: boolean
+    description?: boolean
     achieved?: boolean
     isActive?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type GoalOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "type" | "target" | "period" | "startDate" | "endDate" | "achieved" | "isActive" | "createdAt" | "updatedAt", ExtArgs["result"]["goal"]>
+  export type GoalOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "type" | "target" | "period" | "description" | "achieved" | "isActive" | "createdAt" | "updatedAt", ExtArgs["result"]["goal"]>
   export type GoalInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
   }
@@ -14808,8 +14797,7 @@ export namespace Prisma {
       type: $Enums.GoalType
       target: number
       period: $Enums.GoalPeriod
-      startDate: Date
-      endDate: Date
+      description: string | null
       achieved: number
       isActive: boolean
       createdAt: Date
@@ -15243,8 +15231,7 @@ export namespace Prisma {
     readonly type: FieldRef<"Goal", 'GoalType'>
     readonly target: FieldRef<"Goal", 'Int'>
     readonly period: FieldRef<"Goal", 'GoalPeriod'>
-    readonly startDate: FieldRef<"Goal", 'DateTime'>
-    readonly endDate: FieldRef<"Goal", 'DateTime'>
+    readonly description: FieldRef<"Goal", 'String'>
     readonly achieved: FieldRef<"Goal", 'Int'>
     readonly isActive: FieldRef<"Goal", 'Boolean'>
     readonly createdAt: FieldRef<"Goal", 'DateTime'>
@@ -16895,8 +16882,7 @@ export namespace Prisma {
     type: 'type',
     target: 'target',
     period: 'period',
-    startDate: 'startDate',
-    endDate: 'endDate',
+    description: 'description',
     achieved: 'achieved',
     isActive: 'isActive',
     createdAt: 'createdAt',
@@ -17812,8 +17798,7 @@ export namespace Prisma {
     type?: EnumGoalTypeFilter<"Goal"> | $Enums.GoalType
     target?: IntFilter<"Goal"> | number
     period?: EnumGoalPeriodFilter<"Goal"> | $Enums.GoalPeriod
-    startDate?: DateTimeFilter<"Goal"> | Date | string
-    endDate?: DateTimeFilter<"Goal"> | Date | string
+    description?: StringNullableFilter<"Goal"> | string | null
     achieved?: IntFilter<"Goal"> | number
     isActive?: BoolFilter<"Goal"> | boolean
     createdAt?: DateTimeFilter<"Goal"> | Date | string
@@ -17827,8 +17812,7 @@ export namespace Prisma {
     type?: SortOrder
     target?: SortOrder
     period?: SortOrder
-    startDate?: SortOrder
-    endDate?: SortOrder
+    description?: SortOrderInput | SortOrder
     achieved?: SortOrder
     isActive?: SortOrder
     createdAt?: SortOrder
@@ -17845,8 +17829,7 @@ export namespace Prisma {
     type?: EnumGoalTypeFilter<"Goal"> | $Enums.GoalType
     target?: IntFilter<"Goal"> | number
     period?: EnumGoalPeriodFilter<"Goal"> | $Enums.GoalPeriod
-    startDate?: DateTimeFilter<"Goal"> | Date | string
-    endDate?: DateTimeFilter<"Goal"> | Date | string
+    description?: StringNullableFilter<"Goal"> | string | null
     achieved?: IntFilter<"Goal"> | number
     isActive?: BoolFilter<"Goal"> | boolean
     createdAt?: DateTimeFilter<"Goal"> | Date | string
@@ -17860,8 +17843,7 @@ export namespace Prisma {
     type?: SortOrder
     target?: SortOrder
     period?: SortOrder
-    startDate?: SortOrder
-    endDate?: SortOrder
+    description?: SortOrderInput | SortOrder
     achieved?: SortOrder
     isActive?: SortOrder
     createdAt?: SortOrder
@@ -17882,8 +17864,7 @@ export namespace Prisma {
     type?: EnumGoalTypeWithAggregatesFilter<"Goal"> | $Enums.GoalType
     target?: IntWithAggregatesFilter<"Goal"> | number
     period?: EnumGoalPeriodWithAggregatesFilter<"Goal"> | $Enums.GoalPeriod
-    startDate?: DateTimeWithAggregatesFilter<"Goal"> | Date | string
-    endDate?: DateTimeWithAggregatesFilter<"Goal"> | Date | string
+    description?: StringNullableWithAggregatesFilter<"Goal"> | string | null
     achieved?: IntWithAggregatesFilter<"Goal"> | number
     isActive?: BoolWithAggregatesFilter<"Goal"> | boolean
     createdAt?: DateTimeWithAggregatesFilter<"Goal"> | Date | string
@@ -18795,8 +18776,7 @@ export namespace Prisma {
     type: $Enums.GoalType
     target: number
     period: $Enums.GoalPeriod
-    startDate: Date | string
-    endDate: Date | string
+    description?: string | null
     achieved?: number
     isActive?: boolean
     createdAt?: Date | string
@@ -18810,8 +18790,7 @@ export namespace Prisma {
     type: $Enums.GoalType
     target: number
     period: $Enums.GoalPeriod
-    startDate: Date | string
-    endDate: Date | string
+    description?: string | null
     achieved?: number
     isActive?: boolean
     createdAt?: Date | string
@@ -18823,8 +18802,7 @@ export namespace Prisma {
     type?: EnumGoalTypeFieldUpdateOperationsInput | $Enums.GoalType
     target?: IntFieldUpdateOperationsInput | number
     period?: EnumGoalPeriodFieldUpdateOperationsInput | $Enums.GoalPeriod
-    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
-    endDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
     achieved?: IntFieldUpdateOperationsInput | number
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -18838,8 +18816,7 @@ export namespace Prisma {
     type?: EnumGoalTypeFieldUpdateOperationsInput | $Enums.GoalType
     target?: IntFieldUpdateOperationsInput | number
     period?: EnumGoalPeriodFieldUpdateOperationsInput | $Enums.GoalPeriod
-    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
-    endDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
     achieved?: IntFieldUpdateOperationsInput | number
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -18852,8 +18829,7 @@ export namespace Prisma {
     type: $Enums.GoalType
     target: number
     period: $Enums.GoalPeriod
-    startDate: Date | string
-    endDate: Date | string
+    description?: string | null
     achieved?: number
     isActive?: boolean
     createdAt?: Date | string
@@ -18865,8 +18841,7 @@ export namespace Prisma {
     type?: EnumGoalTypeFieldUpdateOperationsInput | $Enums.GoalType
     target?: IntFieldUpdateOperationsInput | number
     period?: EnumGoalPeriodFieldUpdateOperationsInput | $Enums.GoalPeriod
-    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
-    endDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
     achieved?: IntFieldUpdateOperationsInput | number
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -18879,8 +18854,7 @@ export namespace Prisma {
     type?: EnumGoalTypeFieldUpdateOperationsInput | $Enums.GoalType
     target?: IntFieldUpdateOperationsInput | number
     period?: EnumGoalPeriodFieldUpdateOperationsInput | $Enums.GoalPeriod
-    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
-    endDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
     achieved?: IntFieldUpdateOperationsInput | number
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -19778,8 +19752,7 @@ export namespace Prisma {
     type?: SortOrder
     target?: SortOrder
     period?: SortOrder
-    startDate?: SortOrder
-    endDate?: SortOrder
+    description?: SortOrder
     achieved?: SortOrder
     isActive?: SortOrder
     createdAt?: SortOrder
@@ -19797,8 +19770,7 @@ export namespace Prisma {
     type?: SortOrder
     target?: SortOrder
     period?: SortOrder
-    startDate?: SortOrder
-    endDate?: SortOrder
+    description?: SortOrder
     achieved?: SortOrder
     isActive?: SortOrder
     createdAt?: SortOrder
@@ -19811,8 +19783,7 @@ export namespace Prisma {
     type?: SortOrder
     target?: SortOrder
     period?: SortOrder
-    startDate?: SortOrder
-    endDate?: SortOrder
+    description?: SortOrder
     achieved?: SortOrder
     isActive?: SortOrder
     createdAt?: SortOrder
@@ -21133,8 +21104,7 @@ export namespace Prisma {
     type: $Enums.GoalType
     target: number
     period: $Enums.GoalPeriod
-    startDate: Date | string
-    endDate: Date | string
+    description?: string | null
     achieved?: number
     isActive?: boolean
     createdAt?: Date | string
@@ -21146,8 +21116,7 @@ export namespace Prisma {
     type: $Enums.GoalType
     target: number
     period: $Enums.GoalPeriod
-    startDate: Date | string
-    endDate: Date | string
+    description?: string | null
     achieved?: number
     isActive?: boolean
     createdAt?: Date | string
@@ -21400,8 +21369,7 @@ export namespace Prisma {
     type?: EnumGoalTypeFilter<"Goal"> | $Enums.GoalType
     target?: IntFilter<"Goal"> | number
     period?: EnumGoalPeriodFilter<"Goal"> | $Enums.GoalPeriod
-    startDate?: DateTimeFilter<"Goal"> | Date | string
-    endDate?: DateTimeFilter<"Goal"> | Date | string
+    description?: StringNullableFilter<"Goal"> | string | null
     achieved?: IntFilter<"Goal"> | number
     isActive?: BoolFilter<"Goal"> | boolean
     createdAt?: DateTimeFilter<"Goal"> | Date | string
@@ -22692,8 +22660,7 @@ export namespace Prisma {
     type: $Enums.GoalType
     target: number
     period: $Enums.GoalPeriod
-    startDate: Date | string
-    endDate: Date | string
+    description?: string | null
     achieved?: number
     isActive?: boolean
     createdAt?: Date | string
@@ -22918,8 +22885,7 @@ export namespace Prisma {
     type?: EnumGoalTypeFieldUpdateOperationsInput | $Enums.GoalType
     target?: IntFieldUpdateOperationsInput | number
     period?: EnumGoalPeriodFieldUpdateOperationsInput | $Enums.GoalPeriod
-    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
-    endDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
     achieved?: IntFieldUpdateOperationsInput | number
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -22931,8 +22897,7 @@ export namespace Prisma {
     type?: EnumGoalTypeFieldUpdateOperationsInput | $Enums.GoalType
     target?: IntFieldUpdateOperationsInput | number
     period?: EnumGoalPeriodFieldUpdateOperationsInput | $Enums.GoalPeriod
-    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
-    endDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
     achieved?: IntFieldUpdateOperationsInput | number
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -22944,8 +22909,7 @@ export namespace Prisma {
     type?: EnumGoalTypeFieldUpdateOperationsInput | $Enums.GoalType
     target?: IntFieldUpdateOperationsInput | number
     period?: EnumGoalPeriodFieldUpdateOperationsInput | $Enums.GoalPeriod
-    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
-    endDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
     achieved?: IntFieldUpdateOperationsInput | number
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string

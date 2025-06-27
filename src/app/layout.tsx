@@ -6,11 +6,13 @@ import { SessionProvider } from "@/components/providers/session-provider";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
+  display: 'swap',
 });
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+  display: 'swap',
 });
 
 export const metadata: Metadata = {
@@ -33,6 +35,9 @@ export const metadata: Metadata = {
     shortcut: '/favicon.svg',
     apple: '/favicon.svg',
   },
+  other: {
+    'preload': 'true',
+  }
 };
 
 export default function RootLayout({
@@ -42,19 +47,23 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="scroll-smooth">
+      <head>
+        <link rel="preload" href="/grid.svg" as="image" type="image/svg+xml" />
+        <link rel="dns-prefetch" href="//fonts.googleapis.com" />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800`}
       >
         <SessionProvider>
           <div className="relative">
-            {/* Background Elements */}
-            <div className="fixed inset-0 bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))] pointer-events-none" />
             <div className="fixed inset-0 bg-gradient-to-br from-blue-50/20 via-transparent to-purple-50/20 pointer-events-none" />
             
-            {/* Main Content */}
-            <div className="relative z-10">
+            <div className="fixed inset-0 bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))] pointer-events-none opacity-30" 
+                 style={{ willChange: 'transform' }} />
+            
+            <main className="relative z-10">
               {children}
-            </div>
+            </main>
           </div>
         </SessionProvider>
       </body>

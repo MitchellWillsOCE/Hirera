@@ -1,95 +1,79 @@
-import { NextAuthOptions } from 'next-auth'
-import CredentialsProvider from 'next-auth/providers/credentials'
+import NextAuth, { User } from 'next-auth'
+import { JWT } from 'next-auth/jwt'
+import Credentials from 'next-auth/providers/credentials'
+import { PrismaAdapter } from '@auth/prisma-adapter'
 import bcrypt from 'bcryptjs'
 import { prisma } from './prisma'
 
-export const authOptions: NextAuthOptions = {
+export const { handlers, auth, signIn, signOut } = NextAuth({
+  adapter: PrismaAdapter(prisma),
   providers: [
-    CredentialsProvider({
+    Credentials({
       name: 'credentials',
       credentials: {
         email: { label: 'Email', type: 'email' },
-        password: { label: 'Password', type: 'password' }
+        password: { label: 'Password', type: 'password' },
       },
       async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password) {
-          return null
+        const email = credentials?.email as string;
+        const password = credentials?.password as string;
+
+        if (!email || !password) {
+          return null;
         }
 
-        try {
-          const user = await prisma.user.findUnique({
-            where: { email: credentials.email.toLowerCase().trim() }
-          })
+        const user = await prisma.user.findUnique({
+          where: { email: email.toLowerCase().trim() },
+        });
 
-          if (!user) {
-            console.log('User not found for email:', credentials.email.toLowerCase().trim())
-            return null
-          }
-
-          const isValidPassword = await bcrypt.compare(
-            credentials.password,
-            user.password
-          )
-
-          if (!isValidPassword) {
-            console.log('Invalid password for user:', credentials.email.toLowerCase().trim())
-            return null
-          }
-
-          console.log('Authentication successful for user:', credentials.email.toLowerCase().trim())
+        if (user && (await bcrypt.compare(password, user.password))) {
+          // Return a user object that satisfies the `User` type from next-auth
           return {
             id: user.id,
-            username: user.username,
-            country: user.country || null,
+            name: user.username,
             email: user.email,
-            name: `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.username
-          }
-        } catch (error) {
-          console.error('Auth error:', error)
-          return null
+            // Custom properties to be added to token
+            username: user.username,
+            country: user.country,
+            firstName: user.firstName,
+            lastName: user.lastName,
+          };
         }
-      }
-    })
+        
+        return null;
+      },
+    }),
   ],
   session: {
-    strategy: 'jwt'
+    strategy: 'jwt',
   },
-  secret: process.env.NEXTAUTH_SECRET || 'fallback-secret-key-for-development-only-please-change-in-production',
   callbacks: {
-    async session({ session, token }) {
-      if (token?.sub) {
-        const user = await prisma.user.findUnique({
-          where: { id: token.sub },
-          select: {
-            id: true,
-            username: true,
-            country: true,
-            firstName: true,
-            lastName: true,
-            email: true
-          }
-        })
-
-        if (user) {
-          session.user.id = user.id
-          session.user.username = user.username
-          session.user.country = user.country
-          session.user.name = `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.username
-          session.user.email = user.email
-        }
-      }
-      return session
-    },
+    // The jwt callback is called first. It passes user data to the token.
     async jwt({ token, user }) {
       if (user) {
-        token.sub = user.id
+        // On sign-in, user object is available. Persist it to the token.
+        token.sub = user.id;
+        token.username = (user as any).username;
+        token.country = (user as any).country;
+        token.firstName = (user as any).firstName;
+        token.lastName = (user as any).lastName;
       }
-      return token
-    }
+      return token;
+    },
+    // The session callback is called next. It uses token data to populate the session.
+    async session({ session, token }) {
+      if (token && session.user) {
+        // No need for a database call here. All data is in the token.
+        session.user.id = token.sub as string;
+        session.user.username = token.username as string;
+        session.user.country = token.country as string | null;
+        session.user.name = `${token.firstName || ''} ${token.lastName || ''}`.trim() || token.username as string;
+      }
+      return session;
+    },
   },
   pages: {
-    signIn: '/auth/signin'
-  }
-}
-
-export default authOptions 
+    signIn: '/auth/signin',
+  },
+  secret: process.env.NEXTAUTH_SECRET || 'fallback-secret-key-for-development-only-please-change-in-production',
+}); 
