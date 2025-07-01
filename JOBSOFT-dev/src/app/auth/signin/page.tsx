@@ -92,8 +92,8 @@ export default function SignInPage() {
         className="w-full max-w-md relative z-10"
       >
         <div className="text-center mb-6 sm:mb-8">
-          <div className="flex items-center justify-center mb-3 sm:mb-4">
-            <Briefcase className="h-10 w-10 sm:h-12 sm:w-12 text-blue-600" />
+          <div className="flex items-center justify-center mb-4">
+            <Briefcase className="h-8 w-8 text-blue-600" />
           </div>
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Hirera</h1>
           <p className="text-gray-600 mt-2 text-sm sm:text-base">Sign in to your account</p>

@@ -14,13 +14,15 @@ import { RadialChart, MultiRadialChart } from '@/components/ui/radial-chart'
 
 interface Goal {
   id: string
+  userId: string
   type: string
   target: number
   achieved: number
   period: string
-  startDate: Date
-  endDate: Date
+  description?: string
   isActive: boolean
+  createdAt: Date
+  updatedAt: Date
 }
 
 interface GoalSettingProps {
@@ -31,50 +33,57 @@ interface GoalSettingProps {
 
 export function GoalSetting({ goals, onCreateGoal, onUpdateGoal }: GoalSettingProps) {
   const [showForm, setShowForm] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
   const [formData, setFormData] = useState({
     type: '',
     target: '',
     period: 'MONTHLY'
   })
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    
-    const now = new Date()
-    let startDate = new Date(now.getFullYear(), now.getMonth(), 1)
-    let endDate = new Date(now.getFullYear(), now.getMonth() + 1, 0)
-    
-    if (formData.period === 'WEEKLY') {
-      const dayOfWeek = now.getDay()
-      startDate = new Date(now)
-      startDate.setDate(now.getDate() - dayOfWeek)
-      endDate = new Date(startDate)
-      endDate.setDate(startDate.getDate() + 6)
-    } else if (formData.period === 'QUARTERLY') {
-      const quarter = Math.floor(now.getMonth() / 3)
-      startDate = new Date(now.getFullYear(), quarter * 3, 1)
-      endDate = new Date(now.getFullYear(), (quarter + 1) * 3, 0)
+    setLoading(true)
+    setError('')
+
+    try {
+      await onCreateGoal({
+        ...formData,
+        target: parseInt(formData.target),
+        description: `${formData.type} goal for ${formData.period.toLowerCase()} period`
+      })
+
+      setFormData({ type: '', target: '', period: 'MONTHLY' })
+      setShowForm(false)
+    } catch (err) {
+      setError('Failed to create goal. Please try again.')
+    } finally {
+      setLoading(false)
     }
-
-    onCreateGoal({
-      ...formData,
-      target: parseInt(formData.target),
-      startDate: startDate.toISOString(),
-      endDate: endDate.toISOString()
-    })
-
-    setFormData({ type: '', target: '', period: 'MONTHLY' })
-    setShowForm(false)
   }
 
   const getProgressPercentage = (goal: Goal) => {
     return Math.min((goal.achieved / goal.target) * 100, 100)
   }
 
-  const getDaysRemaining = (endDate: Date) => {
+  const getDaysRemaining = (goal: Goal) => {
     const now = new Date()
-    const end = new Date(endDate)
-    const diffTime = end.getTime() - now.getTime()
+    const created = new Date(goal.createdAt)
+    
+    // Calculate end date based on period and creation date
+    let endDate = new Date(created)
+    
+    if (goal.period === 'WEEKLY') {
+      endDate.setDate(created.getDate() + 7)
+    } else if (goal.period === 'MONTHLY') {
+      endDate.setMonth(created.getMonth() + 1)
+    } else if (goal.period === 'QUARTERLY') {
+      endDate.setMonth(created.getMonth() + 3)
+    } else if (goal.period === 'YEARLY') {
+      endDate.setFullYear(created.getFullYear() + 1)
+    }
+    
+    const diffTime = endDate.getTime() - now.getTime()
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
     return Math.max(0, diffDays)
   }
@@ -200,7 +209,7 @@ export function GoalSetting({ goals, onCreateGoal, onUpdateGoal }: GoalSettingPr
                   </div>
                   <div className="text-center p-4 bg-white/70 rounded-lg">
                     <div className="text-2xl font-bold text-orange-600">
-                      {activeGoals.reduce((sum, goal) => sum + getDaysRemaining(goal.endDate), 0)}
+                      {activeGoals.reduce((sum, goal) => sum + getDaysRemaining(goal), 0)}
                     </div>
                     <div className="text-sm text-gray-600">Total Days Left</div>
                   </div>
@@ -225,6 +234,12 @@ export function GoalSetting({ goals, onCreateGoal, onUpdateGoal }: GoalSettingPr
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-4">
+                {error && (
+                  <div className="bg-red-50 border border-red-200 rounded-md p-3">
+                    <p className="text-sm text-red-700">{error}</p>
+                  </div>
+                )}
+                
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div>
                     <Label htmlFor="type">Goal Type</Label>
@@ -267,10 +282,10 @@ export function GoalSetting({ goals, onCreateGoal, onUpdateGoal }: GoalSettingPr
                   </div>
                 </div>
                 <div className="flex space-x-2">
-                  <Button type="submit" disabled={!formData.type || !formData.target}>
-                    Create Goal
+                  <Button type="submit" disabled={!formData.type || !formData.target || loading}>
+                    {loading ? 'Creating...' : 'Create Goal'}
                   </Button>
-                  <Button type="button" variant="outline" onClick={() => setShowForm(false)}>
+                  <Button type="button" variant="outline" onClick={() => setShowForm(false)} disabled={loading}>
                     Cancel
                   </Button>
                 </div>
@@ -360,7 +375,7 @@ export function GoalSetting({ goals, onCreateGoal, onUpdateGoal }: GoalSettingPr
                       <div className="flex items-center space-x-1">
                         <Calendar className="h-4 w-4 text-gray-500" />
                         <span className="text-gray-600">
-                          {getDaysRemaining(goal.endDate)} days left
+                          {getDaysRemaining(goal)} days left
                         </span>
                       </div>
                       <div className="flex items-center space-x-1">
@@ -375,7 +390,7 @@ export function GoalSetting({ goals, onCreateGoal, onUpdateGoal }: GoalSettingPr
                     <div className="text-center p-2 bg-gray-50 rounded-lg">
                       <div className="text-sm text-gray-600">
                         Rate: <span className="font-medium text-gray-900">
-                          {Math.round((goal.achieved / Math.max(1, (new Date().getTime() - new Date(goal.startDate).getTime()) / (1000 * 60 * 60 * 24))) * 30)} per month
+                          {Math.round((goal.achieved / Math.max(1, (new Date().getTime() - new Date(goal.createdAt).getTime()) / (1000 * 60 * 60 * 24))) * 30)} per month
                         </span>
                       </div>
                     </div>

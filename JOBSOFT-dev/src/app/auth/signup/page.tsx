@@ -10,7 +10,19 @@ import { Label } from '@/components/ui/label'
 import { CountryInput } from '@/components/ui/country-input'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Progress } from '@/components/ui/progress'
-import { Loader2, Mail, Lock, User, Briefcase, CheckCircle, AlertCircle, Eye, EyeOff, Globe } from 'lucide-react'
+import { 
+  Loader2, 
+  Mail, 
+  Lock, 
+  User, 
+  Briefcase, 
+  CheckCircle, 
+  AlertCircle, 
+  Eye, 
+  EyeOff, 
+  Globe,
+  ArrowLeft 
+} from 'lucide-react'
 import { motion } from 'framer-motion'
 import { getCountryName } from '@/lib/countries'
 
@@ -217,39 +229,28 @@ export default function SignUpPage() {
         <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-br from-purple-400/10 to-pink-400/10 rounded-full blur-3xl"></div>
       </div>
 
+      {/* Back Arrow Button */}
+      <div className="absolute top-4 left-4 z-20">
+        <Link href="/">
+          <Button variant="ghost" size="sm" className="bg-white/80 backdrop-blur-sm hover:bg-white/90 shadow-md">
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Back to Home
+          </Button>
+        </Link>
+      </div>
+
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="w-full max-w-lg relative z-10"
+        className="w-full max-w-md relative z-10"
       >
         <div className="text-center mb-6 sm:mb-8">
-          <motion.div 
-            className="flex items-center justify-center mb-3 sm:mb-4"
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
-          >
-            <div className="p-3 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl shadow-lg">
-              <Briefcase className="h-10 w-10 sm:h-12 sm:w-12 text-white" />
-            </div>
-          </motion.div>
-          <motion.h1 
-            className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.3 }}
-          >
-            Hirera
-          </motion.h1>
-          <motion.p 
-            className="text-gray-600 mt-2 text-sm sm:text-base"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.4 }}
-          >
-            Create your account
-          </motion.p>
+          <div className="flex items-center justify-center mb-4">
+            <Briefcase className="h-8 w-8 text-blue-600" />
+          </div>
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Hirera</h1>
+          <p className="text-gray-600 mt-2 text-sm sm:text-base">Create your account</p>
         </div>
 
         <motion.div
@@ -486,41 +487,45 @@ export default function SignUpPage() {
 
                 <Button 
                   type="submit" 
-                  className="w-full h-12 text-base bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 transition-all duration-200 shadow-lg hover:shadow-xl" 
+                  className="w-full h-12 text-base bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 shadow-lg hover:shadow-xl transition-all duration-200" 
                   disabled={loading}
                 >
                   {loading ? (
-                    <>
-                      <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                      Creating Account...
-                    </>
+                    <div className="flex items-center space-x-2">
+                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                      <span>Creating Account...</span>
+                    </div>
                   ) : (
                     'Create Account'
                   )}
                 </Button>
-              </form>
 
-              <div className="mt-6 text-center">
-                <p className="text-sm text-gray-600">
-                  Already have an account?{' '}
-                  <Link href="/auth/signin" className="text-blue-600 hover:text-blue-700 hover:underline font-medium transition-colors">
-                    Sign in here
+                <div className="relative my-6">
+                  <div className="absolute inset-0 flex items-center">
+                    <span className="w-full border-t border-gray-200" />
+                  </div>
+                  <div className="relative flex justify-center text-xs uppercase">
+                    <span className="bg-white px-2 text-gray-500">or</span>
+                  </div>
+                </div>
+
+                <div className="text-center space-y-3">
+                  <p className="text-sm text-gray-600">
+                    Already have an account?
+                  </p>
+                  <Link href="/auth/signin">
+                    <Button
+                      variant="outline"
+                      className="w-full h-12 text-base border-2 hover:bg-gray-50 transition-all duration-200"
+                      type="button"
+                    >
+                      Sign In
+                    </Button>
                   </Link>
-                </p>
-              </div>
+                </div>
+              </form>
             </CardContent>
           </Card>
-        </motion.div>
-
-        <motion.div 
-          className="mt-6 sm:mt-8 text-center"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.6 }}
-        >
-          <p className="text-xs text-gray-500">
-            By creating an account, you agree to our Terms of Service and Privacy Policy
-          </p>
         </motion.div>
       </motion.div>
     </div>

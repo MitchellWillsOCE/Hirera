@@ -5,7 +5,7 @@ import { prisma } from '@/lib/prisma'
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await auth()
@@ -17,7 +17,7 @@ export async function GET(
       )
     }
 
-    const { id } = params
+    const { id } = await params
     const jobApplication = await prisma.jobApplication.findUnique({
       where: {
         id,
@@ -47,7 +47,7 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await auth()
@@ -59,7 +59,7 @@ export async function PUT(
       )
     }
 
-    const { id } = params
+    const { id } = await params
     const body = await request.json()
     
     // Filter out fields that shouldn't be in the update data
@@ -86,7 +86,7 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await auth()
@@ -98,7 +98,7 @@ export async function DELETE(
       )
     }
 
-    const { id } = params
+    const { id } = await params
     await prisma.jobApplication.delete({
       where: {
         id,

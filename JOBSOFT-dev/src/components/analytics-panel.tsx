@@ -80,7 +80,8 @@ export function AnalyticsPanel({ jobs }: AnalyticsPanelProps) {
     const tagAnalytics = Object.entries(
       jobs.reduce((acc, job) => {
         job.tags.forEach(tag => {
-          acc[tag] = (acc[tag] || 0) + 1;
+          const tagName = typeof tag === 'string' ? tag : tag.tag.name;
+          acc[tagName] = (acc[tagName] || 0) + 1;
         });
         return acc;
       }, {} as Record<string, number>)
@@ -119,13 +120,11 @@ export function AnalyticsPanel({ jobs }: AnalyticsPanelProps) {
   };
 
   const getAverageSalary = () => {
-    const jobsWithSalary = jobs.filter(job => job.salary?.min || job.salary?.max);
+    const jobsWithSalary = jobs.filter(job => job.salary && typeof job.salary === 'number' && job.salary > 0);
     if (jobsWithSalary.length === 0) return null;
     
     const totalSalary = jobsWithSalary.reduce((sum, job) => {
-      const min = job.salary?.min || 0;
-      const max = job.salary?.max || min;
-      return sum + (min + max) / 2;
+      return sum + (job.salary as number);
     }, 0);
     
     return Math.round(totalSalary / jobsWithSalary.length);
@@ -135,7 +134,8 @@ export function AnalyticsPanel({ jobs }: AnalyticsPanelProps) {
     const tagCounts: { [key: string]: number } = {};
     jobs.forEach(job => {
       job.tags.forEach(tag => {
-        tagCounts[tag] = (tagCounts[tag] || 0) + 1;
+        const tagName = typeof tag === 'string' ? tag : tag.tag.name;
+        tagCounts[tagName] = (tagCounts[tagName] || 0) + 1;
       });
     });
     

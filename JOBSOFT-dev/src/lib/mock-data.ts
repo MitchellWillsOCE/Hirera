@@ -571,7 +571,7 @@ export function generateMockJobApplication(appliedDaysAgo?: number): MockJobAppl
     salary,
     salaryCurrency: currency,
     contactName: Math.random() > 0.7 ? `${getRandomElement(firstNames)} ${getRandomElement(lastNames)}` : undefined,
-    contactEmail: Math.random() > 0.8 ? `${name.toLowerCase().replace(' ', '.')}@${company.toLowerCase().replace(/\s/g, '')}.com` : undefined,
+    contactEmail: Math.random() > 0.8 ? `contact@${company.toLowerCase().replace(/\s/g, '')}.com` : undefined,
     contactPhone: Math.random() > 0.9 ? generatePhoneNumber(currency) : undefined,
     notes: Math.random() > 0.3 ? generateJobNotes(status, company, jobTitle) : undefined,
     status,

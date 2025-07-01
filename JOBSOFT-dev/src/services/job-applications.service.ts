@@ -1,6 +1,7 @@
 import { BaseService, ServiceResponse, PaginationOptions } from './base.service'
 import { prisma } from '@/lib/prisma'
 import { JobApplication, JobStatus, Priority } from '@/generated/prisma'
+import { goalsService } from './goals.service'
 
 export interface CreateJobApplicationData {
   jobTitle: string
@@ -75,6 +76,9 @@ export class JobApplicationsService extends BaseService {
 
       // Log activity
       await this.logActivity(userId, jobApplication.id, 'CREATED', `Created application for ${data.jobTitle} at ${data.company}`)
+
+      // Update goal progress for new application
+      await goalsService.updateGoalProgress(userId, undefined, jobApplication.status)
 
       return this.success(jobApplication)
     } catch (error) {
@@ -257,6 +261,9 @@ export class JobApplicationsService extends BaseService {
           'STATUS_UPDATED', 
           `Status changed from ${existingApp.status} to ${data.status}`
         )
+
+        // Update goal progress for status change
+        await goalsService.updateGoalProgress(userId, existingApp.status, data.status)
       }
 
       return this.success(jobApplication)
@@ -384,6 +391,15 @@ export class JobApplicationsService extends BaseService {
    */
   async batchUpdateStatus(userId: string, applicationIds: string[], status: JobStatus): Promise<ServiceResponse<number>> {
     try {
+      // Get existing applications to track old statuses
+      const existingApps = await prisma.jobApplication.findMany({
+        where: {
+          id: { in: applicationIds },
+          userId
+        },
+        select: { id: true, status: true }
+      })
+
       const result = await prisma.jobApplication.updateMany({
         where: {
           id: { in: applicationIds },
@@ -401,6 +417,13 @@ export class JobApplicationsService extends BaseService {
 
       // Log batch activity
       await this.logBatchActivity(userId, applicationIds, 'BATCH_STATUS_UPDATE', `Batch updated ${result.count} applications to ${status}`)
+
+      // Update goal progress for each status change
+      for (const app of existingApps) {
+        if (app.status !== status) {
+          await goalsService.updateGoalProgress(userId, app.status, status)
+        }
+      }
 
       return this.success(result.count)
     } catch (error) {

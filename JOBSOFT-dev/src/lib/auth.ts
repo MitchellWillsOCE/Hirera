@@ -18,7 +18,10 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         const email = credentials?.email as string;
         const password = credentials?.password as string;
 
+        console.log('🔐 Auth attempt:', { email, hasPassword: !!password });
+
         if (!email || !password) {
+          console.log('❌ Missing email or password');
           return null;
         }
 
@@ -26,7 +29,10 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           where: { email: email.toLowerCase().trim() },
         });
 
+        console.log('👤 User found:', !!user, user ? { id: user.id, email: user.email } : 'none');
+
         if (user && (await bcrypt.compare(password, user.password))) {
+          console.log('✅ Password match - Login successful');
           // Return a user object that satisfies the `User` type from next-auth
           return {
             id: user.id,
@@ -40,6 +46,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           };
         }
         
+        console.log('❌ Password mismatch or user not found');
         return null;
       },
     }),

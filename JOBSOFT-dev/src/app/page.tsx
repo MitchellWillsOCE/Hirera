@@ -14,12 +14,12 @@ import {
   IconChartInfographic,
   IconTargetArrow,
   IconFileText,
-  IconBriefcase,
   IconBrandGithub,
   IconBrandTwitter,
   IconBrandLinkedin,
   IconClipboardText,
 } from "@tabler/icons-react";
+import { Briefcase } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export default function LandingPage() {
@@ -30,7 +30,7 @@ export default function LandingPage() {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center space-x-2">
-              <IconBriefcase className="h-6 w-6 text-blue-600" />
+              <Briefcase className="h-8 w-8 text-blue-600" />
               <Link href="/" className="text-2xl font-bold text-black">
                 Hirera
               </Link>

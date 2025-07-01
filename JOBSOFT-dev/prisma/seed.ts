@@ -247,20 +247,6 @@ async function main() {
 
       const achieved = Math.floor(target * (Math.random() * 0.9)) // 0-90% progress
 
-      const startDate = new Date()
-      const endDate = new Date()
-      
-      if (randomPeriod === 'WEEKLY') {
-        startDate.setDate(startDate.getDate() - 7)
-        endDate.setDate(endDate.getDate() + 7)
-      } else if (randomPeriod === 'MONTHLY') {
-        startDate.setMonth(startDate.getMonth() - 1)
-        endDate.setMonth(endDate.getMonth() + 1)
-      } else {
-        startDate.setMonth(startDate.getMonth() - 3)
-        endDate.setMonth(endDate.getMonth() + 3)
-      }
-
       try {
         await prisma.goal.create({
           data: {
@@ -269,9 +255,7 @@ async function main() {
             target,
             achieved,
             period: randomPeriod as any,
-            startDate,
-            endDate,
-            isActive: achieved < target && endDate > new Date()
+            isActive: achieved < target
           }
         })
         goalsCreated++
@@ -286,7 +270,9 @@ async function main() {
   // Create achievements for users who completed goals
   console.log('🏆 Creating achievements...')
   const completedGoals = await prisma.goal.findMany({
-    where: { achieved: { gte: prisma.goal.fields.target } },
+    where: { 
+      achieved: { gte: 1 } // Goals with at least 1 achievement
+    },
     include: { user: true }
   })
 
@@ -303,7 +289,7 @@ async function main() {
           type: randomType as any,
           title: `${goal.type} Goal Completed`,
           description: `Successfully achieved ${goal.achieved}/${goal.target} ${goal.type.toLowerCase()} in ${goal.period.toLowerCase()} period`,
-          unlockedAt: goal.endDate
+          unlockedAt: new Date()
         }
       })
       achievementsCreated++

@@ -544,13 +544,15 @@ interface DashboardAuthenticatedProps {
 
 interface Goal {
   id: string
+  userId: string
   type: string
   target: number
   achieved: number
   period: string
-  startDate: Date
-  endDate: Date
+  description?: string
   isActive: boolean
+  createdAt: Date
+  updatedAt: Date
 }
 
 const TABS = [
@@ -775,7 +777,7 @@ export function DashboardAuthenticated({ user }: DashboardAuthenticatedProps) {
           <div className="flex justify-between items-center h-14 sm:h-16">
             <div className="flex items-center space-x-3 sm:space-x-4">
               <Link href="/" className="flex items-center space-x-3 sm:space-x-4 hover:opacity-80 transition-opacity">
-                <Briefcase className="h-6 w-6 sm:h-8 sm:w-8 text-blue-600" />
+                <Briefcase className="h-8 w-8 text-blue-600" />
                 <div>
                   <h1 className="text-lg sm:text-xl font-bold text-slate-900">Hirera</h1>
                   <p className="text-xs sm:text-sm text-slate-600 hidden sm:block">Professional Job Application Management</p>
@@ -953,7 +955,7 @@ export function DashboardAuthenticated({ user }: DashboardAuthenticatedProps) {
                 {filteredJobs.length === 0 && !loading && (
                   <Card className="border-dashed border-2 border-slate-300">
                     <CardContent className="flex flex-col items-center justify-center py-12 sm:py-16">
-                      <Briefcase className="h-12 w-12 sm:h-16 sm:w-16 text-slate-400 mb-4" />
+                      <Briefcase className="h-16 w-16 text-slate-400 mb-4" />
                       <h3 className="text-lg sm:text-xl font-semibold text-slate-600 mb-2">
                         {searchTerm ? 'No matching jobs found' : 'No job applications yet'}
                       </h3>
