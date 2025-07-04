@@ -1,9 +1,9 @@
 import { NextResponse } from 'next/server'
-import { checkServicesHealth } from '@/services'
+import { healthCheckService } from '@/health-check-module/health-check.service'
 
 export async function GET() {
   try {
-    const healthStatus = await checkServicesHealth()
+    const healthStatus = await healthCheckService.performHealthCheck()
     
     const responseStatus = healthStatus.status === 'healthy' ? 200 : 
                           healthStatus.status === 'degraded' ? 207 : 503

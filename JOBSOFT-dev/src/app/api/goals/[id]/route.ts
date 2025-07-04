@@ -143,7 +143,7 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
 
     // Handle recalculate action
     if (body.action === 'recalculate') {
-      const { goalsService } = await import('@/services/goals.service')
+      const { goalsService } = await import('@/goals-module/goals.service')
       const result = await goalsService.recalculateGoalProgress(session.user.id, id)
       
       if (!result.success) {

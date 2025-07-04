@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
-import { jobApplicationsService } from '@/services/job-applications.service'
+import { jobApplicationsService } from '@/jobs-module/job-applications.service'
 import { JobStatus, Priority } from '@/generated/prisma'
 
 // Enable response caching
