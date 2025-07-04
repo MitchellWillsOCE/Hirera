@@ -1,4 +1,4 @@
-import { BaseService, ServiceResponse } from './base.service'
+import { BaseService, ServiceResponse } from '@/lib/base.service'
 import { prisma } from '@/lib/prisma'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
@@ -142,9 +142,9 @@ export class AuthService extends BaseService {
         id: user.id,
         username: user.username,
         email: user.email,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        country: user.country,
+        firstName: user.firstName ?? undefined,
+        lastName: user.lastName ?? undefined,
+        country: user.country ?? undefined,
         isPublic: user.isPublic
       }
 
@@ -178,9 +178,9 @@ export class AuthService extends BaseService {
         id: user.id,
         username: user.username,
         email: user.email,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        country: user.country,
+        firstName: user.firstName ?? undefined,
+        lastName: user.lastName ?? undefined,
+        country: user.country ?? undefined,
         isPublic: user.isPublic
       }
 
@@ -215,9 +215,9 @@ export class AuthService extends BaseService {
         id: user.id,
         username: user.username,
         email: user.email,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        country: user.country,
+        firstName: user.firstName ?? undefined,
+        lastName: user.lastName ?? undefined,
+        country: user.country ?? undefined,
         isPublic: user.isPublic
       }
 
@@ -285,7 +285,7 @@ export class AuthService extends BaseService {
       const decoded = jwt.verify(token, this.jwtSecret) as JWTPayload
       return this.success(decoded)
     } catch (error) {
-      return { success: false, error: 'Invalid token', code: 'INVALID_TOKEN' }
+      return this.handleError(error)
     }
   }
 
@@ -293,35 +293,42 @@ export class AuthService extends BaseService {
    * Create development test user
    */
   async createTestUser(): Promise<ServiceResponse<AuthUser>> {
-    try {
-      const testUser = await prisma.user.upsert({
-        where: { email: 'test@hirera.com' },
-        update: {},
-        create: {
-          username: 'testuser',
-          email: 'test@hirera.com',
-          password: await bcrypt.hash('testpassword', 12),
-          firstName: 'Test',
-          lastName: 'User',
-          country: 'US',
-          isPublic: true
-        }
-      })
-
+    const testEmail = 'testuser@example.com'
+    const existingUser = await prisma.user.findUnique({ where: { email: testEmail } })
+    if (existingUser) {
       const authUser: AuthUser = {
-        id: testUser.id,
-        username: testUser.username,
-        email: testUser.email,
-        firstName: testUser.firstName,
-        lastName: testUser.lastName,
-        country: testUser.country,
-        isPublic: testUser.isPublic
+        id: existingUser.id,
+        username: existingUser.username,
+        email: existingUser.email,
+        firstName: existingUser.firstName ?? undefined,
+        lastName: existingUser.lastName ?? undefined,
+        country: existingUser.country ?? undefined,
+        isPublic: existingUser.isPublic
       }
-
       return this.success(authUser)
-    } catch (error) {
-      return this.handleError(error)
     }
+    const hashedPassword = await bcrypt.hash('password123', 12)
+    const testUser = await prisma.user.create({
+      data: {
+        username: 'testuser',
+        email: testEmail,
+        password: hashedPassword,
+        firstName: 'Test',
+        lastName: 'User',
+        country: 'US',
+        isPublic: true
+      }
+    })
+    const authUser: AuthUser = {
+      id: testUser.id,
+      username: testUser.username,
+      email: testUser.email,
+      firstName: testUser.firstName ?? undefined,
+      lastName: testUser.lastName ?? undefined,
+      country: testUser.country ?? undefined,
+      isPublic: testUser.isPublic
+    }
+    return this.success(authUser)
   }
 }
 

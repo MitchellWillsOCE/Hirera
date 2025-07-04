@@ -1,7 +1,7 @@
-import { BaseService, ServiceResponse, PaginationOptions } from './base.service'
+import { BaseService, ServiceResponse, PaginationOptions } from '@/lib/base.service'
 import { prisma } from '@/lib/prisma'
 import { JobApplication, JobStatus, Priority } from '@/generated/prisma'
-import { goalsService } from './goals.service'
+import { goalsService } from '@/services/goals.service'
 
 export interface CreateJobApplicationData {
   jobTitle: string

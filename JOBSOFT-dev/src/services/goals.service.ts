@@ -1,4 +1,4 @@
-import { BaseService, ServiceResponse } from './base.service'
+import { BaseService, ServiceResponse } from '@/lib/base.service'
 import { prisma } from '@/lib/prisma'
 import { Goal, GoalType, JobStatus } from '@/generated/prisma'
 
