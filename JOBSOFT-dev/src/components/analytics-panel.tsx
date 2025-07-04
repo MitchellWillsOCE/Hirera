@@ -33,8 +33,8 @@ export function AnalyticsPanel({ jobs }: AnalyticsPanelProps) {
       return acc;
     }, {} as Record<string, number>);
 
-    const offersReceived = applicationsByStatus.offer || 0;
-    const interviewsReceived = applicationsByStatus.interview || 0;
+    const offersReceived = applicationsByStatus.OFFER || 0;
+    const interviewsReceived = (applicationsByStatus.INTERVIEW || 0) + (applicationsByStatus.OFFER || 0) + (applicationsByStatus.EMPLOYED || 0);
     const successRate = totalApplications > 0 ? (offersReceived / totalApplications) * 100 : 0;
     const interviewRate = totalApplications > 0 ? (interviewsReceived / totalApplications) * 100 : 0;
 

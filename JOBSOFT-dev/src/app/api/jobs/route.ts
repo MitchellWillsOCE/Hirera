@@ -2,6 +2,24 @@ import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
 import { jobApplicationsService } from '@/services/job-applications.service'
 import { JobStatus, Priority } from '@/generated/prisma'
+import * as z from 'zod'
+
+const jobFormSchema = z.object({
+  jobTitle: z.string().min(1, 'Job title is required'),
+  company: z.string().min(1, 'Company is required'),
+  location: z.string().min(1, 'Location is required'),
+  jobPostUrl: z.string().url().optional().or(z.literal('')),
+  salary: z.number().positive().optional(),
+  salaryCurrency: z.string().optional(),
+  contactName: z.string().optional(),
+  contactEmail: z.string().email({ message: "Invalid email address." }).optional().or(z.literal('')),
+  contactPhone: z.string().optional(),
+  notes: z.string().optional(),
+  status: z.nativeEnum(JobStatus).optional(),
+  priority: z.nativeEnum(Priority).optional(),
+  appliedDate: z.date().optional(),
+  tags: z.array(z.string()).optional()
+})
 
 // Enable response caching
 export const revalidate = 300 // Cache for 5 minutes
@@ -77,96 +95,18 @@ export async function POST(request: NextRequest) {
     const session = await auth()
     
     if (!session?.user?.id) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      )
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
     const body = await request.json()
     
-    // Enhanced validation
-    const requiredFields = ['jobTitle', 'company', 'location']
-    const missingFields = requiredFields.filter(field => !body[field])
-    
-    if (missingFields.length > 0) {
-      return NextResponse.json(
-        { 
-          error: `Missing required fields: ${missingFields.join(', ')}`,
-          code: 'VALIDATION_ERROR' 
-        },
-        { status: 400 }
-      )
-    }
+    // Use Zod for validation
+    const validatedData = jobFormSchema.parse(body)
 
-    // Validate enums
-    if (body.status && !Object.values(JobStatus).includes(body.status)) {
-      return NextResponse.json(
-        { error: 'Invalid status value', code: 'INVALID_STATUS' },
-        { status: 400 }
-      )
-    }
-
-    if (body.priority && !Object.values(Priority).includes(body.priority)) {
-      return NextResponse.json(
-        { error: 'Invalid priority value', code: 'INVALID_PRIORITY' },
-        { status: 400 }
-      )
-    }
-
-    // Validate salary if provided
-    if (body.salary && (typeof body.salary !== 'number' || body.salary < 0)) {
-      return NextResponse.json(
-        { error: 'Salary must be a positive number', code: 'INVALID_SALARY' },
-        { status: 400 }
-      )
-    }
-
-    // Validate URLs permissively: must contain a dot, and we'll add https://
-    let validatedUrl = body.jobPostUrl;
-    if (body.jobPostUrl && body.jobPostUrl.trim()) {
-      const urlString = body.jobPostUrl.trim();
-      
-      if (!urlString.includes('.')) {
-        return NextResponse.json(
-          { error: 'URL must be a valid address containing a dot.', code: 'INVALID_URL' },
-          { status: 400 }
-        );
-      }
-      
-      // Prepend https:// if no protocol is present for consistency.
-      if (!urlString.startsWith('http://') && !urlString.startsWith('https://')) {
-        validatedUrl = `https://\${urlString}`;
-      } else {
-        validatedUrl = urlString;
-      }
-    }
-    
-    // Explicitly map ONLY the fields expected by the service to prevent extra fields
-    const jobData = {
-      jobTitle: body.jobTitle,
-      company: body.company,
-      location: body.location,
-      jobPostUrl: validatedUrl,
-      salary: body.salary,
-      salaryCurrency: body.salaryCurrency,
-      contactName: body.contactName,
-      contactEmail: body.contactEmail,
-      contactPhone: body.contactPhone,
-      notes: body.notes,
-      status: body.status,
-      priority: body.priority,
-      appliedDate: body.appliedDate
-    };
-
-    // Use optimized service with sanitized data
-    const result = await jobApplicationsService.create(session.user.id, jobData)
+    const result = await jobApplicationsService.create(session.user.id, validatedData)
 
     if (!result.success) {
-      return NextResponse.json(
-        { error: result.error, code: result.code },
-        { status: 400 }
-      )
+      return NextResponse.json({ error: result.error, code: result.code }, { status: 400 })
     }
 
     return NextResponse.json(result.data, { 
@@ -177,10 +117,12 @@ export async function POST(request: NextRequest) {
       }
     })
   } catch (error) {
+    if (error instanceof z.ZodError) {
+      const errors = error.flatten().fieldErrors
+      return NextResponse.json({ errors }, { status: 400 })
+    }
+
     console.error('Error creating job:', error)
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 } 

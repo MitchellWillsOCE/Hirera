@@ -23,14 +23,15 @@ import { getCountryFlag } from '@/lib/countries'
 interface LeaderboardUser {
   id: string
   username: string
-  firstName: string | null
-  lastName: string | null
-  country: string | null
+  firstName: string
+  lastName: string
+  country: string
   totalApplications: number
   successRate: number
   interviewRate: number
   offerCount: number
-  avgResponseTime: number | null
+  avgResponseTime: number
+  lastActive: Date
   rank: number
 }
 
@@ -50,7 +51,7 @@ interface LeaderboardData {
 export function Leaderboards() {
   const [data, setData] = useState<LeaderboardData | null>(null)
   const [loading, setLoading] = useState(true)
-  const [metric, setMetric] = useState('totalApps')
+  const [metric, setMetric] = useState('applications')
   const [period, setPeriod] = useState('month')
   const [country, setCountry] = useState('all')
 
@@ -95,24 +96,36 @@ export function Leaderboards() {
 
   const getMetricValue = (user: LeaderboardUser) => {
     switch (metric) {
-      case 'totalApps': return user.totalApplications
+      case 'applications': return user.totalApplications
       case 'success': return `${user.successRate}%`
       case 'interviews': return `${user.interviewRate}%`
       case 'offers': return user.offerCount
-      case 'speed': return user.avgResponseTime ? `${user.avgResponseTime}d` : 'N/A'
+      case 'speed': return `${user.avgResponseTime}d`
       default: return user.totalApplications
     }
   }
 
   const getMetricLabel = () => {
     switch (metric) {
-      case 'totalApps': return 'Applications'
+      case 'applications': return 'Applications'
       case 'success': return 'Success Rate'
       case 'interviews': return 'Interview Rate'
       case 'offers': return 'Offers'
       case 'speed': return 'Response Speed'
       default: return 'Applications'
     }
+  }
+
+  const formatLastActive = (date: Date) => {
+    const now = new Date()
+    const diffInMs = now.getTime() - new Date(date).getTime()
+    const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24))
+    
+    if (diffInDays === 0) return 'Today'
+    if (diffInDays === 1) return 'Yesterday'
+    if (diffInDays < 7) return `${diffInDays} days ago`
+    if (diffInDays < 30) return `${Math.floor(diffInDays / 7)} weeks ago`
+    return `${Math.floor(diffInDays / 30)} months ago`
   }
 
   return (
@@ -136,11 +149,11 @@ export function Leaderboards() {
                   <SelectValue placeholder="Select metric" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="totalApps">📝 Total Applications</SelectItem>
+                  <SelectItem value="applications">📝 Total Applications</SelectItem>
                   <SelectItem value="success">🎯 Success Rate</SelectItem>
                   <SelectItem value="interviews">🎤 Interview Rate</SelectItem>
                   <SelectItem value="offers">🎉 Offers Received</SelectItem>
-                  <SelectItem value="speed" disabled>⚡ Response Speed (soon)</SelectItem>
+                  <SelectItem value="speed">⚡ Response Speed</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -240,7 +253,7 @@ export function Leaderboards() {
               <Card className="hover:shadow-lg transition-shadow">
                 <CardContent className="p-6">
                   <div className="flex items-center">
-                    <div className="bg-green-50 p-3 rounded-lg mr-4">
+                    <div className="bg-green-50 p-3 rounded-lg mr-.4">
                       <Target className="h-6 w-6 text-green-600" />
                     </div>
                     <div>
@@ -317,7 +330,7 @@ export function Leaderboards() {
                         #{data.currentUser.rank}
                       </div>
                       <div className="flex items-center space-x-3">
-                        <span className="text-2xl">{getCountryFlag(data.currentUser.country || 'WW')}</span>
+                        <span className="text-2xl">{getCountryFlag(data.currentUser.country)}</span>
                         <div>
                           <h3 className="font-semibold text-gray-900">
                             {data.currentUser.firstName} {data.currentUser.lastName}
@@ -352,46 +365,33 @@ export function Leaderboards() {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   {data.leaderboard.slice(0, 3).map((user, index) => (
                     <motion.div
                       key={user.id}
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.3, delay: index * 0.1 }}
-                      className="relative"
+                      transition={{ duration: 0.3, delay: 0.6 + index * 0.1 }}
+                      className={`relative p-6 rounded-lg bg-gradient-to-br ${getRankColor(user.rank)} ${
+                        user.rank === 1 ? 'transform -translate-y-2' : ''
+                      }`}
                     >
-                      <div
-                        className={`p-6 rounded-xl shadow-lg h-full flex flex-col justify-between bg-gradient-to-br ${getRankColor(user.rank)}`}
-                      >
-                        <div>
-                          <div className="flex justify-between items-start mb-4">
-                            <Badge className="bg-white/20 text-white border-none">#{user.rank}</Badge>
-                            {getRankIcon(user.rank)}
-                          </div>
-                          <div className="flex items-center space-x-3">
-                            <span className="text-4xl">
-                              {getCountryFlag(user.country || 'WW')}
-                            </span>
-                            <div>
-                              <p className="font-bold text-lg text-white">{user.username}</p>
-                              <p className="text-sm text-gray-200">{user.firstName} {user.lastName}</p>
-                            </div>
-                          </div>
+                      <div className="text-center">
+                        <div className="flex justify-center mb-3">
+                          {getRankIcon(user.rank)}
                         </div>
-                        <div className="text-right mt-4">
-                          <p className="font-bold text-2xl text-white">{getMetricValue(user)}</p>
-                          <p className="text-xs text-gray-200">{getMetricLabel()}</p>
+                        <div className="mb-3">
+                          <span className="text-3xl">{getCountryFlag(user.country)}</span>
+                        </div>
+                        <h3 className="font-bold text-lg">{user.firstName} {user.lastName}</h3>
+                        <p className="text-sm opacity-80">@{user.username}</p>
+                        <div className="mt-4">
+                          <p className="text-2xl font-bold">{getMetricValue(user)}</p>
+                          <p className="text-sm opacity-80">{getMetricLabel()}</p>
                         </div>
                       </div>
                     </motion.div>
                   ))}
-                  {data.leaderboard.length === 0 && (
-                    <div className="text-center py-12 text-gray-500 col-span-1 md:col-span-4">
-                      <p className="mb-2 text-lg">No data for this period yet.</p>
-                      <p>Be the first to make it to the leaderboard!</p>
-                    </div>
-                  )}
                 </div>
               </CardContent>
             </Card>
@@ -424,7 +424,7 @@ export function Leaderboards() {
                         <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center font-semibold text-gray-600">
                           #{user.rank}
                         </div>
-                        <span className="text-xl">{getCountryFlag(user.country || 'WW')}</span>
+                        <span className="text-xl">{getCountryFlag(user.country)}</span>
                         <div>
                           <h3 className="font-semibold text-gray-900">
                             {user.firstName} {user.lastName}
@@ -446,6 +446,10 @@ export function Leaderboards() {
                           <p className="font-semibold text-gray-900">{user.successRate}%</p>
                           <p>Success</p>
                         </div>
+                        <div className="text-center">
+                          <p className="text-xs">{formatLastActive(user.lastActive)}</p>
+                          <p>Last Active</p>
+                        </div>
                       </div>
                     </motion.div>
                   ))}
@@ -453,33 +457,6 @@ export function Leaderboards() {
               </CardContent>
             </Card>
           </motion.div>
-
-          {/* Current User's Rank */}
-          {data.currentUser && data.currentUser.rank > 10 && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3, delay: 0.5 }}
-            >
-              <Card className="mt-6 border-2 border-blue-500 bg-blue-50">
-                <CardContent className="p-4">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-3">
-                      <Badge className={getRankColor(data.currentUser.rank)}>{data.currentUser.rank}</Badge>
-                      <span className="text-2xl">{getCountryFlag(data.currentUser.country || 'WW')}</span>
-                      <div>
-                        <p className="font-bold text-gray-900">{data.currentUser.username} (You)</p>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <p className="font-bold text-lg">{getMetricValue(data.currentUser)}</p>
-                      <p className="text-xs text-gray-500">{getMetricLabel()}</p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </motion.div>
-          )}
         </>
       )}
     </div>

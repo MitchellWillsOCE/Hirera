@@ -29,6 +29,7 @@ import { JobApplication, JobStatus, Priority } from '@/lib/types'
 import { X, Plus, DollarSign, User, Mail, Phone, Link, MapPin, Building, Briefcase } from 'lucide-react'
 import { currencies, getCurrencySymbol } from '@/lib/currencies'
 import { motion, AnimatePresence } from 'framer-motion'
+import { cn } from '@/lib/utils'
 
 const jobFormSchema = z.object({
   jobTitle: z.string().min(1, 'Job title is required'),
@@ -38,7 +39,7 @@ const jobFormSchema = z.object({
   salary: z.number().optional(),
   salaryCurrency: z.string().optional(),
   contactName: z.string().optional(),
-  contactEmail: z.string().email('Invalid email').optional().or(z.literal('')),
+  contactEmail: z.string().email({ message: "Invalid email address." }).optional().or(z.literal('')),
   contactPhone: z.string().optional(),
   notes: z.string().optional(),
   status: z.nativeEnum(JobStatus),
@@ -51,7 +52,7 @@ export type JobFormValues = z.infer<typeof jobFormSchema>
 interface JobFormProps {
   open: boolean
   onClose: () => void
-  onSubmit: (data: JobFormValues) => void
+  onSubmit: (data: JobFormValues) => Promise<{ success: boolean; errors?: any }>
   editingJob?: (JobApplication & { tags: { tag: { name: string } }[] }) | null
 }
 
@@ -75,7 +76,7 @@ export function JobForm({ open, onClose, onSubmit, editingJob }: JobFormProps) {
     }
   })
 
-  const { reset, setValue } = form
+  const { reset, setValue, setError, formState: { errors } } = form
   const [tags, setTags] = React.useState<string[]>([])
   const [currentTag, setCurrentTag] = React.useState('')
 
@@ -121,8 +122,16 @@ export function JobForm({ open, onClose, onSubmit, editingJob }: JobFormProps) {
     }
   }, [editingJob, open, reset])
   
-  const handleSubmit = (values: JobFormValues) => {
-    onSubmit({ ...values, tags })
+  const handleSubmit = async (values: JobFormValues) => {
+    const result = await onSubmit({ ...values, tags })
+    if (!result.success && result.errors) {
+      for (const [field, message] of Object.entries(result.errors)) {
+        setError(field as keyof JobFormValues, {
+          type: 'manual',
+          message: message as string,
+        })
+      }
+    }
   }
   
   const addTag = () => {
@@ -216,7 +225,12 @@ export function JobForm({ open, onClose, onSubmit, editingJob }: JobFormProps) {
                           <FormItem>
                             <FormLabel className="text-sm font-medium">Job Title *</FormLabel>
                             <FormControl>
-                              <Input placeholder="e.g. Senior Frontend Developer" {...field} value={field.value || ''} />
+                              <Input 
+                                placeholder="e.g. Senior Frontend Developer" 
+                                {...field} 
+                                value={field.value || ''} 
+                                className={cn(errors.jobTitle && "border-red-500 focus-visible:ring-red-500")}
+                              />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -229,7 +243,12 @@ export function JobForm({ open, onClose, onSubmit, editingJob }: JobFormProps) {
                           <FormItem>
                             <FormLabel className="text-sm font-medium">Company *</FormLabel>
                             <FormControl>
-                              <Input placeholder="e.g. Google" {...field} value={field.value || ''} />
+                              <Input 
+                                placeholder="e.g. Google" 
+                                {...field} 
+                                value={field.value || ''}
+                                className={cn(errors.company && "border-red-500 focus-visible:ring-red-500")}
+                              />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -247,7 +266,12 @@ export function JobForm({ open, onClose, onSubmit, editingJob }: JobFormProps) {
                               <MapPin className="h-3 w-3" /> Location *
                             </FormLabel>
                             <FormControl>
-                              <Input placeholder="e.g. San Francisco, CA" {...field} value={field.value || ''} />
+                              <Input 
+                                placeholder="e.g. San Francisco, CA" 
+                                {...field} 
+                                value={field.value || ''} 
+                                className={cn(errors.location && "border-red-500 focus-visible:ring-red-500")}
+                              />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -263,9 +287,10 @@ export function JobForm({ open, onClose, onSubmit, editingJob }: JobFormProps) {
                             </FormLabel>
                             <FormControl>
                               <Input 
-                                placeholder="e.g. a.com or https://..." 
+                                placeholder="https://..." 
                                 {...field} 
-                                value={field.value || ''}
+                                value={field.value || ''} 
+                                className={cn(errors.jobPostUrl && "border-red-500 focus-visible:ring-red-500")}
                               />
                             </FormControl>
                             <FormMessage />
@@ -281,9 +306,11 @@ export function JobForm({ open, onClose, onSubmit, editingJob }: JobFormProps) {
                         render={({ field }) => (
                           <FormItem>
                             <FormLabel className="text-sm font-medium">Status *</FormLabel>
-                            <Select onValueChange={field.onChange} value={field.value}>
+                            <Select onValueChange={field.onChange} defaultValue={field.value}>
                               <FormControl>
-                                <SelectTrigger><SelectValue placeholder="Select a status" /></SelectTrigger>
+                                <SelectTrigger className={cn(errors.status && "border-red-500 focus-visible:ring-red-500")}>
+                                  <SelectValue placeholder="Select a status" />
+                                </SelectTrigger>
                               </FormControl>
                               <SelectContent>
                                 {Object.values(JobStatus).map((status) => (
@@ -303,9 +330,11 @@ export function JobForm({ open, onClose, onSubmit, editingJob }: JobFormProps) {
                         render={({ field }) => (
                           <FormItem>
                             <FormLabel className="text-sm font-medium">Priority *</FormLabel>
-                            <Select onValueChange={field.onChange} value={field.value}>
+                            <Select onValueChange={field.onChange} defaultValue={field.value}>
                               <FormControl>
-                                <SelectTrigger><SelectValue placeholder="Select a priority" /></SelectTrigger>
+                                <SelectTrigger className={cn(errors.priority && "border-red-500 focus-visible:ring-red-500")}>
+                                  <SelectValue placeholder="Select a priority" />
+                                </SelectTrigger>
                               </FormControl>
                               <SelectContent>
                                 {Object.values(Priority).map((priority) => (
@@ -334,14 +363,15 @@ export function JobForm({ open, onClose, onSubmit, editingJob }: JobFormProps) {
                           <FormItem>
                             <FormLabel className="text-sm font-medium">Salary</FormLabel>
                             <FormControl>
-                              <Input 
-                                type="number" 
-                                placeholder="e.g. 120000" 
-                                {...field} 
-                                value={field.value || ''} 
+                              <Input
+                                type="number"
+                                placeholder="e.g. 120000"
+                                {...field}
+                                value={field.value ?? ''}
+                                onChange={(e) => field.onChange(e.target.valueAsNumber)}
+                                className={cn("rounded-r-none focus:z-10", errors.salary && "border-red-500 focus-visible:ring-red-500")}
                               />
                             </FormControl>
-                            <FormMessage />
                           </FormItem>
                         )}
                       />
@@ -380,10 +410,16 @@ export function JobForm({ open, onClose, onSubmit, editingJob }: JobFormProps) {
                         name="contactName"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel className="text-sm font-medium">Contact Name</FormLabel>
+                            <FormLabel className="text-sm font-medium flex items-center gap-2"><User className="h-3 w-3" />Contact Name</FormLabel>
                             <FormControl>
-                              <Input placeholder="e.g. Jane Doe" {...field} value={field.value || ''} />
+                              <Input 
+                                placeholder="e.g. Jane Doe" 
+                                {...field} 
+                                value={field.value || ''} 
+                                className={cn(errors.contactName && "border-red-500 focus-visible:ring-red-500")}
+                              />
                             </FormControl>
+                            <FormMessage />
                           </FormItem>
                         )}
                       />
@@ -392,11 +428,14 @@ export function JobForm({ open, onClose, onSubmit, editingJob }: JobFormProps) {
                         name="contactEmail"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel className="text-sm font-medium flex items-center gap-2">
-                              <Mail className="h-3 w-3" /> Contact Email
-                            </FormLabel>
+                            <FormLabel className="text-sm font-medium flex items-center gap-2"><Mail className="h-3 w-3" />Contact Email</FormLabel>
                             <FormControl>
-                              <Input type="email" placeholder="e.g. jane.doe@example.com" {...field} value={field.value || ''} />
+                              <Input 
+                                placeholder="e.g. jane.d@example.com" 
+                                {...field} 
+                                value={field.value || ''}
+                                className={cn(errors.contactEmail && "border-red-500 focus-visible:ring-red-500")}
+                              />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -408,12 +447,16 @@ export function JobForm({ open, onClose, onSubmit, editingJob }: JobFormProps) {
                       name="contactPhone"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-sm font-medium flex items-center gap-2">
-                            <Phone className="h-3 w-3" /> Contact Phone
-                          </FormLabel>
+                          <FormLabel className="text-sm font-medium flex items-center gap-2"><Phone className="h-3 w-3" />Contact Phone</FormLabel>
                           <FormControl>
-                            <Input placeholder="e.g. +1 123-456-7890" {...field} value={field.value || ''} />
+                            <Input 
+                              placeholder="e.g. (123) 456-7890" 
+                              {...field} 
+                              value={field.value || ''}
+                              className={cn(errors.contactPhone && "border-red-500 focus-visible:ring-red-500")}
+                            />
                           </FormControl>
+                          <FormMessage />
                         </FormItem>
                       )}
                     />
@@ -426,66 +469,38 @@ export function JobForm({ open, onClose, onSubmit, editingJob }: JobFormProps) {
                       name="notes"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-sm font-medium">Notes</FormLabel>
+                          <FormLabel className="text-sm font-medium">Notes & Description</FormLabel>
                           <FormControl>
-                            <Textarea placeholder="e.g. Followed up with hiring manager..." className="min-h-[100px]" {...field} value={field.value || ''} />
+                            <Textarea
+                              placeholder="Paste job description, add notes about the role, etc."
+                              className={`min-h-[120px] ${cn(errors.notes && "border-red-500 focus-visible:ring-red-500")}`}
+                              {...field}
+                              value={field.value || ''}
+                            />
                           </FormControl>
+                          <FormMessage />
                         </FormItem>
                       )}
                     />
                     <FormField
                       control={form.control}
                       name="tags"
-                      render={() => (
+                      render={({ field }) => (
                         <FormItem>
                           <FormLabel className="text-sm font-medium">Tags</FormLabel>
-                          <div className="flex flex-wrap gap-2">
-                            {tags.map((tag) => (
-                              <Badge key={tag} variant="secondary">
-                                {tag}
-                                <button
-                                  type="button"
-                                  className="ml-2 rounded-full outline-none ring-offset-background focus:ring-2 focus:ring-ring focus:ring-offset-2"
-                                  onClick={() => removeTag(tag)}
-                                >
-                                  <X className="h-3 w-3" />
-                                </button>
-                              </Badge>
-                            ))}
-                          </div>
-                          <FormControl>
-                            <div className="flex items-center gap-2">
+                          <div className="flex items-center gap-2">
+                            <FormControl>
                               <Input
                                 placeholder="Add a tag..."
                                 value={currentTag}
                                 onChange={(e) => setCurrentTag(e.target.value)}
                                 onKeyDown={handleKeyPress}
+                                className={cn(errors.tags && "border-red-500 focus-visible:ring-red-500")}
                               />
-                              <Button type="button" onClick={addTag}>
-                                <Plus className="h-4 w-4 mr-2" /> Add
-                              </Button>
-                            </div>
-                          </FormControl>
-                          <FormDescription className="text-xs">
-                            Press Enter or click Add to create a tag.
-                          </FormDescription>
-                          <div className="flex flex-wrap gap-1 pt-2">
-                            {suggestedTags.filter(t => !tags.includes(t)).map(t => (
-                              <Button
-                                key={t}
-                                type="button"
-                                variant="outline"
-                                size="sm"
-                                onClick={() => {
-                                  setCurrentTag(t)
-                                  addTag()
-                                }}
-                                className="text-xs"
-                              >
-                                {t}
-                              </Button>
-                            ))}
+                            </FormControl>
+                            <Button type="button" onClick={addTag}>Add</Button>
                           </div>
+                          <FormMessage />
                         </FormItem>
                       )}
                     />

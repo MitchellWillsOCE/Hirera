@@ -681,14 +681,19 @@ export function DashboardAuthenticated({ user }: DashboardAuthenticatedProps) {
         setJobs(prev => [newJob, ...prev])
         setFilteredJobs(prev => [newJob, ...prev])
         setShowJobForm(false)
+        return { success: true }
+      } else {
+        const errorData = await response.json()
+        return { success: false, errors: errorData.errors }
       }
     } catch (error) {
       console.error('Failed to create job:', error)
+      return { success: false, errors: { form: 'An unexpected error occurred.' } }
     }
   }
 
   const handleJobUpdate = async (jobData: any) => {
-    if (!editingJob) return
+    if (!editingJob) return { success: false }
 
     try {
       const response = await fetch(`/api/jobs/${editingJob.id}`, {
@@ -704,9 +709,14 @@ export function DashboardAuthenticated({ user }: DashboardAuthenticatedProps) {
         setFilteredJobs(prev => prev.map(job => job.id === updatedJob.id ? updatedJob : job))
         setEditingJob(null)
         setShowJobForm(false)
+        return { success: true }
+      } else {
+        const errorData = await response.json()
+        return { success: false, errors: errorData.errors }
       }
     } catch (error) {
       console.error('Failed to update job:', error)
+      return { success: false, errors: { form: 'An unexpected error occurred.' } }
     }
   }
 
@@ -778,9 +788,9 @@ export function DashboardAuthenticated({ user }: DashboardAuthenticatedProps) {
             <div className="flex items-center space-x-3 sm:space-x-4">
               <Link href="/" className="flex items-center space-x-3 sm:space-x-4 hover:opacity-80 transition-opacity">
                 <Briefcase className="h-8 w-8 text-blue-600" />
-                <div>
-                  <h1 className="text-lg sm:text-xl font-bold text-slate-900">Hirera</h1>
-                  <p className="text-xs sm:text-sm text-slate-600 hidden sm:block">Professional Job Application Management</p>
+                <div className="flex flex-col">
+                  <h1 className="text-lg sm:text-xl font-bold text-slate-900 leading-none mb-0">Hirera</h1>
+                  <p className="text-xs sm:text-sm text-slate-600 hidden sm:block leading-none">Professional Job Application Management</p>
                 </div>
               </Link>
             </div>

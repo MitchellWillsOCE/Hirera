@@ -38,6 +38,8 @@ export interface JobApplicationStats {
   byStatus: Record<JobStatus, number>
   byPriority: Record<Priority, number>
   successRate: number
+  interviewRate: number
+  rejectionRate: number
   avgResponseTime: number
   recentApplications: number
 }
@@ -349,6 +351,14 @@ export class JobApplicationsService extends BaseService {
         // Calculate success rate
         const successfulApplications = byStatus[JobStatus.OFFER] + byStatus[JobStatus.EMPLOYED]
         const successRate = total > 0 ? (successfulApplications / total) * 100 : 0
+        
+        // Calculate interview rate
+        const interviews = byStatus[JobStatus.INTERVIEW] + byStatus[JobStatus.OFFER] + byStatus[JobStatus.EMPLOYED]
+        const interviewRate = total > 0 ? (interviews / total) * 100 : 0
+        
+        // Calculate rejection rate
+        const rejectedApplications = byStatus[JobStatus.REJECTED]
+        const rejectionRate = total > 0 ? (rejectedApplications / total) * 100 : 0
 
         // Calculate average response time
         const responseTimes = applications
@@ -371,7 +381,9 @@ export class JobApplicationsService extends BaseService {
           total,
           byStatus,
           byPriority,
-          successRate: Math.round(successRate * 100) / 100,
+          successRate: Math.round(successRate),
+          interviewRate: Math.round(interviewRate),
+          rejectionRate: Math.round(rejectionRate),
           avgResponseTime: Math.round(avgResponseTime * 10) / 10,
           recentApplications
         }
