@@ -35,15 +35,27 @@ const jobFormSchema = z.object({
   jobTitle: z.string().min(1, 'Job title is required'),
   company: z.string().min(1, 'Company is required'),
   location: z.string().min(1, 'Location is required'),
-  jobPostUrl: z.string().optional(),
+  jobPostUrl: z.string().optional().or(z.literal('')).refine((url) => {
+    if (!url) return true;
+    try {
+      if (url.startsWith('http://') || url.startsWith('https://')) {
+        new URL(url);
+      } else {
+        new URL(`https://${url}`);
+      }
+      return true;
+    } catch {
+      return false;
+    }
+  }, "Please enter a valid URL."),
   salary: z.number().optional(),
   salaryCurrency: z.string().optional(),
   contactName: z.string().optional(),
   contactEmail: z.string().email({ message: "Invalid email address." }).optional().or(z.literal('')),
   contactPhone: z.string().optional(),
   notes: z.string().optional(),
-  status: z.nativeEnum(JobStatus),
-  priority: z.nativeEnum(Priority),
+  status: z.nativeEnum(JobStatus).optional(),
+  priority: z.nativeEnum(Priority).optional(),
   tags: z.array(z.string()).optional(),
 })
 
@@ -84,6 +96,11 @@ export function JobForm({ open, onClose, onSubmit, editingJob }: JobFormProps) {
     if (open) {
       if (editingJob) {
         const jobTags = editingJob.tags?.map(t => typeof t === 'string' ? t : t.tag.name) || []
+        
+        // Normalize status and priority from potentially incorrect legacy data
+        const normalizedStatus = editingJob.status ? editingJob.status.toUpperCase() as JobStatus : JobStatus.APPLIED;
+        const normalizedPriority = editingJob.priority ? editingJob.priority.toUpperCase() as Priority : Priority.MEDIUM;
+
         reset({
           jobTitle: editingJob.jobTitle,
           company: editingJob.company,
@@ -95,8 +112,8 @@ export function JobForm({ open, onClose, onSubmit, editingJob }: JobFormProps) {
           contactEmail: editingJob.contactEmail || '',
           contactPhone: editingJob.contactPhone || '',
           notes: editingJob.notes || '',
-          status: editingJob.status,
-          priority: editingJob.priority,
+          status: normalizedStatus,
+          priority: normalizedPriority,
           tags: jobTags,
         })
         setTags(jobTags)
@@ -150,7 +167,7 @@ export function JobForm({ open, onClose, onSubmit, editingJob }: JobFormProps) {
     setValue('tags', newTags)
   }
   
-  const handleKeyPress = (e: React.KeyboardEvent) => {
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
       e.preventDefault()
       addTag()

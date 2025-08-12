@@ -1,22 +1,26 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { auth } from '@/lib/auth'
-import { AnalyticsService } from '@/services/analytics.service'
+import { analyticsService } from '@/services/analytics.service'
+import { validateToken } from '@/lib/jwt'
 
 export async function GET(request: NextRequest) {
   try {
-    const session = await auth()
-    
-    if (!session?.user?.id) {
+    const token = request.headers.get('authorization')?.split(' ')[1]
+    if (!token) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const { searchParams } = new URL(request.url)
-    const quick = searchParams.get('quick') === 'true'
+    const validatedToken = await validateToken(token)
+    if (!validatedToken || typeof validatedToken.sub !== 'string') {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
 
-    // Always use getUserAnalytics for now since getQuickStats was removed
-    const analytics = await AnalyticsService.getUserAnalytics(session.user.id)
+    const serviceResponse = await analyticsService.getUserAnalytics(validatedToken.sub)
 
-    return NextResponse.json(analytics)
+    if (!serviceResponse.success) {
+      return NextResponse.json({ error: serviceResponse.error }, { status: 500 })
+    }
+
+    return NextResponse.json(serviceResponse.data)
   } catch (error) {
     console.error('Analytics API error:', error)
     return NextResponse.json(

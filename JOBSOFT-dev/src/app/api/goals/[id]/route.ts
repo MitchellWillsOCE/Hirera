@@ -1,23 +1,24 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { auth } from '@/lib/auth'
-import { prisma } from '@/lib/prisma'
+import { goalsService } from '@/services/goals.service'
+import { validateToken } from '@/lib/jwt'
 
 interface RouteParams {
-  params: Promise<{ id: string }>
+  params: { id: string }
 }
 
 export async function PUT(request: NextRequest, { params }: RouteParams) {
   try {
-    const session = await auth()
-    
-    if (!session?.user?.id) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      )
+    const token = request.headers.get('authorization')?.split(' ')[1]
+    if (!token) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const { id } = await params
+    const validatedToken = await validateToken(token)
+    if (!validatedToken || typeof validatedToken.sub !== 'string') {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    const { id } = params
     const body = await request.json()
 
     if (!id) {
@@ -27,44 +28,16 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       )
     }
 
-    // Verify ownership
-    const existingGoal = await prisma.goal.findFirst({
-      where: { id, userId: session.user.id }
-    })
+    const result = await goalsService.updateGoal(validatedToken.sub, id, body);
 
-    if (!existingGoal) {
-      return NextResponse.json(
-        { error: 'Goal not found or access denied' },
-        { status: 404 }
-      )
+    if (!result.success) {
+        return NextResponse.json(
+            { error: result.error },
+            { status: result.code === 'NOT_FOUND' ? 404 : 400 }
+        )
     }
 
-    const updatedGoal = await prisma.goal.update({
-      where: { id },
-      data: {
-        ...body,
-        updatedAt: new Date(),
-      },
-    })
-
-    // Check if goal is completed and create achievement
-    if (updatedGoal.achieved >= updatedGoal.target && existingGoal.achieved < existingGoal.target) {
-      try {
-        await prisma.achievement.create({
-          data: {
-            userId: session.user.id,
-            type: 'GOAL_ACHIEVER',
-            title: `Goal Completed: ${updatedGoal.type}`,
-            description: `Successfully achieved ${updatedGoal.target} ${updatedGoal.type.toLowerCase()} goal!`
-          }
-        })
-      } catch (achievementError) {
-        // Achievement creation failed but goal update succeeded
-        console.warn('Failed to create achievement:', achievementError)
-      }
-    }
-
-    return NextResponse.json(updatedGoal)
+    return NextResponse.json(result.data);
   } catch (error) {
     console.error('Error updating goal:', error)
     return NextResponse.json(
@@ -76,16 +49,17 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
 
 export async function DELETE(request: NextRequest, { params }: RouteParams) {
   try {
-    const session = await auth()
-    
-    if (!session?.user?.id) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      )
+    const token = request.headers.get('authorization')?.split(' ')[1]
+    if (!token) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const { id } = await params
+    const validatedToken = await validateToken(token)
+    if (!validatedToken || typeof validatedToken.sub !== 'string') {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    const { id } = params
 
     if (!id) {
       return NextResponse.json(
@@ -94,21 +68,14 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
       )
     }
 
-    // Verify ownership
-    const existingGoal = await prisma.goal.findFirst({
-      where: { id, userId: session.user.id }
-    })
+    const result = await goalsService.deleteGoal(validatedToken.sub, id);
 
-    if (!existingGoal) {
-      return NextResponse.json(
-        { error: 'Goal not found or access denied' },
-        { status: 404 }
-      )
+    if (!result.success) {
+        return NextResponse.json(
+            { error: result.error },
+            { status: result.code === 'NOT_FOUND' ? 404 : 400 }
+        )
     }
-
-    await prisma.goal.delete({
-      where: { id },
-    })
 
     return NextResponse.json({ success: true })
   } catch (error) {
@@ -122,16 +89,17 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
 
 export async function PATCH(request: NextRequest, { params }: RouteParams) {
   try {
-    const session = await auth()
-    
-    if (!session?.user?.id) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      )
+    const token = request.headers.get('authorization')?.split(' ')[1]
+    if (!token) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const { id } = await params
+    const validatedToken = await validateToken(token)
+    if (!validatedToken || typeof validatedToken.sub !== 'string') {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    const { id } = params
     const body = await request.json()
 
     if (!id) {
@@ -141,10 +109,8 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
       )
     }
 
-    // Handle recalculate action
     if (body.action === 'recalculate') {
-      const { goalsService } = await import('@/services/goals.service')
-      const result = await goalsService.recalculateGoalProgress(session.user.id, id)
+      const result = await goalsService.recalculateGoalProgress(validatedToken.sub, id)
       
       if (!result.success) {
         return NextResponse.json(

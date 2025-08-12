@@ -1,242 +1,229 @@
-# Hirera
+# Job Tracker Application
 
-Welcome to Hirera, your all-in-one solution for managing job applications and tracking your career progress. Built with the latest technologies, this dashboard provides a seamless and intuitive experience for job seekers.
+A modern job application tracking system built with Next.js, AWS Cognito for authentication, and DynamoDB for data storage.
 
-![Hirera](https://img.shields.io/badge/Next.js-14-black?style=for-the-badge&logo=next.js)
-![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?style=for-the-badge&logo=typescript)
-![Prisma](https://img.shields.io/badge/Prisma-5.0-2D3748?style=for-the-badge&logo=prisma)
-![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.0-06B6D4?style=for-the-badge&logo=tailwind-css)
+## Features
 
-## ✨ Features
+- **Authentication**: Secure user authentication with AWS Cognito
+- **Job Tracking**: Track job applications with status updates
+- **Analytics Dashboard**: Visualize application trends and statistics
+- **Goal Setting**: Set and track career goals
+- **Profile Management**: Manage user profiles and settings
 
-### 🎯 **Core Functionality**
-- **Job Application Management**: Complete CRUD operations for job applications
-- **Status Tracking**: Track application status from applied to offer/rejection
-- **Priority Management**: Set priority levels for applications
-- **Company & Contact Management**: Store company details and contact information
-- **Salary Tracking**: Record and analyze salary ranges across applications
+## Tech Stack
 
-### 📊 **Analytics & Insights**
-- **Success Rate Analysis**: Track your application success metrics
-- **Response Time Analytics**: Monitor how long companies take to respond
-- **Status Distribution**: Visual breakdown of application statuses
-- **Company Analytics**: See which companies you've applied to most
-- **Tag Analytics**: Track skills and technologies across applications
+- **Frontend**: Next.js 15, React, TypeScript, Tailwind CSS
+- **Authentication**: AWS Cognito with OIDC
+- **Database**: AWS DynamoDB
+- **Deployment**: Serverless architecture ready
 
-### 🔐 **Authentication & Security**
-- **NextAuth.js Integration**: Secure authentication system
-- **User Isolation**: Each user only sees their own data
-- **Password Hashing**: Secure password storage with bcrypt
-- **JWT Tokens**: Stateless authentication with JSON Web Tokens
+## Prerequisites
 
-### 📱 **Mobile-First Design**
-- **Responsive Layout**: Works perfectly on all device sizes
-- **Touch-Friendly Interface**: Optimized for mobile interactions
-- **Progressive Web App Ready**: Installable on mobile devices
-- **Fast Performance**: Optimized for speed and efficiency
+- Node.js 18+ and npm
+- AWS Account with appropriate permissions
+- AWS CLI configured (optional but recommended)
 
-### 🎨 **Modern UI/UX**
-- **shadcn/ui Components**: Beautiful, accessible component library
-- **Dark/Light Mode**: Automatic theme switching
-- **Smooth Animations**: Framer Motion powered transitions
-- **Intuitive Navigation**: Easy-to-use interface design
+## AWS Cognito Setup
 
-## 🚀 Quick Start
+### 1. Create Cognito User Pool
 
-### Prerequisites
-- Node.js (v18 or later)
-- npm or yarn
+1. Go to AWS Cognito Console
+2. Click "Create user pool"
+3. Configure the following settings:
 
-### Installation
+**Step 1: Configure sign-in experience**
+- Sign-in options: Email
+- User name requirements: Allow users to sign in with email
 
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/your-repo/hirera.git
-   cd hirera
-   ```
+**Step 2: Configure security requirements**
+- Password policy: Use default or customize as needed
+- Multi-factor authentication: Optional (recommended: Optional MFA)
 
-2. Install dependencies:
-   ```bash
-   npm install
-   # or
-   yarn install
-   ```
+**Step 3: Configure sign-up experience**
+- Self-service sign-up: Enable
+- Required attributes: Email
+- Optional attributes: given_name, family_name (if you want to collect names)
 
-3. **Set up environment variables**
-   ```bash
-   cp .env.example .env.local
-   ```
-   
-   Edit `.env.local` with your configuration:
-   ```env
-   NEXTAUTH_SECRET=your-super-secret-key-here-at-least-32-characters-long
-   NEXTAUTH_URL=http://localhost:3000
-   DATABASE_URL=file:./dev.db
-   ```
+**Step 4: Configure message delivery**
+- Email provider: Send email with Cognito (for development)
+- FROM email address: Use default
 
-4. **Initialize the database**
-   ```bash
-   npx prisma db push
-   ```
+**Step 5: Integrate your app**
+- User pool name: `JobTracker-UserPool` (or your preferred name)
+- App client name: `JobTracker-Client`
+- Client secret: **Generate a client secret** (Important!)
+- Authentication flows:
+  - ✅ ALLOW_USER_PASSWORD_AUTH
+  - ✅ ALLOW_USER_SRP_AUTH  
+  - ✅ ALLOW_REFRESH_TOKEN_AUTH
 
-5. **Start the development server**
-   ```bash
-   npm run dev
-   # or
-   yarn dev
-   ```
+### 2. Configure App Client Settings
 
-6. **Open your browser**
-   Navigate to [http://localhost:3000](http://localhost:3000)
+After creating the user pool:
 
-## 🏗️ Tech Stack
+1. Go to your User Pool → App integration → App clients
+2. Select your app client
+3. Ensure the following authentication flows are enabled:
+   - ✅ ALLOW_USER_PASSWORD_AUTH
+   - ✅ ALLOW_USER_SRP_AUTH
+   - ✅ ALLOW_REFRESH_TOKEN_AUTH
 
-### **Frontend**
-- **Next.js 14**: React framework with App Router
-- **TypeScript**: Type-safe JavaScript development
-- **Tailwind CSS**: Utility-first CSS framework
-- **shadcn/ui**: Modern component library
-- **Framer Motion**: Animation library
-- **Recharts**: Data visualization
+### 3. Get Configuration Values
 
-### **Backend**
-- **Next.js API Routes**: Serverless API endpoints
-- **Prisma**: Modern database ORM
-- **SQLite**: Development database (easily replaceable)
-- **NextAuth.js**: Authentication solution
+From your User Pool, collect these values:
+- **User Pool ID**: Found in "General settings"
+- **App Client ID**: Found in "App clients"
+- **App Client Secret**: Found in "App clients" → Show Details
+- **Region**: The AWS region where you created the pool
 
-### **Development Tools**
-- **ESLint**: Code linting
-- **Prettier**: Code formatting
-- **TypeScript**: Static type checking
-- **Git**: Version control
+## Installation & Setup
 
-## 📁 Project Structure
+### 1. Clone and Install Dependencies
+
+```bash
+git clone <repository-url>
+cd JOBSOFT-dev
+npm install
+```
+
+### 2. Environment Configuration
+
+Create a `.env.local` file in the `JOBSOFT-dev` directory:
+
+```env
+# Cognito Configuration
+NEXT_PUBLIC_COGNITO_USER_POOL_ID="your-user-pool-id"
+NEXT_PUBLIC_COGNITO_CLIENT_ID="your-app-client-id"
+NEXT_PUBLIC_COGNITO_REGION="your-aws-region"
+NEXT_PUBLIC_COGNITO_DOMAIN="your-cognito-domain.auth.region.amazoncognito.com"
+
+# Client Secret (Server-side only)
+COGNITO_CLIENT_SECRET="your-actual-client-secret"
+
+# AWS Credentials for DynamoDB
+AWS_ACCESS_KEY_ID="your-aws-access-key"
+AWS_SECRET_ACCESS_KEY="your-aws-secret-key"
+
+# JWT Configuration
+JWT_SECRET="your-jwt-secret-key-here"
+```
+
+**Important**: Replace all placeholder values with your actual AWS Cognito configuration.
+
+### 3. DynamoDB Setup
+
+The application uses DynamoDB for data storage. Ensure your AWS credentials have the following permissions:
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "dynamodb:PutItem",
+        "dynamodb:GetItem",
+        "dynamodb:Query",
+        "dynamodb:Scan",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:BatchGetItem",
+        "dynamodb:BatchWriteItem"
+      ],
+      "Resource": "arn:aws:dynamodb:*:*:table/JobTracker-*"
+    }
+  ]
+}
+```
+
+### 4. Run the Application
+
+```bash
+npm run dev
+```
+
+The application will be available at `http://localhost:3000`.
+
+## Troubleshooting
+
+### Authentication Issues
+
+**Error: "Auth flow not enabled for this client"**
+- Solution: Ensure `ALLOW_USER_PASSWORD_AUTH` is enabled in your Cognito App Client settings
+
+**Error: "Username cannot be of email format"**
+- Solution: Configure your User Pool to allow email as username in sign-in options
+
+**Error: "Authentication configuration issue"**
+- Solution: Verify all environment variables are correctly set in `.env.local`
+
+### Common Setup Issues
+
+1. **Missing Client Secret**: Ensure you generated and correctly copied the client secret
+2. **Wrong Region**: Verify the region matches where your Cognito resources are created
+3. **Invalid Credentials**: Check your AWS access keys have the required permissions
+
+### Testing Authentication
+
+1. Go to `/auth/signup` to create a new account
+2. Check your email for verification code
+3. Use the verification code to confirm your account
+4. Sign in at `/auth/signin`
+
+## Project Structure
 
 ```
-job-tracker/
+JOBSOFT-dev/
 ├── src/
-│   ├── app/                    # Next.js App Router pages
+│   ├── app/                    # Next.js app directory
 │   │   ├── api/               # API routes
 │   │   ├── auth/              # Authentication pages
-│   │   └── dashboard/         # Main application
+│   │   └── dashboard/         # Dashboard pages
 │   ├── components/            # React components
-│   │   ├── ui/                # shadcn/ui components
-│   │   └── providers/         # Context providers
 │   ├── lib/                   # Utility libraries
+│   │   ├── cognito-direct.ts  # Direct Cognito integration
+│   │   ├── auth-oidc.ts       # OIDC authentication
+│   │   └── dynamodb.ts        # DynamoDB client
 │   ├── services/              # Business logic services
 │   └── types/                 # TypeScript type definitions
-├── prisma/                    # Database schema and migrations
 ├── public/                    # Static assets
-└── docs/                      # Documentation
+└── ...config files
 ```
 
-## 🔧 Configuration
+## Development
 
-### Environment Variables
+### Available Scripts
 
-| Variable | Description | Required |
-|----------|-------------|----------|
-| `NEXTAUTH_SECRET` | Secret key for NextAuth.js | ✅ |
-| `NEXTAUTH_URL` | Base URL of your application | ✅ |
-| `DATABASE_URL` | Database connection string | ✅ |
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm run start` - Start production server
+- `npm run lint` - Run ESLint
 
-### Database Setup
+### Adding New Features
 
-The application uses Prisma with SQLite for development. To use a different database:
+1. Create components in `src/components/`
+2. Add API routes in `src/app/api/`
+3. Implement business logic in `src/services/`
+4. Update types in `src/types/`
 
-1. Update the `DATABASE_URL` in your `.env.local`
-2. Modify the `provider` in `prisma/schema.prisma`
-3. Run `npx prisma db push` to apply changes
+## Deployment
 
-## 📊 API Documentation
+This application is designed for serverless deployment on AWS:
 
-### Authentication
-- `POST /api/auth/register` - Register new user
-- `POST /api/auth/signin` - Sign in user
-- `GET /api/auth/test-login` - Development test login
+1. **Frontend**: Deploy to AWS S3 + CloudFront or Vercel
+2. **API**: Deploy as AWS Lambda functions
+3. **Database**: Uses AWS DynamoDB
+4. **Authentication**: AWS Cognito
 
-### Job Applications
-- `GET /api/jobs` - Get user's job applications
-- `POST /api/jobs` - Create new job application
-- `GET /api/jobs/[id]` - Get specific job application
-- `PUT /api/jobs/[id]` - Update job application
-- `DELETE /api/jobs/[id]` - Delete job application
+## Support
 
-### Analytics
-- `GET /api/analytics` - Get user's analytics data
+If you encounter issues:
 
-## 🧪 Development
+1. Check the troubleshooting section above
+2. Verify all environment variables are correctly configured
+3. Ensure AWS Cognito is properly set up with the correct authentication flows
+4. Check AWS CloudWatch logs for detailed error messages
 
-### Running Tests
-```bash
-npm run test
-# or
-yarn test
-```
+## License
 
-### Linting & Formatting
-```bash
-npm run lint
-npm run format
-```
-
-### Database Operations
-```bash
-# Apply schema changes
-npx prisma db push
-
-# Generate Prisma client
-npx prisma generate
-
-# Reset database
-npx prisma db push --force-reset
-```
-
-## 🚀 Deployment
-
-### Vercel (Recommended)
-1. Push your code to GitHub
-2. Import project in Vercel dashboard
-3. Set environment variables
-4. Deploy!
-
-### Docker
-```bash
-# Build image
-docker build -t jobtracker-pro .
-
-# Run container
-docker run -p 3000:3000 jobtracker-pro
-```
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-## 📝 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🙏 Acknowledgments
-
-- [Next.js](https://nextjs.org/) - The React framework
-- [shadcn/ui](https://ui.shadcn.com/) - Beautiful UI components
-- [Prisma](https://prisma.io/) - Database toolkit
-- [NextAuth.js](https://next-auth.js.org/) - Authentication
-- [Tailwind CSS](https://tailwindcss.com/) - CSS framework
-
-## 📞 Support
-
-If you have any questions or need help, please:
-- Open an issue on GitHub
-- Check the documentation
-- Contact the maintainers
-
----
-
-**Made with ❤️ by Mitchell Wills**
+[Add your license information here]

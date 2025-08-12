@@ -1,34 +1,31 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { auth } from '@/lib/auth'
-import { prisma } from '@/lib/prisma'
-import { GoalType, GoalPeriod } from '@/generated/prisma/client'
+import { goalsService } from '@/services/goals.service'
+import { GoalType, GoalPeriod } from '@/lib/types'
+import { validateToken } from '@/lib/jwt'
 
 export async function GET(request: NextRequest) {
   try {
-    const session = await auth()
-    
-    if (!session?.user?.id) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      )
+    const token = request.headers.get('authorization')?.split(' ')[1]
+    if (!token) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    const validatedToken = await validateToken(token)
+    if (!validatedToken || typeof validatedToken.sub !== 'string') {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
     const { searchParams } = new URL(request.url)
-    const type = searchParams.get('type')
-    const period = searchParams.get('period')
+    const type = searchParams.get('type') as GoalType | null
+    const period = searchParams.get('period') as GoalPeriod | null
 
-    const goals = await prisma.goal.findMany({
-      where: {
-        userId: session.user.id,
-        ...(type && { type: type.toUpperCase() as GoalType }),
-        ...(period && { period: period.toUpperCase() as GoalPeriod }),
-        isActive: true
-      },
-      orderBy: { createdAt: 'desc' }
-    })
+    const result = await goalsService.getGoals(validatedToken.sub, type || undefined, period || undefined);
 
-    return NextResponse.json(goals)
+    if (!result.success) {
+      return NextResponse.json({ error: result.error }, { status: 500 })
+    }
+
+    return NextResponse.json(result.data)
   } catch (error) {
     console.error('Error fetching goals:', error)
     return NextResponse.json(
@@ -40,13 +37,14 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const session = await auth()
-    
-    if (!session?.user?.id) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      )
+    const token = request.headers.get('authorization')?.split(' ')[1]
+    if (!token) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    const validatedToken = await validateToken(token)
+    if (!validatedToken || typeof validatedToken.sub !== 'string') {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
     const body = await request.json()
@@ -59,30 +57,18 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Deactivate existing similar goals
-    await prisma.goal.updateMany({
-      where: {
-        userId: session.user.id,
-        type: type.toUpperCase() as GoalType,
-        period: period.toUpperCase() as GoalPeriod,
-        isActive: true,
-      },
-      data: {
-        isActive: false
-      }
+    const result = await goalsService.createGoal(validatedToken.sub, {
+      type,
+      target,
+      period,
+      description,
     })
 
-    const newGoal = await prisma.goal.create({
-      data: {
-        userId: session.user.id,
-        type: type.toUpperCase() as GoalType,
-        target: Number(target),
-        period: period.toUpperCase() as GoalPeriod,
-        description,
-      }
-    })
+    if (!result.success) {
+      return NextResponse.json({ error: result.error }, { status: 500 })
+    }
 
-    return NextResponse.json(newGoal, { status: 201 })
+    return NextResponse.json(result.data, { status: 201 })
   } catch (error) {
     console.error('Error creating goal:', error)
     return NextResponse.json(

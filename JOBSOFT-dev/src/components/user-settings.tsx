@@ -1,32 +1,31 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
-import { useSession } from 'next-auth/react'
+import { useAuth } from '@/components/providers/auth-provider'
+import { CognitoService } from '@/lib/cognito'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Switch } from '@/components/ui/switch'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Separator } from '@/components/ui/separator'
-import { Badge } from '@/components/ui/badge'
-import { 
-  User, 
-  Mail, 
-  Globe, 
-  Shield, 
-  Bell, 
-  Eye,
+import { Label } from '@/components/ui/label'
+import { Input } from '@/components/ui/input'
+import { countries } from '@/lib/countries'
+import { currencies } from '@/lib/currencies'
+import {
+  Shield,
+  Bell,
   Save,
   AlertCircle,
   CheckCircle,
   Trash2,
   Key,
-  Settings
+  Globe,
+  User as UserIcon,
+  Mail
 } from 'lucide-react'
-import { countries } from '@/lib/countries'
-import { currencies } from '@/lib/currencies'
+import { useRouter } from 'next/navigation'
+import { CountryInput } from '@/components/ui/country-input'
 
 interface UserProfile {
   id: string
@@ -39,21 +38,17 @@ interface UserProfile {
   createdAt: string
 }
 
-export function UserSettings() {
-  const { data: session, update: updateSession } = useSession()
-  const [loading, setLoading] = useState(true)
+export default function UserSettings() {
+  const { user, loading, signOut } = useAuth()
+  const router = useRouter()
   const [saving, setSaving] = useState(false)
   const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null)
-  
-  const [profile, setProfile] = useState<UserProfile>({
-    id: '',
-    username: '',
-    email: '',
+
+  const [profile, setProfile] = useState<Partial<UserProfile>>({
     firstName: '',
     lastName: '',
     country: 'US',
     isPublic: false,
-    createdAt: ''
   })
 
   const [passwords, setPasswords] = useState({
@@ -71,30 +66,30 @@ export function UserSettings() {
   })
 
   useEffect(() => {
-    if (session?.user) {
-      loadProfile()
+    if (user) {
+      setProfile({
+        firstName: user.firstName || '',
+        lastName: user.lastName || '',
+        country: user.country || 'US',
+        isPublic: false, // Default value since we don't have this in our User type
+      })
+      setPreferences(prev => ({
+        ...prev,
+        publicProfile: false // Default value
+      }))
     }
-  }, [session])
+  }, [user])
 
-  const loadProfile = async () => {
+  const getAuthHeader = async () => {
     try {
-      setLoading(true)
-      const response = await fetch('/api/user/profile')
-      if (response.ok) {
-        const data = await response.json()
-        setProfile(data)
-        setPreferences(prev => ({
-          ...prev,
-          publicProfile: data.isPublic
-        }))
-      } else {
-        setMessage({ type: 'error', text: 'Failed to load profile data.'})
+      const token = await CognitoService.getAccessToken();
+      if (token) {
+        return { 'Authorization': `Bearer ${token}` }
       }
+      throw new Error("Session not found.");
     } catch (error) {
-      console.error('Failed to load profile:', error)
-      setMessage({ type: 'error', text: 'Failed to load profile information' })
-    } finally {
-      setLoading(false)
+      console.error("Error getting session:", error);
+      throw error;
     }
   }
 
@@ -102,38 +97,30 @@ export function UserSettings() {
     try {
       setSaving(true)
       setMessage(null)
+      const authHeader = await getAuthHeader();
       const response = await fetch('/api/user/profile', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
+          ...authHeader,
         },
         body: JSON.stringify({
           firstName: profile.firstName,
           lastName: profile.lastName,
           country: profile.country,
-          isPublic: preferences.publicProfile
+          isPublic: profile.isPublic
         }),
       })
 
       if (response.ok) {
-        const updatedProfile = await response.json()
-        setProfile(updatedProfile)
         setMessage({ type: 'success', text: 'Profile updated successfully!' })
-        
-        await updateSession({
-          ...session,
-          user: {
-            ...session?.user,
-            name: `${updatedProfile.firstName} ${updatedProfile.lastName}`.trim()
-          }
-        })
       } else {
         const error = await response.json()
         setMessage({ type: 'error', text: error.message || 'Failed to update profile' })
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Failed to save profile:', error)
-      setMessage({ type: 'error', text: 'Failed to update profile' })
+      setMessage({ type: 'error', text: error.message || 'Failed to update profile' })
     } finally {
       setSaving(false)
     }
@@ -153,13 +140,15 @@ export function UserSettings() {
     try {
       setSaving(true)
       setMessage(null)
+      const authHeader = await getAuthHeader();
       const response = await fetch('/api/user/change-password', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          ...authHeader,
         },
         body: JSON.stringify({
-          currentPassword: passwords.current,
+          oldPassword: passwords.current,
           newPassword: passwords.new
         }),
       })
@@ -171,9 +160,9 @@ export function UserSettings() {
         const error = await response.json()
         setMessage({ type: 'error', text: error.message || 'Failed to change password' })
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Failed to change password:', error)
-      setMessage({ type: 'error', text: 'Failed to change password' })
+      setMessage({ type: 'error', text: error.message || 'Failed to change password' })
     } finally {
       setSaving(false)
     }
@@ -184,22 +173,34 @@ export function UserSettings() {
       return
     }
 
+    const password = prompt("Please enter your password to confirm account deletion.");
+    if (!password) {
+      return;
+    }
+
     try {
       setSaving(true)
       setMessage(null)
+      const authHeader = await getAuthHeader();
       const response = await fetch('/api/user/delete-account', {
-        method: 'DELETE'
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          ...authHeader,
+        },
+        body: JSON.stringify({ password })
       })
 
       if (response.ok) {
-        window.location.href = '/auth/signin'
+        await signOut()
+        router.push('/auth/signup');
       } else {
         const error = await response.json()
         setMessage({ type: 'error', text: error.message || 'Failed to delete account' })
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Failed to delete account:', error)
-      setMessage({ type: 'error', text: 'Failed to delete account' })
+      setMessage({ type: 'error', text: error.message || 'Failed to delete account' })
     } finally {
       setSaving(false)
     }
@@ -221,290 +222,186 @@ export function UserSettings() {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center space-x-2">
-        <Settings className="h-6 w-6 text-blue-600" />
-        <h2 className="text-2xl font-bold text-gray-900">Account Settings</h2>
-      </div>
-
+    <div className="space-y-8 max-w-4xl mx-auto p-4 md:p-6">
       {message && (
-        <div className={`flex items-center space-x-2 p-4 rounded-lg ${
-          message.type === 'success' 
-            ? 'bg-green-50 text-green-800 border border-green-200' 
-            : 'bg-red-50 text-red-800 border border-red-200'
-        }`}>
-          {message.type === 'success' ? (
-            <CheckCircle className="h-5 w-5" />
-          ) : (
-            <AlertCircle className="h-5 w-5" />
-          )}
+        <div className={`p-4 rounded-md ${message.type === 'success' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'} flex items-center space-x-2`}>
+          {message.type === 'success' ? <CheckCircle className="h-5 w-5" /> : <AlertCircle className="h-5 w-5" />}
           <span>{message.text}</span>
         </div>
       )}
 
-      <Tabs defaultValue="profile" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4">
-          <TabsTrigger value="profile" className="flex items-center gap-2">
-            <User className="h-4 w-4" />
-            Profile
-          </TabsTrigger>
-          <TabsTrigger value="account" className="flex items-center gap-2">
-            <Mail className="h-4 w-4" />
-            Account
-          </TabsTrigger>
-          <TabsTrigger value="security" className="flex items-center gap-2">
-            <Shield className="h-4 w-4" />
-            Security
-          </TabsTrigger>
-          <TabsTrigger value="preferences" className="flex items-center gap-2">
-            <Bell className="h-4 w-4" />
-            Preferences
-          </TabsTrigger>
-        </TabsList>
+      {/* Profile Information */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Profile Information</CardTitle>
+          <CardDescription>Manage your personal details.</CardDescription>
+        </CardHeader>
+        <CardContent className="grid md:grid-cols-2 gap-6">
+          <div className="space-y-2">
+            <Label htmlFor="firstName">First Name</Label>
+            <Input id="firstName" value={profile.firstName || ''} onChange={(e) => setProfile(p => ({ ...p, firstName: e.target.value }))} />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="lastName">Last Name</Label>
+            <Input id="lastName" value={profile.lastName || ''} onChange={(e) => setProfile(p => ({ ...p, lastName: e.target.value }))} />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="username">Username</Label>
+            <div className="flex items-center space-x-2">
+              <UserIcon className="h-5 w-5 text-gray-400" />
+              <Input id="username" value={user?.email || ''} disabled />
+            </div>
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="email">Email</Label>
+            <div className="flex items-center space-x-2">
+              <Mail className="h-5 w-5 text-gray-400" />
+              <Input id="email" value={user?.email || ''} disabled />
+            </div>
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="country">Country</Label>
+            <div className="flex items-center space-x-2">
+              <Globe className="h-5 w-5 text-gray-400" />
+              <Select value={profile.country || 'US'} onValueChange={(value) => setProfile(p => ({ ...p, country: value }))}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select your country" />
+                </SelectTrigger>
+                <SelectContent>
+                  {countries.map(c => <SelectItem key={c.code} value={c.code}>{c.name}</SelectItem>)}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          <div className="flex items-center space-x-2">
+            <Switch id="public-profile" checked={profile.isPublic} onCheckedChange={(checked) => setProfile(p => ({ ...p, isPublic: checked }))} />
+            <Label htmlFor="public-profile">Public Profile</Label>
+          </div>
+          <div className="md:col-span-2 flex items-center space-x-2 pt-4">
+            <Button onClick={saveProfile} disabled={saving}>
+              {saving ? 'Saving...' : 'Save Profile'}
+              <Save className="h-4 w-4 ml-2" />
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+      
+      <Separator />
 
-        <TabsContent value="profile" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Profile Information</CardTitle>
-              <CardDescription>
-                Update your personal information and public profile settings.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="firstName">First Name</Label>
-                  <Input
-                    id="firstName"
-                    value={profile.firstName || ''}
-                    onChange={(e) => setProfile(prev => ({ ...prev, firstName: e.target.value }))}
-                    placeholder="Enter your first name"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="lastName">Last Name</Label>
-                  <Input
-                    id="lastName"
-                    value={profile.lastName || ''}
-                    onChange={(e) => setProfile(prev => ({ ...prev, lastName: e.target.value }))}
-                    placeholder="Enter your last name"
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="country">Country</Label>
-                <Select 
-                  value={profile.country || 'US'} 
-                  onValueChange={(value) => setProfile(prev => ({ ...prev, country: value }))}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select your country" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {countries.map((country) => (
-                      <SelectItem key={country.code} value={country.code}>
-                        {country.flag} {country.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="flex items-center space-x-2">
-                <Switch
-                  id="publicProfile"
-                  checked={preferences.publicProfile}
-                  onCheckedChange={(checked) => setPreferences(prev => ({ ...prev, publicProfile: checked }))}
-                />
-                <Label htmlFor="publicProfile" className="text-sm">
-                  Make my profile public on leaderboards
-                </Label>
-              </div>
-
-              <Button onClick={saveProfile} disabled={saving} className="w-full md:w-auto">
-                <Save className="h-4 w-4 mr-2" />
-                {saving ? 'Saving...' : 'Save Profile'}
+      {/* Security Settings */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Security</CardTitle>
+          <CardDescription>Manage your password and account security.</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <div className="space-y-4">
+            <h4 className="font-semibold">Change Password</h4>
+            <div className="grid md:grid-cols-3 gap-4">
+              <Input type="password" placeholder="Current Password" value={passwords.current} onChange={e => setPasswords(p => ({...p, current: e.target.value}))}/>
+              <Input type="password" placeholder="New Password" value={passwords.new} onChange={e => setPasswords(p => ({...p, new: e.target.value}))}/>
+              <Input type="password" placeholder="Confirm New Password" value={passwords.confirm} onChange={e => setPasswords(p => ({...p, confirm: e.target.value}))}/>
+            </div>
+            <Button onClick={changePassword} disabled={saving}>
+              {saving ? 'Changing...' : 'Change Password'}
+              <Key className="h-4 w-4 ml-2" />
+            </Button>
+          </div>
+          <Separator />
+          <div className="space-y-4">
+            <h4 className="font-semibold">Account Deletion</h4>
+            <div className="flex items-center justify-between p-4 bg-red-50 border border-red-200 rounded-lg">
+              <p className="text-sm text-red-700">Permanently delete your account and all associated data.</p>
+              <Button variant="destructive" onClick={deleteAccount} disabled={saving}>
+                {saving ? 'Deleting...' : 'Delete Account'}
+                <Trash2 className="h-4 w-4 ml-2" />
               </Button>
-            </CardContent>
-          </Card>
-        </TabsContent>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
-        <TabsContent value="account" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Account Information</CardTitle>
-              <CardDescription>
-                View and manage your account details.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label>Username</Label>
-                <div className="flex items-center space-x-2">
-                  <Input value={profile.username} disabled />
-                  <Badge variant="secondary">Cannot be changed</Badge>
-                </div>
-              </div>
+      <Separator />
 
-              <div className="space-y-2">
-                <Label>Email Address</Label>
-                <div className="flex items-center space-x-2">
-                  <Input value={profile.email} disabled />
-                  <Badge variant="secondary">Cannot be changed</Badge>
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label>Member Since</Label>
-                <Input 
-                  value={profile.createdAt ? new Date(profile.createdAt).toLocaleDateString() : ''} 
-                  disabled 
-                />
-              </div>
-
-              <Separator />
-
-              <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-                <h4 className="font-semibold text-red-800 mb-2">Danger Zone</h4>
-                <p className="text-sm text-red-600 mb-4">
-                  Permanently delete your account and all associated data. This action cannot be undone.
-                </p>
-                <Button 
-                  variant="destructive" 
-                  onClick={deleteAccount}
-                  disabled={saving}
-                >
-                  <Trash2 className="h-4 w-4 mr-2" />
-                  Delete Account
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="security" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Change Password</CardTitle>
-              <CardDescription>
-                Update your password to keep your account secure.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="currentPassword">Current Password</Label>
-                <Input
-                  id="currentPassword"
-                  type="password"
-                  value={passwords.current}
-                  onChange={(e) => setPasswords(prev => ({ ...prev, current: e.target.value }))}
-                  placeholder="Enter your current password"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="newPassword">New Password</Label>
-                <Input
-                  id="newPassword"
-                  type="password"
-                  value={passwords.new}
-                  onChange={(e) => setPasswords(prev => ({ ...prev, new: e.target.value }))}
-                  placeholder="Enter your new password"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="confirmPassword">Confirm New Password</Label>
-                <Input
-                  id="confirmPassword"
-                  type="password"
-                  value={passwords.confirm}
-                  onChange={(e) => setPasswords(prev => ({ ...prev, confirm: e.target.value }))}
-                  placeholder="Confirm your new password"
-                />
-              </div>
-
-              <Button 
-                onClick={changePassword} 
-                disabled={saving || !passwords.current || !passwords.new || !passwords.confirm}
-                className="w-full md:w-auto"
-              >
-                <Key className="h-4 w-4 mr-2" />
-                {saving ? 'Changing...' : 'Change Password'}
-              </Button>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="preferences" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Application Preferences</CardTitle>
-              <CardDescription>
-                Customize your Hirera experience.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="space-y-2">
-                <Label htmlFor="defaultCurrency">Default Currency</Label>
-                <Select 
-                  value={preferences.defaultCurrency} 
-                  onValueChange={(value) => setPreferences(prev => ({ ...prev, defaultCurrency: value }))}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select default currency" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {currencies.map((currency) => (
-                      <SelectItem key={currency.code} value={currency.code}>
-                        {currency.symbol} {currency.name} ({currency.code})
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <Separator />
-
-              <div className="space-y-4">
-                <h4 className="font-semibold">Notification Settings</h4>
-                
-                <div className="flex items-center justify-between">
-                  <div className="space-y-0.5">
-                    <Label>Email Notifications</Label>
-                    <p className="text-sm text-gray-500">
-                      Receive email updates about your job applications
-                    </p>
-                  </div>
-                  <Switch
-                    checked={preferences.emailNotifications}
-                    onCheckedChange={(checked) => setPreferences(prev => ({ ...prev, emailNotifications: checked }))}
-                  />
-                </div>
-
-                <div className="flex items-center justify-between">
-                  <div className="space-y-0.5">
-                    <Label>Marketing Emails</Label>
-                    <p className="text-sm text-gray-500">
-                      Receive tips, updates, and promotional content
-                    </p>
-                  </div>
-                  <Switch
-                    checked={preferences.marketingEmails}
-                    onCheckedChange={(checked) => setPreferences(prev => ({ ...prev, marketingEmails: checked }))}
-                  />
-                </div>
-              </div>
-
-              <Button className="w-full md:w-auto" disabled>
-                <Save className="h-4 w-4 mr-2" />
-                Save Preferences (Coming Soon)
-              </Button>
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
+      {/* Preferences */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Preferences</CardTitle>
+          <CardDescription>Customize your experience.</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-6">
+           <div className="flex items-center justify-between">
+            <Label htmlFor="publicProfile" className="flex flex-col space-y-1">
+              <span>Public Profile</span>
+              <span className="font-normal leading-snug text-muted-foreground">
+                Allow other users to see your anonymized progress on leaderboards.
+              </span>
+            </Label>
+            <Switch
+              id="publicProfile"
+              checked={preferences.publicProfile}
+              onCheckedChange={(c) => {
+                setPreferences(p => ({ ...p, publicProfile: c }))
+                setProfile(p => ({...p, isPublic: c}))
+              }}
+            />
+          </div>
+          <Separator />
+          <div className="flex items-center justify-between">
+            <Label htmlFor="emailNotifications" className="flex flex-col space-y-1">
+              <span>Email Notifications</span>
+              <span className="font-normal leading-snug text-muted-foreground">
+                Receive important updates about your applications and goals.
+              </span>
+            </Label>
+            <Switch
+              id="emailNotifications"
+              checked={preferences.emailNotifications}
+              onCheckedChange={(c) => setPreferences(p => ({ ...p, emailNotifications: c }))}
+            />
+          </div>
+          <Separator />
+           <div className="flex items-center justify-between">
+            <Label htmlFor="marketingEmails" className="flex flex-col space-y-1">
+              <span>Marketing Emails</span>
+              <span className="font-normal leading-snug text-muted-foreground">
+                Receive news, feature updates, and special offers from Hirera.
+              </span>
+            </Label>
+            <Switch
+              id="marketingEmails"
+              checked={preferences.marketingEmails}
+              onCheckedChange={(c) => setPreferences(p => ({ ...p, marketingEmails: c }))}
+            />
+          </div>
+          <Separator />
+           <div className="space-y-2">
+            <Label htmlFor="defaultCurrency">Default Currency</Label>
+             <Select value={preferences.defaultCurrency} onValueChange={(v) => setPreferences(p => ({ ...p, defaultCurrency: v }))}>
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue placeholder="Select currency" />
+                </SelectTrigger>
+                <SelectContent>
+                  {currencies.map(c => <SelectItem key={c.code} value={c.code}>{c.name} ({c.symbol})</SelectItem>)}
+                </SelectContent>
+              </Select>
+          </div>
+           <div className="space-y-2">
+            <Label htmlFor="timezone">Timezone</Label>
+             <Select value={preferences.timezone} onValueChange={(v) => setPreferences(p => ({ ...p, timezone: v }))}>
+                <SelectTrigger className="w-[280px]">
+                  <SelectValue placeholder="Select timezone" />
+                </SelectTrigger>
+                <SelectContent>
+                  {/* In a real app, this would be a full list of timezones */}
+                  <SelectItem value="UTC">UTC</SelectItem>
+                  <SelectItem value="PST">Pacific Standard Time</SelectItem>
+                  <SelectItem value="EST">Eastern Standard Time</SelectItem>
+                </SelectContent>
+              </Select>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   )
 } 

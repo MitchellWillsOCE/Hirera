@@ -57,6 +57,14 @@ export function JobCard({
     onStatusUpdate(job.id, newStatus);
   };
 
+  const formatUrl = (url: string) => {
+    if (!url) return '#';
+    if (url.startsWith('http://') || url.startsWith('https://')) {
+      return url;
+    }
+    return `https://${url}`;
+  };
+
   const statusOptions: JobApplication['status'][] = [
     'APPLIED', 'SCREENING', 'INTERVIEW', 'OFFER', 'REJECTED', 'WITHDRAWN', 'EMPLOYED'
   ];
@@ -181,7 +189,7 @@ export function JobCard({
                 Skills & Tags
               </div>
               <div className="flex flex-wrap gap-1">
-                {job.tags.slice(0, 3).map((tag, index) => (
+                {job.tags.slice(0, 3).map((tagObj, index) => (
                   <motion.div
                     key={index}
                     initial={{ opacity: 0, scale: 0.8 }}
@@ -193,7 +201,7 @@ export function JobCard({
                       variant="secondary"
                       className="text-xs bg-blue-50 text-blue-700 dark:bg-blue-900/20 dark:text-blue-300 hover:bg-blue-100 transition-colors duration-200"
                     >
-                      {tag}
+                      {tagObj.tag.name}
                     </Badge>
                   </motion.div>
                 ))}
@@ -207,27 +215,27 @@ export function JobCard({
           )}
 
           {/* Contact Info */}
-          {(job.contactInfo?.name || job.contactInfo?.email) && (
+          {(job.contactName || job.contactEmail) && (
             <div className="text-sm text-slate-600 dark:text-slate-400 bg-slate-50 dark:bg-slate-700/50 p-3 rounded-lg">
               <div className="font-medium mb-2 flex items-center">
                 <Users className="h-4 w-4 mr-1" />
                 Contact
               </div>
-              {job.contactInfo.name && (
+              {job.contactName && (
                 <div className="flex items-center mt-1">
-                  <span className="font-medium">{job.contactInfo.name}</span>
+                  <span className="font-medium">{job.contactName}</span>
                 </div>
               )}
-              {job.contactInfo.email && (
+              {job.contactEmail && (
                 <div className="flex items-center mt-1">
                   <Mail className="h-3 w-3 mr-1" />
-                  <span className="text-xs">{job.contactInfo.email}</span>
+                  <span className="text-xs">{job.contactEmail}</span>
                 </div>
               )}
-              {job.contactInfo.phone && (
+              {job.contactPhone && (
                 <div className="flex items-center mt-1">
                   <Phone className="h-3 w-3 mr-1" />
-                  <span className="text-xs">{job.contactInfo.phone}</span>
+                  <span className="text-xs">{job.contactPhone}</span>
                 </div>
               )}
             </div>
@@ -248,46 +256,46 @@ export function JobCard({
 
           <Separator />
 
-          {/* Actions */}
-          <div className="flex items-center justify-between pt-2">
-            <div className="flex items-center gap-2">
+          <div className="flex justify-between items-center pt-3">
+            <div className="flex gap-2">
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="h-8"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onEdit(job);
+                }}
+              >
+                <Edit className="h-3 w-3 mr-1" /> Edit
+              </Button>
               {job.jobPostUrl && (
-                <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => window.open(job.jobPostUrl, '_blank')}
-                    className="p-2 h-8 w-8 hover:bg-blue-50 hover:text-blue-600 transition-colors duration-200"
-                  >
-                    <ExternalLink className="h-4 w-4" />
-                  </Button>
-                </motion.div>
+                <Button variant="ghost" size="sm" className="h-8" asChild>
+                  <a href={formatUrl(job.jobPostUrl)} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()}>
+                    <ExternalLink className="h-3 w-3 mr-1" /> View Post
+                  </a>
+                </Button>
               )}
             </div>
-            
-            <div className="flex items-center gap-1">
-              <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => onEdit(job)}
-                  className="p-2 h-8 w-8 hover:bg-blue-50 hover:text-blue-600 transition-colors duration-200"
-                >
-                  <Edit className="h-4 w-4" />
+
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon" className="h-8 w-8" onClick={(e) => e.stopPropagation()}>
+                  <Trash2 className="h-4 w-4 text-slate-500" />
                 </Button>
-              </motion.div>
-              
-              <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => onDelete(job.id)}
-                  className="p-2 h-8 w-8 hover:bg-red-50 hover:text-red-600 transition-colors duration-200"
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem 
+                  className="text-red-600"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onDelete(job.id);
+                  }}
                 >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
-              </motion.div>
-            </div>
+                  Confirm Delete
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
 
           {/* Application Date */}

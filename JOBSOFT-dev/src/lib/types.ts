@@ -17,6 +17,47 @@ export const Priority = {
 export type JobStatus = typeof JobStatus[keyof typeof JobStatus];
 export type Priority = typeof Priority[keyof typeof Priority];
 
+export const GoalType = {
+  APPLICATIONS: 'APPLICATIONS',
+  INTERVIEWS: 'INTERVIEWS',
+  OFFERS: 'OFFERS',
+  RESPONSES: 'RESPONSES',
+} as const;
+
+export type GoalType = typeof GoalType[keyof typeof GoalType];
+
+export const GoalPeriod = {
+  WEEKLY: 'WEEKLY',
+  MONTHLY: 'MONTHLY',
+  QUARTERLY: 'QUARTERLY',
+} as const;
+
+export type GoalPeriod = typeof GoalPeriod[keyof typeof GoalPeriod];
+
+export const AchievementType = {
+  GOAL_COMPLETED: 'GOAL_COMPLETED',
+  FIRST_APPLICATION: 'FIRST_APPLICATION',
+  FIRST_INTERVIEW: 'FIRST_INTERVIEW',
+  FIRST_OFFER: 'FIRST_OFFER',
+} as const;
+
+export type AchievementType = typeof AchievementType[keyof typeof AchievementType];
+
+export const NotificationType = {
+  REMINDER: 'REMINDER',
+  STATUS_UPDATE: 'STATUS_UPDATE',
+  GOAL_PROGRESS: 'GOAL_PROGRESS',
+} as const;
+
+export type NotificationType = typeof NotificationType[keyof typeof NotificationType];
+
+export const TemplateType = {
+  RESUME: 'RESUME',
+  COVER_LETTER: 'COVER_LETTER',
+} as const;
+
+export type TemplateType = typeof TemplateType[keyof typeof TemplateType];
+
 export interface JobApplication {
   id: string;
   jobTitle: string;

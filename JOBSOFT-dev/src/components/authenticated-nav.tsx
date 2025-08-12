@@ -1,16 +1,16 @@
 'use client'
 
-import { useSession } from 'next-auth/react'
+import { useAuth } from '@/components/providers/auth-provider'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 
 export default function AuthenticatedNav() {
-  const { data: session } = useSession()
+  const { user, isAuthenticated } = useAuth()
 
-  if (session) {
+  if (isAuthenticated && user) {
     return (
       <>
-        <span className="text-sm text-gray-700">Welcome back, {session.user?.name || session.user?.username}!</span>
+        <span className="text-sm text-gray-700">Welcome back, {user.firstName || user.email}!</span>
         <Link href="/dashboard">
           <Button className="bg-blue-600 hover:bg-blue-700 shadow-md hover:shadow-lg transition-all duration-300">
             Go to Dashboard

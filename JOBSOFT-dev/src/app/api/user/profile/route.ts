@@ -1,33 +1,36 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { auth } from '@/lib/auth'
-import { prisma } from '@/lib/prisma'
+import { userService } from '@/services/user.service'
+import { validateToken } from '@/lib/jwt'
+import { JwtPayload } from 'jsonwebtoken'
+
+interface ValidatedToken extends JwtPayload {
+  email: string;
+  sub: string;
+}
+
+function isTokenValidated(token: string | JwtPayload | null): token is ValidatedToken {
+  return (token as ValidatedToken)?.email !== undefined && (token as ValidatedToken)?.sub !== undefined
+}
 
 export async function GET(request: NextRequest) {
   try {
-    const session = await auth()
-    if (!session?.user?.id) {
+    const token = request.headers.get('authorization')?.split(' ')[1]
+    if (!token) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 })
     }
 
-    const user = await prisma.user.findUnique({
-      where: { id: session.user.id },
-      select: {
-        id: true,
-        username: true,
-        email: true,
-        firstName: true,
-        lastName: true,
-        country: true,
-        isPublic: true,
-        createdAt: true,
-      },
-    })
-
-    if (!user) {
-      return NextResponse.json({ message: "User not found" }, { status: 404 })
+    const validatedToken = await validateToken(token)
+    if (!isTokenValidated(validatedToken)) {
+      return NextResponse.json({ message: "Unauthorized" }, { status: 401 })
     }
 
-    return NextResponse.json(user)
+    const result = await userService.getUserProfile(validatedToken.sub);
+
+    if (!result.success) {
+      return NextResponse.json({ message: result.error }, { status: result.code === 'NOT_FOUND' ? 404 : 500 });
+    }
+
+    return NextResponse.json(result.data)
   } catch (error) {
     console.error("Error fetching user profile:", error)
     return NextResponse.json({ message: "Internal Server Error" }, { status: 500 })
@@ -36,37 +39,27 @@ export async function GET(request: NextRequest) {
 
 export async function PUT(request: NextRequest) {
   try {
-    const session = await auth()
-    if (!session?.user?.id) {
+    const token = request.headers.get('authorization')?.split(' ')[1]
+    if (!token) {
+      return NextResponse.json({ message: "Unauthorized" }, { status: 401 })
+    }
+
+    const validatedToken = await validateToken(token)
+    if (!isTokenValidated(validatedToken)) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 })
     }
 
     const body = await request.json()
-    const { firstName, lastName, country, isPublic } = body
+    
+    const result = await userService.updateUserProfile(validatedToken.sub, validatedToken.email, body);
 
-    const updatedUser = await prisma.user.update({
-      where: { id: session.user.id },
-      data: {
-        firstName,
-        lastName,
-        country,
-        isPublic,
-      },
-      select: {
-        id: true,
-        username: true,
-        email: true,
-        firstName: true,
-        lastName: true,
-        country: true,
-        isPublic: true,
-        createdAt: true,
-      },
-    })
+    if (!result.success) {
+      return NextResponse.json({ message: result.error }, { status: 500 });
+    }
 
-    return NextResponse.json(updatedUser)
-  } catch (error) {
+    return NextResponse.json(result.data)
+  } catch (error: any) {
     console.error("Error updating user profile:", error)
-    return NextResponse.json({ message: "Internal Server Error" }, { status: 500 })
+    return NextResponse.json({ message: error.message || "Internal Server Error" }, { status: 500 })
   }
 } 

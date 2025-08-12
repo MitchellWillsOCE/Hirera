@@ -1,12 +1,25 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { auth } from '@/lib/auth'
-import { prisma } from '@/lib/prisma'
-import bcrypt from 'bcryptjs'
+import { validateToken } from '@/lib/jwt'
+import { changePassword } from '@/lib/cognito'
+import { JwtPayload } from 'jsonwebtoken'
+
+interface ValidatedToken extends JwtPayload {
+  email: string;
+}
+
+function isTokenValidated(token: string | JwtPayload | null): token is ValidatedToken {
+  return (token as ValidatedToken)?.email !== undefined
+}
 
 export async function POST(request: NextRequest) {
   try {
-    const session = await auth()
-    if (!session?.user?.id) {
+    const token = request.headers.get('authorization')?.split(' ')[1]
+    if (!token) {
+      return NextResponse.json({ message: "Unauthorized" }, { status: 401 })
+    }
+
+    const validatedToken = await validateToken(token)
+    if (!isTokenValidated(validatedToken)) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 })
     }
 
@@ -16,28 +29,11 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ message: "Missing required fields" }, { status: 400 })
     }
 
-    const user = await prisma.user.findUnique({ where: { id: session.user.id } })
-
-    if (!user) {
-      return NextResponse.json({ message: "User not found" }, { status: 404 })
-    }
-
-    const isPasswordValid = await bcrypt.compare(oldPassword, user.password)
-
-    if (!isPasswordValid) {
-      return NextResponse.json({ message: "Invalid current password" }, { status: 400 })
-    }
-
-    const hashedPassword = await bcrypt.hash(newPassword, 10)
-
-    await prisma.user.update({
-      where: { id: session.user.id },
-      data: { password: hashedPassword },
-    })
+    await changePassword(validatedToken.email, oldPassword, newPassword)
 
     return NextResponse.json({ message: 'Password updated successfully' })
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error changing password:", error)
-    return NextResponse.json({ message: "Internal Server Error" }, { status: 500 })
+    return NextResponse.json({ message: error.message || "Internal Server Error" }, { status: 500 })
   }
 } 
