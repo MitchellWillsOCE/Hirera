@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-const JOB_SERVICE_URL = process.env.JOB_SERVICE_URL || 'http://localhost:3002';
+const JOB_SERVICE_URL = process.env.INTERNAL_JOB_SERVICE_URL || process.env.JOB_SERVICE_URL || 'http://localhost:3002';
 
 async function forwardRequest(request: NextRequest, path: string = '') {
   const token = request.cookies.get('access_token')?.value;

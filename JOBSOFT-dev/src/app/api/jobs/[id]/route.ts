@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-const JOB_SERVICE_URL = process.env.JOB_SERVICE_URL || 'http://localhost:3002';
+const JOB_SERVICE_URL = process.env.INTERNAL_JOB_SERVICE_URL || process.env.JOB_SERVICE_URL || 'http://jobs:3002';
 
 async function forwardRequest(request: NextRequest, jobId: string) {
   const token = request.cookies.get('access_token')?.value;
@@ -20,7 +20,8 @@ async function forwardRequest(request: NextRequest, jobId: string) {
       body: request.method !== 'GET' ? await request.text() : undefined,
     });
 
-    const data = await response.json();
+    const text = await response.text();
+    const data = text ? JSON.parse(text) : {};
 
     return NextResponse.json(data, { status: response.status });
   } catch (error) {
@@ -36,3 +37,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
 export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
   return forwardRequest(request, params.id);
 } 
+
+export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
+  return forwardRequest(request, params.id);
+}

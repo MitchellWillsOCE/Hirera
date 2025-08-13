@@ -38,7 +38,7 @@ import { Leaderboards } from '@/components/leaderboards'
 import UserSettings from './user-settings'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useRouter } from 'next/navigation'
-import { getJobs } from '@/services/job-applications.service'
+import { getJobs, createJob } from '@/services/job-applications.service'
 
 interface User {
   name?: string | null | undefined;
@@ -146,36 +146,43 @@ export function DashboardAuthenticated({ user }: DashboardAuthenticatedProps) {
   
   const handleJobCreate = async (jobData: any) => {
     try {
-      const response = await fetch('/api/jobs', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(jobData),
-      })
-      if (response.ok) {
-        loadJobs()
-        setShowJobForm(false)
-        return { success: true }
-      } else {
-        const errorData = await response.json();
-        console.error('Failed to create job:', errorData)
-        return { success: false, errors: errorData.errors }
-      }
-    } catch (error) {
+      await createJob(jobData)
+      await loadJobs()
+      setShowJobForm(false)
+      return { success: true }
+    } catch (error: any) {
       console.error('An error occurred during job creation:', error)
-      return { success: false, errors: { form: 'An unexpected error occurred.' } }
+      return { success: false, errors: { form: error?.message || 'An unexpected error occurred.' } }
     }
   }
 
   const handleJobUpdate = async (jobData: any) => {
     if (!editingJob) return { success: false };
     try {
+      // Map UI fields to job-service expected schema
+      const payload = {
+        title: jobData.jobTitle,
+        company: jobData.company,
+        location: jobData.location,
+        url: jobData.jobPostUrl,
+        notes: jobData.notes,
+        salary: jobData.salary,
+        salaryCurrency: jobData.salaryCurrency,
+        contactName: jobData.contactName,
+        contactEmail: jobData.contactEmail,
+        contactPhone: jobData.contactPhone,
+        status: jobData.status,
+        priority: jobData.priority,
+        tags: jobData.tags,
+      }
+
       const response = await fetch(`/api/jobs/${editingJob.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(jobData),
+        body: JSON.stringify(payload),
       })
       if (response.ok) {
-        loadJobs()
+        await loadJobs()
         setShowJobForm(false)
         setEditingJob(null)
         return { success: true }
@@ -315,7 +322,7 @@ export function DashboardAuthenticated({ user }: DashboardAuthenticatedProps) {
                 />
               ) : (
                 <>
-                  <TabsContent value="applications">
+          <TabsContent value="applications">
                     <Card>
                       <CardHeader>
                         <CardTitle>My Job Applications</CardTitle>
@@ -325,15 +332,6 @@ export function DashboardAuthenticated({ user }: DashboardAuthenticatedProps) {
                       </CardHeader>
                       <CardContent>
                         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-6">
-                          <div className="relative w-full sm:w-auto sm:flex-grow">
-                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
-                            <Input 
-                              placeholder="Search by title or company..." 
-                              className="pl-10 w-full"
-                              value={searchTerm}
-                              onChange={(e) => setSearchTerm(e.target.value)}
-                            />
-                          </div>
                           <div className="flex items-center gap-2 w-full sm:w-auto">
                              <Button 
                               variant="outline" 
@@ -369,16 +367,17 @@ export function DashboardAuthenticated({ user }: DashboardAuthenticatedProps) {
                             </Button>
                           </div>
                         </div>
-                        
-                        <FilterPanel
-                          filters={filters}
-                          onFiltersChange={setFilters}
-                          sortOptions={sort}
-                          onSortChange={setSort}
-                          searchQuery={searchTerm}
-                          onSearchChange={setSearchTerm}
-                          jobs={jobs}
-                        />
+                        {isFilterPanelOpen && (
+                          <FilterPanel
+                            filters={filters}
+                            onFiltersChange={setFilters}
+                            sortOptions={sort}
+                            onSortChange={setSort}
+                            searchQuery={searchTerm}
+                            onSearchChange={setSearchTerm}
+                            jobs={jobs}
+                          />
+                        )}
 
                         {isLoading ? (
                           <div className="text-center py-12">

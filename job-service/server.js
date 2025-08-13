@@ -6,7 +6,7 @@ require('dotenv').config();
 const app = express();
 app.set('trust proxy', 1);
 const authenticateToken = require('./auth');
-const { createJob, getJobsByUser, getJobById, updateJob, ensureJobsTableExists } = require('./dynamo');
+const { createJob, getJobsByUser, getJobById, updateJob, deleteJob, ensureJobsTableExists } = require('./dynamo');
 
 // Security headers
 app.use(helmet());
@@ -100,6 +100,19 @@ app.put('/jobs/:jobId', authenticateToken, async (req, res) => {
   } catch (error) {
     console.error('Error in PUT /jobs/:jobId:', error);
     res.status(500).json({ message: 'Failed to update job.' });
+  }
+});
+
+// Delete a job application
+app.delete('/jobs/:jobId', authenticateToken, async (req, res) => {
+  try {
+    const userId = req.user.sub;
+    const { jobId } = req.params;
+    await deleteJob(userId, jobId);
+    res.status(204).send();
+  } catch (error) {
+    console.error('Error in DELETE /jobs/:jobId:', error);
+    res.status(500).json({ message: 'Failed to delete job.' });
   }
 });
 

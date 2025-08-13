@@ -35,8 +35,11 @@ class AuthMicroserviceClient {
   private readonly baseUrl: string;
 
   constructor() {
-    // Use environment variable for auth service URL, defaulting to local development
-    this.baseUrl = process.env.NEXT_PUBLIC_AUTH_SERVICE_URL || 'http://localhost:3001';
+    // Prefer internal URL in container to avoid TLS trust issues with local CA
+    this.baseUrl =
+      process.env.INTERNAL_AUTH_SERVICE_URL ||
+      process.env.NEXT_PUBLIC_AUTH_SERVICE_URL ||
+      'http://localhost:3001';
   }
 
   private async makeRequest<T>(

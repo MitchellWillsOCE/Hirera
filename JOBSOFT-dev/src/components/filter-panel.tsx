@@ -14,6 +14,7 @@ interface FilterPanelProps {
   searchQuery: string;
   onSearchChange: (query: string) => void;
   jobs: JobApplication[];
+  showSearch?: boolean;
 }
 
 export function FilterPanel({
@@ -24,6 +25,7 @@ export function FilterPanel({
   searchQuery,
   onSearchChange,
   jobs,
+  showSearch = true,
 }: FilterPanelProps) {
   const statusOptions: JobApplication['status'][] = [
     'APPLIED', 'SCREENING', 'INTERVIEW', 'OFFER', 'REJECTED', 'WITHDRAWN'
@@ -100,21 +102,23 @@ export function FilterPanel({
       </CardHeader>
       <CardContent className="space-y-4 sm:space-y-6">
         {/* Search */}
-        <div className="space-y-2">
-          <label className="text-sm font-medium flex items-center gap-2">
-            <Search className="h-4 w-4" />
-            Search Applications
-          </label>
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
-            <Input
-              placeholder="Search by job title, company, location, or tags..."
-              value={searchQuery}
-              onChange={(e) => onSearchChange(e.target.value)}
-              className="pl-10 h-10 sm:h-9 text-base sm:text-sm"
-            />
+        {showSearch && (
+          <div className="space-y-2">
+            <label className="text-sm font-medium flex items-center gap-2">
+              <Search className="h-4 w-4" />
+              Search Applications
+            </label>
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
+              <Input
+                placeholder="Search by job title, company, location, or tags..."
+                value={searchQuery}
+                onChange={(e) => onSearchChange(e.target.value)}
+                className="pl-10 h-10 sm:h-9 text-base sm:text-sm"
+              />
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Status Filters */}
         <div className="space-y-3">

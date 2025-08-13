@@ -1,0 +1,55 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Hirera core infra - DynamoDB tables for jobs and usernames
+
+Parameters:
+  EnvironmentName:
+    Type: String
+    Default: dev
+  UsernameTableName:
+    Type: String
+    Default: hirera-usernames
+  JobsTableName:
+    Type: String
+    Default: hirera-jobs
+
+Resources:
+  JobsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Ref JobsTableName
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: userId
+          AttributeType: S
+        - AttributeName: jobId
+          AttributeType: S
+      KeySchema:
+        - AttributeName: userId
+          KeyType: HASH
+        - AttributeName: jobId
+          KeyType: RANGE
+      Tags:
+        - Key: Environment
+          Value: !Ref EnvironmentName
+
+  UsernameTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Ref UsernameTableName
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: username
+          AttributeType: S
+      KeySchema:
+        - AttributeName: username
+          KeyType: HASH
+      Tags:
+        - Key: Environment
+          Value: !Ref EnvironmentName
+
+Outputs:
+  JobsTableName:
+    Value: !Ref JobsTable
+  UsernameTableOutName:
+    Value: !Ref UsernameTable
+

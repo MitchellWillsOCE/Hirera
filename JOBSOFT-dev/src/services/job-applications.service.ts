@@ -266,12 +266,30 @@ export const createJob = async (jobData: {
   tags?: string[];
   priority?: string;
 }) => {
+  // Map UI payload to job-service expected fields
+  const payload = {
+    title: jobData.jobTitle,
+    company: jobData.company,
+    location: jobData.location,
+    url: jobData.jobPostUrl,
+    status: jobData.status,
+    applicationDate: jobData.applicationDate,
+    notes: jobData.notes,
+    salary: jobData.salary,
+    salaryCurrency: jobData.salaryCurrency,
+    contactName: jobData.contactName,
+    contactEmail: jobData.contactEmail,
+    contactPhone: jobData.contactPhone,
+    tags: jobData.tags,
+    priority: jobData.priority,
+  };
+
   const response = await fetch(API_PROXY_URL, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify(jobData),
+    body: JSON.stringify(payload),
   });
 
   if (!response.ok) {

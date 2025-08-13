@@ -1,0 +1,47 @@
+{
+  "family": "hirera-web",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "512",
+  "memory": "1024",
+  "executionRoleArn": "arn:aws:iam::ACCOUNT_ID:role/ecsTaskExecutionRole",
+  "taskRoleArn": "arn:aws:iam::ACCOUNT_ID:role/hirera-web-task-role",
+  "containerDefinitions": [
+    {
+      "name": "web",
+      "image": "ACCOUNT_ID.dkr.ecr.ap-southeast-2.amazonaws.com/hirera-web:latest",
+      "portMappings": [{ "containerPort": 3000, "protocol": "tcp" }],
+      "essential": true,
+      "secrets": [
+        { "name": "NEXT_PUBLIC_AUTH_SERVICE_URL", "valueFrom": "/hirera/prod/web/NEXT_PUBLIC_AUTH_SERVICE_URL" },
+        { "name": "JOB_SERVICE_URL", "valueFrom": "/hirera/prod/web/JOB_SERVICE_URL" },
+        { "name": "NEXT_PUBLIC_COGNITO_USER_POOL_ID", "valueFrom": "/hirera/prod/web/NEXT_PUBLIC_COGNITO_USER_POOL_ID" },
+        { "name": "NEXT_PUBLIC_COGNITO_CLIENT_ID", "valueFrom": "/hirera/prod/web/NEXT_PUBLIC_COGNITO_CLIENT_ID" },
+        { "name": "NEXT_PUBLIC_COGNITO_REGION", "valueFrom": "/hirera/prod/web/NEXT_PUBLIC_COGNITO_REGION" },
+        { "name": "COGNITO_CLIENT_SECRET", "valueFrom": "/hirera/prod/web/COGNITO_CLIENT_SECRET" },
+        { "name": "COOKIE_DOMAIN", "valueFrom": "/hirera/prod/web/COOKIE_DOMAIN" },
+        { "name": "COOKIE_SECURE", "valueFrom": "/hirera/prod/web/COOKIE_SECURE" },
+        { "name": "NODE_ENV", "valueFrom": "/hirera/prod/web/NODE_ENV" }
+      ],
+      "environment": [],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/hirera-web",
+          "awslogs-region": "ap-southeast-2",
+          "awslogs-stream-prefix": "ecs"
+        }
+      },
+      "healthCheck": {
+        "command": ["CMD-SHELL", "curl -f http://localhost:3000/api/health || exit 1"],
+        "interval": 30,
+        "timeout": 5,
+        "retries": 3,
+        "startPeriod": 10
+      }
+    }
+  ]
+}
+
+
+

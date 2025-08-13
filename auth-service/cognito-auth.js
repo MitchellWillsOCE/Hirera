@@ -71,32 +71,27 @@ class CognitoAuthService {
       const userAttributes = [
         { Name: 'email', Value: email }
       ];
+      if (firstName) userAttributes.push({ Name: 'given_name', Value: firstName });
+      if (lastName) userAttributes.push({ Name: 'family_name', Value: lastName });
+      // Do not include custom:country unless your pool defines it. Avoid schema errors in dev.
+      // Do not include preferred_username unless explicitly supported in the pool; skip in local/dev
 
       if (firstName) userAttributes.push({ Name: 'given_name', Value: firstName });
       if (lastName) userAttributes.push({ Name: 'family_name', Value: lastName });
       if (country) userAttributes.push({ Name: 'custom:country', Value: country });
 
-      // Use provided username or generate a unique one
-      let finalUsername;
-      if (username) {
-        finalUsername = username;
-      } else {
-        // Generate a unique username since email aliases are configured
-        const emailPrefix = email.split('@')[0].replace(/[^a-zA-Z0-9]/g, '');
-        const timestamp = Date.now().toString().slice(-6); // Last 6 digits
-        const randomString = Math.random().toString(36).substring(2, 5);
-        finalUsername = `${emailPrefix}_${timestamp}_${randomString}`;
-      }
+      // In pools configured with email as username, Cognito expects Username to be the email
+      const cognitoUsername = email;
 
       const params = {
         ClientId: this.clientId,
-        Username: finalUsername,
+        Username: cognitoUsername,
         Password: password,
         UserAttributes: userAttributes
       };
 
-      // Add secret hash if available (use the final username for hash)
-      const secretHash = this.calculateSecretHash(finalUsername);
+      // Add secret hash if available (use the actual Cognito Username for hash)
+      const secretHash = this.calculateSecretHash(cognitoUsername);
       if (secretHash) {
         params.SecretHash = secretHash;
       }
@@ -104,12 +99,12 @@ class CognitoAuthService {
       const command = new SignUpCommand(params);
       const response = await this.client.send(command);
 
-      console.log(`✅ User signed up successfully: ${email} (username: ${finalUsername})`);
+      console.log(`✅ User signed up successfully: ${email}`);
       return {
         success: true,
         message: 'User registered successfully. Check your email for verification.',
         userSub: response.UserSub,
-        username: finalUsername,
+        username: username || email,
         needsConfirmation: !response.UserConfirmed
       };
 

@@ -10,6 +10,7 @@ export async function GET(req: NextRequest) {
 
   const cognitoDomain = process.env.NEXT_PUBLIC_COGNITO_DOMAIN;
   const clientId = process.env.NEXT_PUBLIC_COGNITO_CLIENT_ID;
+  const clientSecret = process.env.COGNITO_CLIENT_SECRET;
   const redirectUri = process.env.NEXT_PUBLIC_APP_URL + '/api/auth/callback';
 
   if (!cognitoDomain || !clientId) {
@@ -24,6 +25,7 @@ export async function GET(req: NextRequest) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
+        ...(clientSecret ? { Authorization: 'Basic ' + Buffer.from(`${clientId}:${clientSecret}`).toString('base64') } : {}),
       },
       body: new URLSearchParams({
         grant_type: 'authorization_code',

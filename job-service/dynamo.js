@@ -8,7 +8,12 @@ const DYNAMODB_ENDPOINT = process.env.DYNAMODB_ENDPOINT || undefined;
 
 const client = new DynamoDBClient({
   region: REGION,
-  ...(DYNAMODB_ENDPOINT ? { endpoint: DYNAMODB_ENDPOINT } : {}),
+  ...(DYNAMODB_ENDPOINT
+    ? {
+        endpoint: DYNAMODB_ENDPOINT,
+        credentials: { accessKeyId: 'local', secretAccessKey: 'local' },
+      }
+    : {}),
 });
 const docClient = DynamoDBDocumentClient.from(client);
 
@@ -139,12 +144,31 @@ const updateJob = async (userId, jobId, jobData) => {
   }
 };
 
+const deleteJob = async (userId, jobId) => {
+  const params = {
+    TableName: TABLE_NAME,
+    Key: {
+      userId: userId,
+      jobId: jobId,
+    },
+  };
+
+  try {
+    await docClient.send(new DeleteCommand(params));
+    return true;
+  } catch (error) {
+    console.error('Error deleting job from DynamoDB:', error);
+    throw new Error('Could not delete job.');
+  }
+};
+
 
 module.exports = {
   createJob,
   getJobsByUser,
   getJobById,
   updateJob,
+  deleteJob,
   ensureJobsTableExists: async () => {
     if (!DYNAMODB_ENDPOINT) {
       return; // Assume managed DynamoDB in AWS

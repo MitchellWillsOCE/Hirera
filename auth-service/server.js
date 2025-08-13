@@ -3,6 +3,7 @@ const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
 const CognitoAuthService = require('./cognito-auth');
+const usernames = require('./usernames');
 
 // Create instance of the auth service
 const cognitoAuth = new CognitoAuthService();
@@ -98,7 +99,7 @@ app.get('/test-config', (req, res) => {
 // Authentication endpoints
 app.post('/auth/signup', async (req, res) => {
   try {
-    const { email, password, firstName, lastName, country, username } = req.body;
+    const { email, password, firstName, lastName, username } = req.body;
 
     if (!email || !password) {
       return res.status(400).json({
@@ -107,10 +108,32 @@ app.post('/auth/signup', async (req, res) => {
       });
     }
 
-    const result = await cognitoAuth.signUp(email, password, firstName, lastName, country, username);
-    res.json(result);
+    // Reserve username if provided
+    if (username) {
+      const uname = String(username).trim().toLowerCase();
+      const available = await usernames.isUsernameAvailable(uname);
+      if (!available) {
+        return res.status(400).json({ success: false, message: 'Username is already taken' });
+      }
+      await usernames.reserveUsername(uname, email);
+    }
+
+    try {
+      const result = await cognitoAuth.signUp(email, password, firstName, lastName, undefined, undefined);
+      res.json(result);
+    } catch (e) {
+      // rollback reservation on failure
+      if (username) {
+        const uname = String(username).trim().toLowerCase();
+        try { await usernames.releaseUsername(uname); } catch (_) {}
+      }
+      throw e;
+    }
   } catch (error) {
     console.error('Signup error:', error);
+    if (error?.name === 'InvalidParameterException') {
+      return res.status(400).json({ success: false, message: error?.message || 'Invalid parameters' });
+    }
     res.status(500).json({
       success: false,
       message: 'Internal server error'
@@ -129,7 +152,8 @@ app.post('/auth/confirm', async (req, res) => {
       });
     }
 
-    const result = await cognitoAuth.confirmSignUp(email, confirmationCode, username);
+    // Force email as identifier since pool uses email-as-username
+    const result = await cognitoAuth.confirmSignUp(email, confirmationCode, null);
     res.json(result);
   } catch (error) {
     console.error('Confirm signup error:', error);
@@ -169,14 +193,47 @@ app.post('/auth/signin', async (req, res) => {
 
   // Handle standard password-based login
   try {
-    const result = await cognitoAuth.signIn(email, password, username);
+    // Prefer username mapping if a username is provided, regardless of email field
+    let identifier = '';
+    if (username) {
+      const uname = String(username).trim().toLowerCase();
+      const mappedEmail = await usernames.getEmailByUsername(uname);
+      if (!mappedEmail) {
+        return res.status(404).json({ success: false, message: 'User not found.' });
+      }
+      identifier = mappedEmail;
+    } else if (email) {
+      const isEmailFormat = /@/.test(String(email));
+      if (isEmailFormat) {
+        identifier = email;
+      } else {
+        // Treat provided "email" field as a username-like value
+        const uname = String(email).trim().toLowerCase();
+        const mappedEmail = await usernames.getEmailByUsername(uname);
+        if (!mappedEmail) {
+          return res.status(404).json({ success: false, message: 'User not found.' });
+        }
+        identifier = mappedEmail;
+      }
+    }
+
+    const result = await cognitoAuth.signIn(identifier, password, null);
     res.json(result);
   } catch (error) {
     console.error('Signin error:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Internal server error'
-    });
+    // Map common Cognito errors to meaningful HTTP status codes/messages
+    const name = error?.name || '';
+    const message = error?.message || 'Sign in failed';
+    if (name === 'UserNotFoundException') {
+      return res.status(404).json({ success: false, message: 'User not found.' });
+    }
+    if (name === 'NotAuthorizedException') {
+      return res.status(401).json({ success: false, message: 'Incorrect username or password.' });
+    }
+    if (name === 'UserNotConfirmedException') {
+      return res.status(403).json({ success: false, message: 'User is not confirmed. Please verify your email.' });
+    }
+    return res.status(400).json({ success: false, message });
   }
 });
 
@@ -286,12 +343,9 @@ app.post('/auth/check-availability', async (req, res) => {
     if (field === 'email') {
       user = await cognitoAuth.findUserByEmail(value);
     } else if (field === 'username') {
-      // For username, we can leverage the primary lookup.
-      // A simple ListUsers is efficient here.
-      const params = { UserPoolId: cognitoAuth.userPoolId, Filter: `username = "${value}"`, Limit: 1 };
-      const command = new (require('@aws-sdk/client-cognito-identity-provider').ListUsersCommand)(params);
-      const response = await cognitoAuth.client.send(command);
-      user = response.Users && response.Users.length > 0 ? response.Users[0] : null;
+      // Use DynamoDB username registry (normalized)
+      const uname = String(value).trim().toLowerCase();
+      user = (await usernames.getEmailByUsername(uname)) ? { Username: uname } : null;
     } else {
       return res.status(400).json({ available: false, message: 'Invalid field specified.' });
     }
@@ -330,6 +384,7 @@ app.listen(PORT, () => {
   } else {
     console.log(`🔧 Development mode: CORS enabled for localhost`);
   }
+  usernames.ensureUsernameTableExists().catch((e) => console.warn('Username table ensure skipped:', e?.message || e));
 });
 
 module.exports = app; 

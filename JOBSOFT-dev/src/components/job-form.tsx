@@ -28,7 +28,8 @@ import {
 import { JobApplication, JobStatus, Priority } from '@/lib/types'
 import { X, Plus, DollarSign, User, Mail, Phone, Link, MapPin, Building, Briefcase } from 'lucide-react'
 import { currencies, getCurrencySymbol } from '@/lib/currencies'
-import { motion, AnimatePresence } from 'framer-motion'
+import { AnimatePresence } from 'framer-motion'
+import { AnimatedModal } from '@/components/ui/animated-modal'
 import { cn } from '@/lib/utils'
 
 const jobFormSchema = z.object({
@@ -183,29 +184,7 @@ export function JobForm({ open, onClose, onSubmit, editingJob }: JobFormProps) {
   return (
     <AnimatePresence>
       {open && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center">
-          {/* Backdrop */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.15 }}
-            className="absolute inset-0 bg-black/80"
-            onClick={onClose}
-          />
-          
-          {/* Modal Content */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.8 }}
-            transition={{ 
-              duration: 0.2, 
-              ease: "easeOut"
-            }}
-            className="relative w-[95vw] max-w-none sm:max-w-[700px] max-h-[90vh] overflow-y-auto bg-background border rounded-lg shadow-lg p-3 sm:p-6"
-            onClick={(e) => e.stopPropagation()}
-          >
+        <AnimatedModal open={open} onClose={onClose}>
             {/* Close Button */}
             <button
               onClick={onClose}
@@ -533,8 +512,7 @@ export function JobForm({ open, onClose, onSubmit, editingJob }: JobFormProps) {
                   </div>
                 </form>
               </Form>
-          </motion.div>
-        </div>
+        </AnimatedModal>
       )}
     </AnimatePresence>
   )

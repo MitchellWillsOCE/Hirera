@@ -15,6 +15,10 @@ RUN npm run build
 FROM node:18-bullseye AS runner
 WORKDIR /app
 ENV NODE_ENV=production
+ENV INTERNAL_JOB_SERVICE_URL=http://jobs:3002
+ENV HEALTH_AUTH_URL=http://auth:3001
+ENV HEALTH_JOBS_URL=http://jobs:3002
+ENV INTERNAL_AUTH_SERVICE_URL=http://auth:3001
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV TAILWIND_DISABLE_LIGHTNINGCSS=1
 COPY --from=builder /app/.next ./.next
