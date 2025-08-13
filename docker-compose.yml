@@ -1,0 +1,76 @@
+version: "3.9"
+
+services:
+  reverse-proxy:
+    image: caddy:2.8
+    container_name: hirera-proxy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - web
+      - auth
+      - jobs
+
+  web:
+    build:
+      context: ./JOBSOFT-dev
+      dockerfile: Dockerfile
+    container_name: hirera-web
+    env_file:
+      - ./JOBSOFT-dev/.env.docker
+    environment:
+      - NODE_ENV=production
+      - NEXT_PUBLIC_AUTH_SERVICE_URL=https://auth.local.hirera
+      - JOB_SERVICE_URL=https://jobs.local.hirera
+    restart: unless-stopped
+
+  auth:
+    build:
+      context: ./auth-service
+      dockerfile: Dockerfile
+    container_name: hirera-auth
+    env_file:
+      - ./auth-service/.env.docker
+    environment:
+      - NODE_ENV=production
+      - PORT=3001
+    expose:
+      - "3001"
+    restart: unless-stopped
+
+  jobs:
+    build:
+      context: ./job-service
+      dockerfile: Dockerfile
+    container_name: hirera-jobs
+    env_file:
+      - ./job-service/.env.docker
+    environment:
+      - NODE_ENV=production
+      - PORT=3002
+      - DYNAMODB_ENDPOINT=http://dynamodb-local:8000
+      - DYNAMODB_TABLE_NAME=hirera-jobs
+    expose:
+      - "3002"
+    restart: unless-stopped
+    depends_on:
+      - dynamodb-local
+
+  dynamodb-local:
+    image: amazon/dynamodb-local:2.5.2
+    container_name: hirera-dynamodb
+    command: -jar DynamoDBLocal.jar -inMemory -sharedDb
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
+
+volumes:
+  caddy_data:
+  caddy_config:
+

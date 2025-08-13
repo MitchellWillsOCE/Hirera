@@ -1,111 +1,38 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { jobApplicationsService } from '@/services/job-applications.service'
-import { validateToken } from '@/lib/jwt'
+import { NextRequest, NextResponse } from 'next/server';
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+const JOB_SERVICE_URL = process.env.JOB_SERVICE_URL || 'http://localhost:3002';
+
+async function forwardRequest(request: NextRequest, jobId: string) {
+  const token = request.cookies.get('access_token')?.value;
+
+  if (!token) {
+    return NextResponse.json({ message: 'Authentication required' }, { status: 401 });
+  }
+
+  const url = `${JOB_SERVICE_URL}/jobs/${jobId}`;
+  const headers = new Headers(request.headers);
+  headers.set('Authorization', `Bearer ${token}`);
+
   try {
-    const token = request.headers.get('authorization')?.split(' ')[1]
-    if (!token) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
+    const response = await fetch(url, {
+      method: request.method,
+      headers: headers,
+      body: request.method !== 'GET' ? await request.text() : undefined,
+    });
 
-    const validatedToken = await validateToken(token)
-    if (!validatedToken || typeof validatedToken.sub !== 'string') {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
+    const data = await response.json();
 
-    const { id } = params
-    const result = await jobApplicationsService.getById(validatedToken.sub, id)
-
-    if (!result.success) {
-      return NextResponse.json(
-        { error: result.error },
-        { status: result.code === 'NOT_FOUND' ? 404 : 400 }
-      )
-    }
-
-    return NextResponse.json(result.data)
+    return NextResponse.json(data, { status: response.status });
   } catch (error) {
-    console.error('Error fetching job:', error)
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    )
+    console.error(`[Jobs API Proxy] Error forwarding request to ${url}:`, error);
+    return NextResponse.json({ message: 'Error forwarding request to job service' }, { status: 502 });
   }
 }
 
-export async function PUT(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
-  try {
-    const token = request.headers.get('authorization')?.split(' ')[1]
-    if (!token) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
-
-    const validatedToken = await validateToken(token)
-    if (!validatedToken || typeof validatedToken.sub !== 'string') {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
-
-    const { id } = params
-    const body = await request.json()
-    
-    // The service now handles the tag logic internally
-    const result = await jobApplicationsService.update(validatedToken.sub, id, body)
-    
-    if (!result.success) {
-      return NextResponse.json(
-        { error: result.error },
-        { status: result.code === 'NOT_FOUND' ? 404 : 400 }
-      )
-    }
-
-    return NextResponse.json(result.data)
-  } catch (error) {
-    console.error('Error updating job:', error)
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    )
-  }
+export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+  return forwardRequest(request, params.id);
 }
 
-export async function DELETE(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
-  try {
-    const token = request.headers.get('authorization')?.split(' ')[1]
-    if (!token) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
-
-    const validatedToken = await validateToken(token)
-    if (!validatedToken || typeof validatedToken.sub !== 'string') {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
-
-    const { id } = params
-    const result = await jobApplicationsService.delete(validatedToken.sub, id)
-
-    if (!result.success) {
-      return NextResponse.json(
-        { error: result.error },
-        { status: result.code === 'NOT_FOUND' ? 404 : 400 }
-      )
-    }
-
-    return NextResponse.json({ message: 'Job application deleted successfully' })
-  } catch (error) {
-    console.error('Error deleting job:', error)
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    )
-  }
+export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
+  return forwardRequest(request, params.id);
 } 

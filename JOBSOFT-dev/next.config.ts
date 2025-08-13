@@ -22,6 +22,16 @@ const nextConfig: NextConfig = {
     removeConsole: process.env.NODE_ENV === 'production',
   },
 
+  // Dev-time rewrites for microservices
+  async rewrites() {
+    const authUrl = process.env.NEXT_PUBLIC_AUTH_SERVICE_URL || 'http://localhost:3001';
+    const jobUrl = process.env.JOB_SERVICE_URL || 'http://localhost:3002';
+    return [
+      { source: '/_proxy/auth/:path*', destination: `${authUrl}/:path*` },
+      { source: '/_proxy/jobs/:path*', destination: `${jobUrl}/:path*` },
+    ];
+  },
+
   // Image optimization
   images: {
     formats: ['image/webp', 'image/avif'],

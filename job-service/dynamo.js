@@ -1,11 +1,15 @@
-const { DynamoDBClient } = require('@aws-sdk/client-dynamodb');
+const { DynamoDBClient, CreateTableCommand, DescribeTableCommand } = require('@aws-sdk/client-dynamodb');
 const { DynamoDBDocumentClient, PutCommand, GetCommand, QueryCommand, DeleteCommand, UpdateCommand } = require('@aws-sdk/lib-dynamodb');
 const { v4: uuidv4 } = require('uuid');
 
-const REGION = process.env.AWS_REGION;
-const TABLE_NAME = 'hirera-jobs';
+const REGION = process.env.AWS_REGION || 'ap-southeast-2';
+const TABLE_NAME = process.env.DYNAMODB_TABLE_NAME || 'hirera-jobs';
+const DYNAMODB_ENDPOINT = process.env.DYNAMODB_ENDPOINT || undefined;
 
-const client = new DynamoDBClient({ region: REGION });
+const client = new DynamoDBClient({
+  region: REGION,
+  ...(DYNAMODB_ENDPOINT ? { endpoint: DYNAMODB_ENDPOINT } : {}),
+});
 const docClient = DynamoDBDocumentClient.from(client);
 
 const createJob = async (userId, jobData) => {
@@ -141,4 +145,42 @@ module.exports = {
   getJobsByUser,
   getJobById,
   updateJob,
+  ensureJobsTableExists: async () => {
+    if (!DYNAMODB_ENDPOINT) {
+      return; // Assume managed DynamoDB in AWS
+    }
+    try {
+      // Check if table exists
+      await client.send(new DescribeTableCommand({ TableName: TABLE_NAME }));
+      return;
+    } catch (err) {
+      if (err && err.name !== 'ResourceNotFoundException') {
+        console.error('Error describing DynamoDB table:', err);
+        throw err;
+      }
+    }
+
+    console.log(`Creating DynamoDB table '${TABLE_NAME}' on local endpoint...`);
+    try {
+      await client.send(new CreateTableCommand({
+        TableName: TABLE_NAME,
+        AttributeDefinitions: [
+          { AttributeName: 'userId', AttributeType: 'S' },
+          { AttributeName: 'jobId', AttributeType: 'S' },
+        ],
+        KeySchema: [
+          { AttributeName: 'userId', KeyType: 'HASH' },
+          { AttributeName: 'jobId', KeyType: 'RANGE' },
+        ],
+        BillingMode: 'PAY_PER_REQUEST',
+      }));
+      console.log('DynamoDB table created.');
+    } catch (createErr) {
+      // If table already being created, ignore
+      if (createErr && createErr.name !== 'ResourceInUseException') {
+        console.error('Failed to create DynamoDB table:', createErr);
+        throw createErr;
+      }
+    }
+  },
 }; 

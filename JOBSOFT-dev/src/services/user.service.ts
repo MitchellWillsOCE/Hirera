@@ -1,7 +1,7 @@
 import { BaseService, ServiceResponse } from '@/lib/base.service';
 import docClient from '@/lib/dynamodb';
 import { GetCommand, UpdateCommand, DeleteCommand } from '@aws-sdk/lib-dynamodb';
-import { updateUserAttributes } from '@/lib/cognito';
+// import { updateUserAttributes } from '@/lib/cognito';
 
 const TABLE_NAME = 'Hirera'; // This should be in an env var
 
@@ -37,13 +37,7 @@ export class UserService extends BaseService {
     try {
         const { firstName, lastName, country, isPublic } = data;
 
-        // Update in Cognito
-        await updateUserAttributes(email, {
-            'given_name': firstName,
-            'family_name': lastName,
-            'custom:country': country,
-            'custom:isPublic': isPublic.toString(),
-        });
+        // TODO: Update attributes in Cognito via auth-service or Amplify if needed
 
         // Update in DynamoDB
         const updateExpression = 'set #firstName = :firstName, #lastName = :lastName, #country = :country, #isPublic = :isPublic, #updatedAt = :updatedAt';

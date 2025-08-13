@@ -100,6 +100,10 @@ NEXT_PUBLIC_COGNITO_DOMAIN="your-cognito-domain.auth.region.amazoncognito.com"
 # Client Secret (Server-side only)
 COGNITO_CLIENT_SECRET="your-actual-client-secret"
 
+# Microservices URLs (used by Next.js API routes and client libs)
+NEXT_PUBLIC_AUTH_SERVICE_URL="http://localhost:3001"
+JOB_SERVICE_URL="http://localhost:3002"
+
 # AWS Credentials for DynamoDB
 AWS_ACCESS_KEY_ID="your-aws-access-key"
 AWS_SECRET_ACCESS_KEY="your-aws-secret-key"

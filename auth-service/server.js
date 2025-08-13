@@ -1,40 +1,44 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
+const helmet = require('helmet');
 const CognitoAuthService = require('./cognito-auth');
 
 // Create instance of the auth service
 const cognitoAuth = new CognitoAuthService();
 
 const app = express();
+app.set('trust proxy', 1);
 const PORT = process.env.PORT || 3001;
 
-// CORS configuration for production and development
+// Security headers
+app.use(helmet());
+
+// CORS configuration (env-driven)
+// Set CORS_ALLOWED_ORIGINS as a comma-separated list, e.g.
+// "https://web.local.hirera,https://hirera.net,https://www.hirera.net,http://localhost:3000"
+const parsedAllowedOrigins = (process.env.CORS_ALLOWED_ORIGINS || '')
+  .split(',')
+  .map((o) => o.trim())
+  .filter(Boolean);
+
 const corsOptions = {
   origin: function (origin, callback) {
-    // Allow requests from hirera.net domains and localhost for development
-    const allowedOrigins = [
-      'https://hirera.net',
-      'https://www.hirera.net',
-      'https://auth.hirera.net',
-      'http://localhost:3000',
-      'http://localhost:3001',
-      'http://127.0.0.1:3000'
-    ];
-    
-    // Allow requests with no origin (like mobile apps or curl requests)
     if (!origin) return callback(null, true);
-    
-    if (allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      console.warn(`CORS blocked origin: ${origin}`);
-      callback(new Error('Not allowed by CORS'));
-    }
+    // If no env configured, allow localhost defaults for DX
+    const defaultOrigins = [
+      'http://localhost:3000',
+      'http://127.0.0.1:3000',
+      'https://localhost:3000',
+    ];
+    const allowed = parsedAllowedOrigins.length > 0 ? parsedAllowedOrigins : defaultOrigins;
+    if (allowed.includes(origin)) return callback(null, true);
+    console.warn(`CORS blocked origin: ${origin}`);
+    return callback(new Error('Not allowed by CORS'));
   },
-  credentials: true, // Allow cookies to be sent
+  credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
 };
 
 app.use(cors(corsOptions));

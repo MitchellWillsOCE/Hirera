@@ -2,7 +2,7 @@
 
 ## Overview
 
-This guide covers deploying the Hirera job tracking application with the integrated authentication microservice. The system consists of:
+This guide covers deploying the Hirera job tracking application with the microservices. The system consists of:
 
 1. **Authentication Microservice** (Node.js/Express)
 2. **Main Application** (Next.js)
@@ -11,7 +11,8 @@ This guide covers deploying the Hirera job tracking application with the integra
 ## Architecture
 
 ```
-hirera.net (Main App) ←→ auth.hirera.net (Auth Service) ←→ AWS Cognito
+web (Next.js) ←→ auth (Cognito proxy) ←→ AWS Cognito
+               ↘︎ jobs (DynamoDB API) ←→ DynamoDB
 ```
 
 ## Prerequisites
@@ -28,7 +29,7 @@ hirera.net (Main App) ←→ auth.hirera.net (Auth Service) ←→ AWS Cognito
 
 ## Deployment Steps
 
-### 1. Authentication Microservice Deployment
+### 1. Containerized Microservices (Local + Prod)
 
 #### Environment Variables
 Create `.env` file for the auth service:
@@ -51,25 +52,17 @@ NODE_ENV=production
 
 #### Deploy Options
 
-**Option A: AWS ECS/Fargate**
+**Local Docker (with HTTPS via Caddy)**
 ```bash
-# Build Docker image
-docker build -t hirera-auth-service ./auth-service
-docker tag hirera-auth-service:latest your-ecr-repo/hirera-auth-service:latest
-docker push your-ecr-repo/hirera-auth-service:latest
-
-# Deploy via ECS CLI or AWS Console
+cd ..
+docker compose up --build
+# Open: https://web.local.hirera (Caddy provides local TLS)
 ```
 
-**Option B: AWS Lambda + API Gateway**
-```bash
-# Install serverless framework
-npm install -g serverless
-
-# Deploy serverless function
-cd auth-service
-serverless deploy --stage production
-```
+**Production via ECS/Fargate**
+1. Build and push images to ECR for `web`, `auth`, `jobs`
+2. Deploy with ECS services behind an ALB
+3. Configure ACM certificates for your domains
 
 **Option C: VPS/Server**
 ```bash
@@ -90,6 +83,7 @@ Update `.env.production`:
 ```bash
 # Auth Service Configuration
 NEXT_PUBLIC_AUTH_SERVICE_URL=https://auth.hirera.net
+JOB_SERVICE_URL=https://jobs.hirera.net
 
 # AWS Configuration (for other services)
 AWS_REGION=ap-southeast-2
@@ -103,7 +97,7 @@ NEXTAUTH_URL=https://hirera.net
 
 #### Deploy Options
 
-**Option A: Vercel**
+**Option A: Vercel (Frontend only)**
 ```bash
 # Install Vercel CLI
 npm install -g vercel

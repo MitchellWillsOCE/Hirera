@@ -14,13 +14,11 @@ This project is organized as a microservices architecture:
   - Application management
   - Analytics and reporting
 
-### Planned Microservices
+### Microservices
 
-- **auth-service/**: Authentication and authorization service
-- **notification-service/**: Email and in-app notifications
-- **analytics-service/**: Data analytics and insights
-- **document-service/**: Resume and document management
-- **integration-service/**: Third-party integrations (LinkedIn, job boards)
+- **auth-service/**: Authentication and authorization service (Express → AWS Cognito)
+- **job-service/**: Job data API (Express → DynamoDB)
+- Reverse proxy: Caddy for local HTTPS and domain routing
 
 ## Getting Started
 
@@ -29,19 +27,20 @@ This project is organized as a microservices architecture:
 - Node.js 18+
 - npm or yarn
 
-### Running the Main Application
+### Run locally (Docker, with HTTPS)
 
 ```bash
-cd JOBSOFT-dev
-npm install
-npm run dev
+docker compose up --build
 ```
 
-The application will be available at `http://localhost:3000`
+Open `https://web.local.hirera` (Caddy provides certificates). Services:
+- Web: `https://web.local.hirera`
+- Auth: `https://auth.local.hirera`
+- Jobs: `https://jobs.local.hirera`
 
 ### Development
 
-Each microservice can be developed and deployed independently. The main application (JOBSOFT-dev) contains the frontend and core API functionality.
+Each microservice can be developed and deployed independently. The main application (JOBSOFT-dev) contains the frontend and proxies requests to the microservices.
 
 ## Features
 
@@ -57,9 +56,10 @@ Each microservice can be developed and deployed independently. The main applicat
 ## Tech Stack
 
 - **Frontend**: Next.js 15, React 19, TypeScript, Tailwind CSS
-- **Backend**: Next.js API routes, Prisma ORM
-- **Database**: SQLite (development), PostgreSQL (production)
-- **Authentication**: NextAuth.js
+- **APIs**: Express microservices (auth → Cognito, jobs → DynamoDB)
+- **Database**: DynamoDB (local in dev via DynamoDB Local)
+- **Authentication**: AWS Cognito (via `auth-service`)
+- **Reverse Proxy**: Caddy (local HTTPS)
 - **UI Components**: Radix UI, shadcn/ui
 - **Animations**: Framer Motion
 

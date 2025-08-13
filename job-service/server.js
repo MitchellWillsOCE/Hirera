@@ -1,12 +1,41 @@
 const express = require('express');
 const cors = require('cors');
+const helmet = require('helmet');
 require('dotenv').config();
 
 const app = express();
+app.set('trust proxy', 1);
 const authenticateToken = require('./auth');
-const { createJob, getJobsByUser, getJobById, updateJob } = require('./dynamo');
+const { createJob, getJobsByUser, getJobById, updateJob, ensureJobsTableExists } = require('./dynamo');
 
-app.use(cors());
+// Security headers
+app.use(helmet());
+
+// CORS configuration (env-driven)
+const parsedAllowedOrigins = (process.env.CORS_ALLOWED_ORIGINS || '')
+  .split(',')
+  .map((o) => o.trim())
+  .filter(Boolean);
+
+const corsOptions = {
+  origin: function (origin, callback) {
+    if (!origin) return callback(null, true);
+    const defaultOrigins = [
+      'http://localhost:3000',
+      'http://127.0.0.1:3000',
+      'https://localhost:3000',
+    ];
+    const allowed = parsedAllowedOrigins.length > 0 ? parsedAllowedOrigins : defaultOrigins;
+    if (allowed.includes(origin)) return callback(null, true);
+    console.warn(`CORS blocked origin: ${origin}`);
+    return callback(new Error('Not allowed by CORS'));
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+};
+
+app.use(cors(corsOptions));
 app.use(express.json());
 
 // Health check endpoint
@@ -76,6 +105,11 @@ app.put('/jobs/:jobId', authenticateToken, async (req, res) => {
 
 const PORT = process.env.PORT || 3002;
 
-app.listen(PORT, () => {
+app.listen(PORT, async () => {
   console.log(`🚀 Job Service running on port ${PORT}`);
-}); 
+  try {
+    await ensureJobsTableExists();
+  } catch (e) {
+    console.warn('Skipping local table ensure due to error:', e?.message || e);
+  }
+});

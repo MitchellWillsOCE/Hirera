@@ -1,17 +1,14 @@
 import jwt from 'jsonwebtoken';
 import jwkToPem from 'jwk-to-pem';
-import fetch from 'node-fetch';
 
 let pems: { [key: string]: string } = {};
 
 const COGNITO_USER_POOL_ID = process.env.NEXT_PUBLIC_COGNITO_USER_POOL_ID;
 const COGNITO_REGION = process.env.NEXT_PUBLIC_COGNITO_REGION;
 
-if (!COGNITO_USER_POOL_ID || !COGNITO_REGION) {
-  throw new Error("Cognito User Pool ID and Region must be configured in environment variables.");
-}
-
-const jwksUrl = `https://cognito-idp.${COGNITO_REGION}.amazonaws.com/${COGNITO_USER_POOL_ID}/.well-known/jwks.json`;
+const jwksUrl = COGNITO_USER_POOL_ID && COGNITO_REGION
+  ? `https://cognito-idp.${COGNITO_REGION}.amazonaws.com/${COGNITO_USER_POOL_ID}/.well-known/jwks.json`
+  : '';
 
 interface Jwks {
   keys: {
@@ -30,7 +27,10 @@ const getPems = async () => {
   }
 
   try {
-    const response = await fetch(jwksUrl);
+    if (!jwksUrl) {
+      return {};
+    }
+    const response = await fetch(jwksUrl, { cache: 'no-store' } as any);
     const jwks = (await response.json()) as Jwks;
     pems = jwks.keys.reduce((acc: any, key: any) => {
       acc[key.kid] = jwkToPem({ kty: key.kty, n: key.n, e: key.e });
@@ -46,6 +46,10 @@ const getPems = async () => {
 
 export const validateToken = async (token: string) => {
   try {
+    if (!COGNITO_USER_POOL_ID || !COGNITO_REGION) {
+      // In build-time or missing env, skip validation
+      return null;
+    }
     const pems = await getPems();
     if (Object.keys(pems).length === 0) {
       throw new Error("Could not fetch JWKS. Cannot validate token.");

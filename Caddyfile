@@ -1,0 +1,21 @@
+# Local HTTPS with Caddy's internal CA
+web.local.hirera {
+  tls internal
+  reverse_proxy web:3000
+}
+
+auth.local.hirera {
+  tls internal
+  reverse_proxy auth:3001
+}
+
+jobs.local.hirera {
+  tls internal
+  reverse_proxy jobs:3002
+}
+
+# For quick HTTP testing without TLS uncomment below and comment the above blocks
+# :8080 {
+#   reverse_proxy web:3000
+# }
+

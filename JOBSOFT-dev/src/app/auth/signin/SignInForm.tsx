@@ -19,7 +19,6 @@ import {
   AlertCircle 
 } from 'lucide-react'
 import { useAuth } from '@/components/providers/auth-provider'
-import { signIn } from "next-auth/react";
 import { Separator } from "@/components/ui/separator";
 
 export default function SignInForm() {

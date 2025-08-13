@@ -7,13 +7,12 @@
     "dev:3000": "cross-env DATABASE_URL=\"file:./dev.db\" next dev -p 3000",
     "dev:turbo": "next dev --turbopack",
     "build": "next build",
-    "start": "next start -p 3000",
-    "lint": "next lint",
-    "db:seed": "tsx prisma/seed.ts",
-    "db:push": "cross-env DATABASE_URL=\"file:./dev.db\" npx prisma db push"
+    "start": "next start -H 0.0.0.0 -p 3000",
+    "start:prod": "NODE_ENV=production next start -H 0.0.0.0 -p 3000",
+    "lint": "next lint"
   },
   "dependencies": {
-    "@auth/prisma-adapter": "^2.10.0",
+    
     "@aws-sdk/client-cognito-identity-provider": "^3.840.0",
     "@aws-sdk/client-dynamodb": "^3.840.0",
     "@aws-sdk/lib-dynamodb": "^3.840.0",
@@ -32,25 +31,24 @@
     "@radix-ui/react-tooltip": "^1.2.7",
     "@tabler/icons-react": "^3.34.0",
     "@tanstack/react-table": "^8.21.3",
-    "@types/bcryptjs": "^2.4.6",
     "@types/express-session": "^1.18.2",
     "@types/jsonwebtoken": "^9.0.10",
     "aceternity-ui": "^0.2.2",
     "aws-amplify": "^6.15.3",
-    "bcrypt": "^6.0.0",
-    "bcryptjs": "^3.0.2",
+    
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cross-env": "^7.0.3",
     "date-fns": "^4.1.0",
     "dotenv-cli": "^8.0.0",
-    "express-session": "^1.18.1",
+    
     "framer-motion": "^12.23.0",
     "jsonwebtoken": "^9.0.2",
     "lucide-react": "^0.518.0",
     "next": "15.3.4",
-    "next-auth": "^5.0.0-beta.29",
     "openid-client": "^5.7.0",
+    "jwk-to-pem": "^2.0.7",
+    "lightningcss": "^1.25.1",
     "react": "^19.0.0",
     "react-day-picker": "^9.7.0",
     "react-dom": "^19.0.0",
@@ -65,7 +63,6 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",
-    "@types/bcrypt": "^5.0.2",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
@@ -82,4 +79,8 @@
   "author": "",
   "license": "ISC",
   "type": "commonjs"
+,
+  "optionalDependencies": {
+    "lightningcss-linux-x64-gnu": "^1.25.1"
+  }
 }

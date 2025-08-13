@@ -23,58 +23,61 @@ export async function POST(request: NextRequest) {
       });
 
       // Store tokens in secure HTTP-only cookies
+      const cookieDomain = process.env.COOKIE_DOMAIN || undefined;
+      const cookieSecure = (process.env.COOKIE_SECURE || 'true') === 'true';
+
       if (result.tokens.accessToken) {
         response.cookies.set('access_token', result.tokens.accessToken, {
           httpOnly: true,
-          secure: process.env.NODE_ENV === 'production',
+          secure: cookieSecure,
           sameSite: 'lax',
           maxAge: 3600, // 1 hour
           path: '/',
-          domain: process.env.NODE_ENV === 'production' ? '.hirera.net' : undefined
+          domain: cookieDomain
         });
       }
 
       if (result.tokens.refreshToken) {
         response.cookies.set('refresh_token', result.tokens.refreshToken, {
           httpOnly: true,
-          secure: process.env.NODE_ENV === 'production',
+          secure: cookieSecure,
           sameSite: 'lax',
           maxAge: 2592000, // 30 days
           path: '/',
-          domain: process.env.NODE_ENV === 'production' ? '.hirera.net' : undefined
+          domain: cookieDomain
         });
       }
 
       if (result.tokens.idToken) {
         response.cookies.set('id_token', result.tokens.idToken, {
           httpOnly: true,
-          secure: process.env.NODE_ENV === 'production',
+          secure: cookieSecure,
           sameSite: 'lax',
           maxAge: 3600, // 1 hour
           path: '/',
-          domain: process.env.NODE_ENV === 'production' ? '.hirera.net' : undefined
+          domain: cookieDomain
         });
       }
 
       // Store user session
       response.cookies.set('user_session', JSON.stringify(result.user), {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
+        secure: cookieSecure,
         sameSite: 'lax',
         maxAge: 86400, // 24 hours
         path: '/',
-        domain: process.env.NODE_ENV === 'production' ? '.hirera.net' : undefined
+        domain: cookieDomain
       });
 
       // Store username for future auth operations
       if (result.user.username) {
         response.cookies.set('auth_username', result.user.username, {
           httpOnly: true,
-          secure: process.env.NODE_ENV === 'production',
+          secure: cookieSecure,
           sameSite: 'lax',
           maxAge: 2592000, // 30 days
           path: '/',
-          domain: process.env.NODE_ENV === 'production' ? '.hirera.net' : undefined
+          domain: cookieDomain
         });
       }
 
