@@ -1,4 +1,4 @@
-const { DynamoDBClient, CreateTableCommand, DescribeTableCommand } = require('@aws-sdk/client-dynamodb');
+﻿const { DynamoDBClient, CreateTableCommand, DescribeTableCommand } = require('@aws-sdk/client-dynamodb');
 const { DynamoDBDocumentClient, PutCommand, GetCommand, QueryCommand, DeleteCommand, UpdateCommand } = require('@aws-sdk/lib-dynamodb');
 const { v4: uuidv4 } = require('uuid');
 
@@ -16,6 +16,80 @@ const client = new DynamoDBClient({
     : {}),
 });
 const docClient = DynamoDBDocumentClient.from(client);
+
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+async function waitForDynamoEndpoint() {
+  if (!DYNAMODB_ENDPOINT) return;
+  const maxAttempts = 15;
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    try {
+      // If endpoint is reachable, this will either succeed or throw ResourceNotFound (which is fine)
+      await client.send(new DescribeTableCommand({ TableName: TABLE_NAME }));
+      return;
+    } catch (err) {
+      if (err && err.name === 'ResourceNotFoundException') {
+        return; // Endpoint reachable, table just doesn't exist yet
+      }
+      const delayMs = Math.min(500 * attempt, 3000);
+      await sleep(delayMs);
+    }
+  }
+}
+
+async function ensureJobsTableExists() {
+  if (!DYNAMODB_ENDPOINT) {
+    return; // Assume managed DynamoDB in AWS
+  }
+
+  try {
+    await waitForDynamoEndpoint();
+    await client.send(new DescribeTableCommand({ TableName: TABLE_NAME }));
+    return;
+  } catch (err) {
+    if (err && err.name !== 'ResourceNotFoundException') {
+      console.error('Error describing DynamoDB table:', err);
+      throw err;
+    }
+  }
+
+  console.log(`Creating DynamoDB table '${TABLE_NAME}' on local endpoint...`);
+  try {
+    await client.send(new CreateTableCommand({
+      TableName: TABLE_NAME,
+      AttributeDefinitions: [
+        { AttributeName: 'userId', AttributeType: 'S' },
+        { AttributeName: 'jobId', AttributeType: 'S' },
+      ],
+      KeySchema: [
+        { AttributeName: 'userId', KeyType: 'HASH' },
+        { AttributeName: 'jobId', KeyType: 'RANGE' },
+      ],
+      BillingMode: 'PAY_PER_REQUEST',
+    }));
+    console.log('DynamoDB table created.');
+  } catch (createErr) {
+    // If table already being created/exists, ignore
+    if (createErr && createErr.name !== 'ResourceInUseException') {
+      console.error('Failed to create DynamoDB table:', createErr);
+      throw createErr;
+    }
+  }
+}
+
+async function withTableEnsureRetry(fn) {
+  try {
+    return await fn();
+  } catch (err) {
+    if (DYNAMODB_ENDPOINT && err && err.name === 'ResourceNotFoundException') {
+      await ensureJobsTableExists();
+      return await fn();
+    }
+    throw err;
+  }
+}
 
 const createJob = async (userId, jobData) => {
   const jobId = uuidv4();
@@ -46,7 +120,7 @@ const createJob = async (userId, jobData) => {
   };
 
   try {
-    await docClient.send(new PutCommand(params));
+    await withTableEnsureRetry(() => docClient.send(new PutCommand(params)));
     return params.Item;
   } catch (error) {
     console.error('Error creating job in DynamoDB:', error);
@@ -64,7 +138,7 @@ const getJobsByUser = async (userId) => {
   };
 
   try {
-    const data = await docClient.send(new QueryCommand(params));
+    const data = await withTableEnsureRetry(() => docClient.send(new QueryCommand(params)));
     return data.Items;
   } catch (error) {
     console.error('Error getting jobs from DynamoDB:', error);
@@ -82,7 +156,7 @@ const getJobById = async (userId, jobId) => {
   };
 
   try {
-    const data = await docClient.send(new GetCommand(params));
+    const data = await withTableEnsureRetry(() => docClient.send(new GetCommand(params)));
     return data.Item;
   } catch (error) {
     console.error('Error getting job by ID from DynamoDB:', error);
@@ -92,7 +166,7 @@ const getJobById = async (userId, jobId) => {
 
 const updateJob = async (userId, jobId, jobData) => {
   const timestamp = new Date().toISOString();
-  
+
   // Remove keys that are part of the key schema
   const { userId: uid, jobId: jid, ...updateData } = jobData;
 
@@ -127,16 +201,15 @@ const updateJob = async (userId, jobId, jobData) => {
     ExpressionAttributeValues: expressionAttributeValues,
     ReturnValues: 'ALL_NEW',
   };
-  
+
   // If tags are an empty array, we want to remove the attribute
   if (updateData.tags && updateData.tags.length === 0) {
-      params.UpdateExpression += ' REMOVE #tags';
-      expressionAttributeNames['#tags'] = 'tags';
+    params.UpdateExpression += ' REMOVE #tags';
+    expressionAttributeNames['#tags'] = 'tags';
   }
 
-
   try {
-    const data = await docClient.send(new UpdateCommand(params));
+    const data = await withTableEnsureRetry(() => docClient.send(new UpdateCommand(params)));
     return data.Attributes;
   } catch (error) {
     console.error('Error updating job in DynamoDB:', error);
@@ -154,7 +227,7 @@ const deleteJob = async (userId, jobId) => {
   };
 
   try {
-    await docClient.send(new DeleteCommand(params));
+    await withTableEnsureRetry(() => docClient.send(new DeleteCommand(params)));
     return true;
   } catch (error) {
     console.error('Error deleting job from DynamoDB:', error);
@@ -162,49 +235,11 @@ const deleteJob = async (userId, jobId) => {
   }
 };
 
-
 module.exports = {
   createJob,
   getJobsByUser,
   getJobById,
   updateJob,
   deleteJob,
-  ensureJobsTableExists: async () => {
-    if (!DYNAMODB_ENDPOINT) {
-      return; // Assume managed DynamoDB in AWS
-    }
-    try {
-      // Check if table exists
-      await client.send(new DescribeTableCommand({ TableName: TABLE_NAME }));
-      return;
-    } catch (err) {
-      if (err && err.name !== 'ResourceNotFoundException') {
-        console.error('Error describing DynamoDB table:', err);
-        throw err;
-      }
-    }
-
-    console.log(`Creating DynamoDB table '${TABLE_NAME}' on local endpoint...`);
-    try {
-      await client.send(new CreateTableCommand({
-        TableName: TABLE_NAME,
-        AttributeDefinitions: [
-          { AttributeName: 'userId', AttributeType: 'S' },
-          { AttributeName: 'jobId', AttributeType: 'S' },
-        ],
-        KeySchema: [
-          { AttributeName: 'userId', KeyType: 'HASH' },
-          { AttributeName: 'jobId', KeyType: 'RANGE' },
-        ],
-        BillingMode: 'PAY_PER_REQUEST',
-      }));
-      console.log('DynamoDB table created.');
-    } catch (createErr) {
-      // If table already being created, ignore
-      if (createErr && createErr.name !== 'ResourceInUseException') {
-        console.error('Failed to create DynamoDB table:', createErr);
-        throw createErr;
-      }
-    }
-  },
-}; 
+  ensureJobsTableExists,
+};
