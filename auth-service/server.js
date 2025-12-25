@@ -1,12 +1,20 @@
-require('dotenv').config();
+﻿require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
-const CognitoAuthService = require('./cognito-auth');
 const usernames = require('./usernames');
 
-// Create instance of the auth service
-const cognitoAuth = new CognitoAuthService();
+const AUTH_MODE = (process.env.AUTH_MODE || '').toLowerCase() || 'local';
+
+// Create instance of the auth service (local by default; AWS infra may not be available)
+let authService;
+if (AUTH_MODE === 'cognito') {
+  const CognitoAuthService = require('./cognito-auth');
+  authService = new CognitoAuthService();
+} else {
+  const LocalAuthService = require('./local-auth');
+  authService = new LocalAuthService();
+}
 
 const app = express();
 app.set('trust proxy', 1);
@@ -17,7 +25,7 @@ app.use(helmet());
 
 // CORS configuration (env-driven)
 // Set CORS_ALLOWED_ORIGINS as a comma-separated list, e.g.
-// "https://web.local.hirera,https://hirera.net,https://www.hirera.net,http://localhost:3000"
+// "https://web.local.hirera,https://hirera.net,https://www.hirera.net,http://localhost:8080"
 const parsedAllowedOrigins = (process.env.CORS_ALLOWED_ORIGINS || '')
   .split(',')
   .map((o) => o.trim())
@@ -31,6 +39,8 @@ const corsOptions = {
       'http://localhost:3000',
       'http://127.0.0.1:3000',
       'https://localhost:3000',
+      'http://localhost:8080',
+      'http://127.0.0.1:8080',
     ];
     const allowed = parsedAllowedOrigins.length > 0 ? parsedAllowedOrigins : defaultOrigins;
     if (allowed.includes(origin)) return callback(null, true);
@@ -53,31 +63,26 @@ app.get('/health', async (req, res) => {
       status: 'healthy',
       timestamp: new Date().toISOString(),
       dependencies: {
-        cognito: 'pending'
+        auth: 'pending'
       }
     };
 
     if (isDeepCheck) {
-      console.log('🩺 Performing deep health check...');
-      const cognitoStatus = await cognitoAuth.testConnection();
-      if (cognitoStatus.success) {
-        response.dependencies.cognito = 'healthy';
-        console.log('  -> Cognito connection is healthy');
+      const status = await authService.testConnection();
+      if (status.success) {
+        response.dependencies.auth = AUTH_MODE === 'cognito' ? 'cognito:healthy' : 'local:healthy';
         return res.status(200).json(response);
-      } else {
-        response.status = 'unhealthy';
-        response.dependencies.cognito = 'unhealthy';
-        console.error('  -> Cognito connection is unhealthy:', cognitoStatus.error);
-        return res.status(503).json({ ...response, error: cognitoStatus.error });
       }
-    } else {
-      // Basic health check
-      response.dependencies.cognito = 'un-checked';
-      return res.status(200).json(response);
+      response.status = 'unhealthy';
+      response.dependencies.auth = AUTH_MODE === 'cognito' ? 'cognito:unhealthy' : 'local:unhealthy';
+      return res.status(503).json({ ...response, error: status.error });
     }
+
+    response.dependencies.auth = AUTH_MODE === 'cognito' ? 'cognito:un-checked' : 'local:un-checked';
+    return res.status(200).json(response);
   } catch (error) {
-    console.error('❌ Health check failed:', error);
-    res.status(500).json({
+    console.error('âŒ Health check failed:', error);
+    return res.status(500).json({
       status: 'unhealthy',
       message: 'An unexpected error occurred during health check.',
       error: error.message
@@ -88,6 +93,8 @@ app.get('/health', async (req, res) => {
 // Test configuration endpoint
 app.get('/test-config', (req, res) => {
   res.json({
+    authMode: AUTH_MODE,
+    jwtSecret: process.env.JWT_SECRET ? 'Configured' : 'Not configured',
     region: process.env.AWS_REGION || 'Not configured',
     userPoolId: process.env.COGNITO_USER_POOL_ID ? 'Configured' : 'Not configured',
     clientId: process.env.COGNITO_CLIENT_ID ? 'Configured' : 'Not configured',
@@ -99,7 +106,7 @@ app.get('/test-config', (req, res) => {
 // Authentication endpoints
 app.post('/auth/signup', async (req, res) => {
   try {
-    const { email, password, firstName, lastName, username } = req.body;
+    const { email, password, firstName, lastName, country, username } = req.body;
 
     if (!email || !password) {
       return res.status(400).json({
@@ -108,8 +115,8 @@ app.post('/auth/signup', async (req, res) => {
       });
     }
 
-    // Reserve username if provided
-    if (username) {
+    // Cognito mode: reserve username mapping if provided
+    if (AUTH_MODE === 'cognito' && username) {
       const uname = String(username).trim().toLowerCase();
       const available = await usernames.isUsernameAvailable(uname);
       if (!available) {
@@ -119,11 +126,11 @@ app.post('/auth/signup', async (req, res) => {
     }
 
     try {
-      const result = await cognitoAuth.signUp(email, password, firstName, lastName, undefined, undefined);
-      res.json(result);
+      const result = await authService.signUp(email, password, firstName, lastName, country, username);
+      return res.json(result);
     } catch (e) {
-      // rollback reservation on failure
-      if (username) {
+      // Roll back username reservation on failure (Cognito mode only)
+      if (AUTH_MODE === 'cognito' && username) {
         const uname = String(username).trim().toLowerCase();
         try { await usernames.releaseUsername(uname); } catch (_) {}
       }
@@ -134,7 +141,7 @@ app.post('/auth/signup', async (req, res) => {
     if (error?.name === 'InvalidParameterException') {
       return res.status(400).json({ success: false, message: error?.message || 'Invalid parameters' });
     }
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       message: 'Internal server error'
     });
@@ -152,12 +159,14 @@ app.post('/auth/confirm', async (req, res) => {
       });
     }
 
-    // Force email as identifier since pool uses email-as-username
-    const result = await cognitoAuth.confirmSignUp(email, confirmationCode, null);
-    res.json(result);
+    const result = AUTH_MODE === 'cognito'
+      ? await authService.confirmSignUp(email, confirmationCode, null)
+      : await authService.confirmSignUp(email, confirmationCode, username);
+
+    return res.json(result);
   } catch (error) {
     console.error('Confirm signup error:', error);
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       message: 'Internal server error'
     });
@@ -174,14 +183,11 @@ app.post('/auth/signin', async (req, res) => {
   // Handle existence check for federated login
   if (!password) {
     try {
-      const userExists = await cognitoAuth.findUserByEmailOrUsername(email || username);
+      const userExists = await authService.findUserByEmailOrUsername(email || username);
       if (userExists) {
         return res.status(200).json({ success: true, message: 'User exists.', user: userExists });
-      } else {
-        // This case should ideally not be hit if findUserByEmailOrUsername throws,
-        // but as a fallback, we explicitly state the user is not found.
-        return res.status(404).json({ success: false, message: 'User not found.' });
       }
+      return res.status(404).json({ success: false, message: 'User not found.' });
     } catch (error) {
       if (error.name === 'UserNotFoundException') {
         return res.status(404).json({ success: false, message: 'User not found.' });
@@ -191,39 +197,42 @@ app.post('/auth/signin', async (req, res) => {
     }
   }
 
-  // Handle standard password-based login
   try {
-    // Prefer username mapping if a username is provided, regardless of email field
-    let identifier = '';
-    if (username) {
-      const uname = String(username).trim().toLowerCase();
-      const mappedEmail = await usernames.getEmailByUsername(uname);
-      if (!mappedEmail) {
-        return res.status(404).json({ success: false, message: 'User not found.' });
-      }
-      identifier = mappedEmail;
-    } else if (email) {
-      const isEmailFormat = /@/.test(String(email));
-      if (isEmailFormat) {
-        identifier = email;
-      } else {
-        // Treat provided "email" field as a username-like value
-        const uname = String(email).trim().toLowerCase();
+    if (AUTH_MODE === 'cognito') {
+      // Map username -> email if needed
+      let identifier = '';
+      if (username) {
+        const uname = String(username).trim().toLowerCase();
         const mappedEmail = await usernames.getEmailByUsername(uname);
         if (!mappedEmail) {
           return res.status(404).json({ success: false, message: 'User not found.' });
         }
         identifier = mappedEmail;
+      } else if (email) {
+        const isEmailFormat = /@/.test(String(email));
+        if (isEmailFormat) {
+          identifier = email;
+        } else {
+          const uname = String(email).trim().toLowerCase();
+          const mappedEmail = await usernames.getEmailByUsername(uname);
+          if (!mappedEmail) {
+            return res.status(404).json({ success: false, message: 'User not found.' });
+          }
+          identifier = mappedEmail;
+        }
       }
+
+      const result = await authService.signIn(identifier, password, null);
+      return res.json(result);
     }
 
-    const result = await cognitoAuth.signIn(identifier, password, null);
-    res.json(result);
+    const result = await authService.signIn(email, password, username);
+    return res.json(result);
   } catch (error) {
     console.error('Signin error:', error);
-    // Map common Cognito errors to meaningful HTTP status codes/messages
     const name = error?.name || '';
     const message = error?.message || 'Sign in failed';
+
     if (name === 'UserNotFoundException') {
       return res.status(404).json({ success: false, message: 'User not found.' });
     }
@@ -240,7 +249,7 @@ app.post('/auth/signin', async (req, res) => {
 app.get('/auth/user', async (req, res) => {
   try {
     const authHeader = req.headers.authorization;
-    
+
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
       return res.status(401).json({
         success: false,
@@ -249,13 +258,13 @@ app.get('/auth/user', async (req, res) => {
     }
 
     const accessToken = authHeader.substring(7); // Remove 'Bearer ' prefix
-    const userInfo = await cognitoAuth.getUserInfo(accessToken);
-    
+    const userInfo = await authService.getUserInfo(accessToken);
+
     if (userInfo) {
-      res.json({
+      return res.json({
         success: true,
         user: {
-          id: userInfo.username,
+          id: userInfo.id || userInfo.username,
           email: userInfo.email,
           username: userInfo.username,
           firstName: userInfo.firstName,
@@ -263,15 +272,15 @@ app.get('/auth/user', async (req, res) => {
           emailVerified: userInfo.emailVerified
         }
       });
-    } else {
-      res.status(401).json({
-        success: false,
-        message: 'Invalid or expired token'
-      });
     }
+
+    return res.status(401).json({
+      success: false,
+      message: 'Invalid or expired token'
+    });
   } catch (error) {
     console.error('Get user error:', error);
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       message: 'Internal server error'
     });
@@ -289,11 +298,11 @@ app.post('/auth/resend-code', async (req, res) => {
       });
     }
 
-    const result = await cognitoAuth.resendConfirmationCode(email, username);
-    res.json(result);
+    const result = await authService.resendConfirmationCode(email, username);
+    return res.json(result);
   } catch (error) {
     console.error('Resend confirmation code error:', error);
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       message: 'Internal server error'
     });
@@ -303,7 +312,7 @@ app.post('/auth/resend-code', async (req, res) => {
 app.post('/auth/change-password', async (req, res) => {
   try {
     const authHeader = req.headers.authorization;
-    
+
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
       return res.status(401).json({
         success: false,
@@ -321,11 +330,11 @@ app.post('/auth/change-password', async (req, res) => {
     }
 
     const accessToken = authHeader.substring(7); // Remove 'Bearer ' prefix
-    const result = await cognitoAuth.changePassword(accessToken, oldPassword, newPassword);
-    res.json(result);
+    const result = await authService.changePassword(accessToken, oldPassword, newPassword);
+    return res.json(result);
   } catch (error) {
     console.error('Change password error:', error);
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       message: 'Internal server error'
     });
@@ -339,21 +348,26 @@ app.post('/auth/check-availability', async (req, res) => {
       return res.status(400).json({ available: false, message: 'Field and value are required.' });
     }
 
+    if (AUTH_MODE !== 'cognito') {
+      const result = await authService.checkAvailability(field, value);
+      return res.json({ available: !!result.available });
+    }
+
+    // Cognito mode
     let user;
     if (field === 'email') {
-      user = await cognitoAuth.findUserByEmail(value);
+      user = await authService.findUserByEmail(value);
     } else if (field === 'username') {
-      // Use DynamoDB username registry (normalized)
       const uname = String(value).trim().toLowerCase();
       user = (await usernames.getEmailByUsername(uname)) ? { Username: uname } : null;
     } else {
       return res.status(400).json({ available: false, message: 'Invalid field specified.' });
     }
 
-    res.json({ available: !user });
+    return res.json({ available: !user });
   } catch (error) {
     console.error('Availability check error:', error);
-    res.status(500).json({ available: false, message: 'Error checking availability.' });
+    return res.status(500).json({ available: false, message: 'Error checking availability.' });
   }
 });
 
@@ -375,16 +389,13 @@ app.use('*', (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`🚀 Cognito Auth Service running on port ${PORT}`);
-  console.log(`📍 Environment: ${process.env.NODE_ENV || 'development'}`);
-  console.log(`🌐 Health check: http://localhost:${PORT}/health`);
-  
-  if (process.env.NODE_ENV === 'production') {
-    console.log(`🔒 Production mode: CORS enabled for hirera.net domains`);
-  } else {
-    console.log(`🔧 Development mode: CORS enabled for localhost`);
+  console.log(`ðŸš€ Auth Service running on port ${PORT} (mode: ${AUTH_MODE})`);
+  console.log(`ðŸ“ Environment: ${process.env.NODE_ENV || 'development'}`);
+  console.log(`ðŸŒ Health check: http://localhost:${PORT}/health`);
+
+  if (AUTH_MODE === 'cognito') {
+    usernames.ensureUsernameTableExists().catch((e) => console.warn('Username table ensure skipped:', e?.message || e));
   }
-  usernames.ensureUsernameTableExists().catch((e) => console.warn('Username table ensure skipped:', e?.message || e));
 });
 
-module.exports = app; 
+module.exports = app;

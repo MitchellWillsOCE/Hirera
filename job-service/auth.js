@@ -2,14 +2,20 @@ const jwt = require('jsonwebtoken');
 const jwkToPem = require('jwk-to-pem');
 const fetch = require('node-fetch');
 
+const AUTH_MODE = (process.env.AUTH_MODE || '').toLowerCase() || 'local';
+const LOCAL_JWT_SECRET = process.env.JWT_SECRET;
+
 let pems = null;
 const cognitoUserPoolId = process.env.COGNITO_USER_POOL_ID;
 const cognitoRegion = process.env.AWS_REGION;
-const jwksUrl = `https://cognito-idp.${cognitoRegion}.amazonaws.com/${cognitoUserPoolId}/.well-known/jwks.json`;
+const jwksUrl = (cognitoRegion && cognitoUserPoolId)
+  ? `https://cognito-idp.${cognitoRegion}.amazonaws.com/${cognitoUserPoolId}/.well-known/jwks.json`
+  : null;
 
 // Fetch and cache the public keys from Cognito's JWKS endpoint
 const loadPems = async () => {
   try {
+    if (!jwksUrl) throw new Error('JWKS URL is not configured (missing AWS_REGION or COGNITO_USER_POOL_ID)');
     console.log(`🔍 Fetching JWKS from ${jwksUrl}`);
     const response = await fetch(jwksUrl);
     if (!response.ok) {
@@ -28,7 +34,9 @@ const loadPems = async () => {
 };
 
 // Load the PEMs on startup
-loadPems();
+if (AUTH_MODE === 'cognito') {
+  loadPems();
+}
 
 // The authentication middleware function
 const authenticateToken = async (req, res, next) => {
@@ -37,6 +45,20 @@ const authenticateToken = async (req, res, next) => {
 
   if (token == null) {
     return res.status(401).json({ message: 'No token provided' });
+  }
+
+  // Local mode: verify JWT signed by auth-service (no AWS/Cognito dependency)
+  if (AUTH_MODE !== 'cognito') {
+    if (!LOCAL_JWT_SECRET || LOCAL_JWT_SECRET.length < 16) {
+      return res.status(500).json({ message: 'Local auth misconfigured: JWT_SECRET is required.' });
+    }
+    try {
+      const payload = jwt.verify(token, LOCAL_JWT_SECRET, { algorithms: ['HS256'] });
+      req.user = payload;
+      return next();
+    } catch (error) {
+      return res.status(401).json({ message: 'Invalid or expired token' });
+    }
   }
 
   if (!pems) {

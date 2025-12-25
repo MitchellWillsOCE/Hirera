@@ -1,9 +1,10 @@
-import { NextResponse } from 'next/server'
+﻿import { NextResponse } from 'next/server'
 
 export async function GET() {
-  const authUrl = process.env.HEALTH_AUTH_URL || process.env.NEXT_PUBLIC_AUTH_SERVICE_URL || 'http://localhost:3001'
+  // Prefer explicit health override envs; otherwise use internal/service URLs.
+  const authUrl = process.env.HEALTH_AUTH_URL || process.env.AUTH_SERVICE_URL || process.env.NEXT_PUBLIC_AUTH_SERVICE_URL || 'http://localhost:3001'
   const jobsUrl = process.env.HEALTH_JOBS_URL || process.env.JOB_SERVICE_URL || 'http://localhost:3002'
-  const start = Date.now()
+const start = Date.now()
   const results: Record<string, { status: string; responseTime?: number; error?: string }> = {}
   let overall: 'healthy' | 'degraded' | 'unhealthy' = 'healthy'
 

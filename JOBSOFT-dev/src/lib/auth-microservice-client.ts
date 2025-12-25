@@ -1,4 +1,4 @@
-export interface User {
+﻿export interface User {
   id: string;
   email: string;
   username: string;
@@ -35,8 +35,9 @@ class AuthMicroserviceClient {
   private readonly baseUrl: string;
 
   constructor() {
-    // Prefer internal URL in container to avoid TLS trust issues with local CA
+    // Prefer server-side/internal URL when running in Docker (avoid relying on public TLS hostnames inside the container).
     this.baseUrl =
+      process.env.AUTH_SERVICE_URL ||
       process.env.INTERNAL_AUTH_SERVICE_URL ||
       process.env.NEXT_PUBLIC_AUTH_SERVICE_URL ||
       'http://localhost:3001';

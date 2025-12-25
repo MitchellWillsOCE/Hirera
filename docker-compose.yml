@@ -1,4 +1,4 @@
-version: "3.9"
+﻿version: "3.9"
 
 services:
   reverse-proxy:
@@ -8,6 +8,7 @@ services:
     ports:
       - "80:80"
       - "443:443"
+      - "8080:8080"
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile:ro
       - caddy_data:/data
@@ -26,8 +27,13 @@ services:
       - ./JOBSOFT-dev/.env.docker
     environment:
       - NODE_ENV=production
+      - COOKIE_DOMAIN=
+      - COOKIE_SECURE=false
+      # Internal service URLs for server-side fetches from Next.js API routes
+      - AUTH_SERVICE_URL=http://auth:3001
+      - JOB_SERVICE_URL=http://jobs:3002
+      # Public URL (only needed if the browser talks to auth directly)
       - NEXT_PUBLIC_AUTH_SERVICE_URL=https://auth.local.hirera
-      - JOB_SERVICE_URL=https://jobs.local.hirera
     restart: unless-stopped
 
   auth:
@@ -40,6 +46,11 @@ services:
     environment:
       - NODE_ENV=production
       - PORT=3001
+      # Local-first auth mode (no AWS/Cognito dependency)
+      - AUTH_MODE=local
+      - JWT_SECRET=hirera-local-dev-secret-change-me
+      - LOCAL_AUTH_STORE_PATH=/data/users.json
+      # If switching to Cognito mode locally, enable username registry via DynamoDB Local
       - USERNAME_TABLE_NAME=hirera-usernames
       - DYNAMODB_ENDPOINT=http://dynamodb-local:8000
     expose:
@@ -47,6 +58,8 @@ services:
     restart: unless-stopped
     depends_on:
       - dynamodb-local
+    volumes:
+      - auth_data:/data
 
   jobs:
     build:
@@ -60,7 +73,14 @@ services:
       - PORT=3002
       - DYNAMODB_ENDPOINT=http://dynamodb-local:8000
       - DYNAMODB_TABLE_NAME=hirera-jobs
-      - CORS_ALLOWED_ORIGINS=https://web.local.hirera
+      - CORS_ALLOWED_ORIGINS=https://web.local.hirera,http://localhost:8080
+      # Local-first auth mode (no AWS/Cognito dependency)
+      - AUTH_MODE=local
+      - JWT_SECRET=hirera-local-dev-secret-change-me
+      # DynamoDB Local doesn''t validate AWS signatures, but the AWS SDK still requires credentials to be present.
+      - AWS_ACCESS_KEY_ID=local
+      - AWS_SECRET_ACCESS_KEY=local
+      - AWS_EC2_METADATA_DISABLED=true
     expose:
       - "3002"
     restart: unless-stopped
@@ -78,4 +98,4 @@ services:
 volumes:
   caddy_data:
   caddy_config:
-
+  auth_data:
