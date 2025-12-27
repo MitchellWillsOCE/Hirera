@@ -1,18 +1,18 @@
-{
+﻿{
   "name": "hirera-microservices",
   "version": "1.0.0",
   "description": "Hirera Job Tracking Platform - Microservices Architecture",
   "private": true,
   "scripts": {
-    "dev": "echo \"To run the development server, please 'cd JOBSOFT-dev' first, then run 'npm run dev'\"",
-    "build": "echo \"To build the project, please 'cd JOBSOFT-dev' first, then run 'npm run build'\"",
-    "start": "echo \"To start the production server, please 'cd JOBSOFT-dev' first, then run 'npm run start'\"",
-    "lint": "cd JOBSOFT-dev && npm run lint",
-    "install-all": "cd JOBSOFT-dev && npm install",
-    "clean": "cd JOBSOFT-dev && npm run clean"
+    "dev": "echo \"To run the development server, please 'cd web-app' first, then run 'npm run dev'\"",
+    "build": "echo \"To build the project, please 'cd web-app' first, then run 'npm run build'\"",
+    "start": "echo \"To start the production server, please 'cd web-app' first, then run 'npm run start'\"",
+    "lint": "cd web-app && npm run lint",
+    "install-all": "cd web-app && npm install",
+    "clean": "cd web-app && npm run clean"
   },
   "workspaces": [
-    "JOBSOFT-dev"
+    "web-app"
   ],
   "devDependencies": {
     "@testing-library/jest-dom": "^6.6.3",
@@ -48,3 +48,4 @@
     "uuid": "^11.1.0"
   }
 }
+

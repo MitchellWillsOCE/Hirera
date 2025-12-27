@@ -1,75 +1,75 @@
-# Hirera - Job Tracking Platform
+﻿# Hirera
 
-A comprehensive job tracking platform built with modern microservices architecture.
+Hirera is a job-application tracking platform built as a small local-first microservices stack.
 
-## Architecture
+## Repository layout
 
-This project is organized as a microservices architecture:
+- `web-app/`: Next.js web application (UI + Next.js API routes that proxy to the microservices)
+- `auth-service/`: Express authentication service (local file-backed auth for dev; Cognito-compatible interface)
+- `job-service/`: Express job application API (DynamoDB Local in dev)
+- `docker-compose.yml`: Local development stack
+- `Caddyfile`: Reverse proxy configuration (local HTTPS domains + `http://localhost:8080`)
 
-### Core Services
-
-- **JOBSOFT-dev/**: Main application service (Next.js frontend + API)
-  - Job tracking dashboard
-  - User authentication
-  - Application management
-  - Analytics and reporting
-
-### Microservices
-
-- **auth-service/**: Authentication and authorization service (Express → AWS Cognito)
-- **job-service/**: Job data API (Express → DynamoDB)
-- Reverse proxy: Caddy for local HTTPS and domain routing
-
-## Getting Started
+## Quick start (recommended)
 
 ### Prerequisites
 
-- Node.js 18+
-- npm or yarn
+- Docker Desktop
 
-### Run locally (Docker, with HTTPS)
+### Start the stack
 
 ```bash
 docker compose up --build
 ```
 
-Open `https://web.local.hirera` (Caddy provides certificates). Services:
-- Web: `https://web.local.hirera`
-- Auth: `https://auth.local.hirera`
-- Jobs: `https://jobs.local.hirera`
+### Open the app
 
-### Development
+- Web app: `http://localhost:8080`
 
-Each microservice can be developed and deployed independently. The main application (JOBSOFT-dev) contains the frontend and proxies requests to the microservices.
+(You can also use local HTTPS domains via Caddy: `https://web.local.hirera`, `https://auth.local.hirera`, `https://jobs.local.hirera`.)
 
-## Features
+## Local authentication
 
-- ✅ Job application tracking
-- ✅ Analytics dashboard
-- ✅ Document management
-- ✅ Interview scheduling
-- ✅ Goal setting and tracking
-- 🚧 LinkedIn integration
-- 🚧 Email notifications
-- 🚧 Advanced analytics
+This repo defaults to **local auth mode** when running with Docker Compose.
 
-## Tech Stack
+- Users are stored in a Docker volume at `auth-service:/data/users.json`
+- JWTs are signed with `JWT_SECRET` from `docker-compose.yml`
 
-- **Frontend**: Next.js 15, React 19, TypeScript, Tailwind CSS
-- **APIs**: Express microservices (auth → Cognito, jobs → DynamoDB)
-- **Database**: DynamoDB (local in dev via DynamoDB Local)
-- **Authentication**: AWS Cognito (via `auth-service`)
-- **Reverse Proxy**: Caddy (local HTTPS)
-- **UI Components**: Radix UI, shadcn/ui
-- **Animations**: Framer Motion
+### Create an account
 
-## Contributing
+Use the **Sign up** page in the UI.
 
-1. Choose the appropriate microservice directory
-2. Make your changes
-3. Test locally
-4. Submit a pull request
+- Your user will be persisted to the local auth store.
+
+## Services & ports (Docker)
+
+- `reverse-proxy` (Caddy): exposes `http://localhost:8080` and local HTTPS domains
+- `web` (Next.js): internal `:3000`
+- `auth` (Express): internal `:3001`
+- `jobs` (Express): internal `:3002`
+- `dynamodb-local`: `:8000`
+
+## API overview
+
+The browser talks to the Next.js API routes on the web app, which proxy to the microservices.
+
+- Auth
+  - `POST /api/auth/signup`
+  - `POST /api/auth/signin`
+  - `GET /api/auth/user`
+- Job applications
+  - `GET /api/jobs`
+  - `POST /api/jobs`
+  - `PUT /api/jobs/:id`
+  - `DELETE /api/jobs/:id`
+- Leaderboards
+  - `GET /api/leaderboards`
+
+## Development notes
+
+- The `web-app` API routes read `access_token` from cookies and forward it to microservices as a Bearer token.
+- The job service accepts UI payload fields (`jobTitle`, `jobPostUrl`) and maps them to service fields (`title`, `url`).
 
 ## License
 
-MIT License
+MIT

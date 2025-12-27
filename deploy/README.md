@@ -1,4 +1,4 @@
-# Hirera Deployment (AWS ECS/Fargate)
+﻿# Hirera Deployment (AWS ECS/Fargate)
 
 This folder contains ECS task definitions and a checklist to deploy the web, auth, and jobs services per the operations plan.
 
@@ -7,9 +7,9 @@ This folder contains ECS task definitions and a checklist to deploy the web, aut
 - ECR repositories: `hirera-web`, `hirera-auth`, `hirera-jobs`
 - ECS cluster: `hirera-cluster`
 - ALB with host rules:
-  - `hirera.net`, `www.hirera.net` → web target group (3000)
-  - `auth.hirera.net` → auth target group (3001)
-  - `jobs.hirera.net` → jobs target group (3002)
+  - `hirera.net`, `www.hirera.net` â†’ web target group (3000)
+  - `auth.hirera.net` â†’ auth target group (3001)
+  - `jobs.hirera.net` â†’ jobs target group (3002)
 - IAM roles:
   - `ecsTaskExecutionRole`
   - `hirera-web-task-role`, `hirera-auth-task-role`, `hirera-jobs-task-role`
@@ -21,7 +21,7 @@ This folder contains ECS task definitions and a checklist to deploy the web, aut
 aws ecr get-login-password --region ap-southeast-2 | docker login --username AWS --password-stdin ACCOUNT_ID.dkr.ecr.ap-southeast-2.amazonaws.com
 
 # Build
-docker build -t hirera-web:latest Hirera/JOBSOFT-dev
+docker build -t hirera-web:latest Hirera/web-app
 docker build -t hirera-auth:latest Hirera/auth-service
 docker build -t hirera-jobs:latest Hirera/job-service
 
@@ -89,6 +89,7 @@ aws ecs update-service --cluster hirera-cluster --service web-svc --force-new-de
 ## Notes
 - Ensure ACM certs are attached to ALB and DNS A/ALIAS records point to ALB.
 - If behind a proxy and push fails, retry from a stable network or an EC2 builder.
+
 
 
 

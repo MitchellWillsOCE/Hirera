@@ -1,18 +1,18 @@
-# Hirera Microservices: Operations Plan and Handover
+﻿# Hirera Microservices: Operations Plan and Handover
 
 This document summarizes the architecture, endpoints, environment variables, AWS setup, and runbooks for continuing deployment of Hirera at the following domains:
 
 - Web (Next.js): https://hirera.net and https://www.hirera.net
-- Auth API (Express → AWS Cognito): https://auth.hirera.net
-- Jobs API (Express → DynamoDB): https://jobs.hirera.net
+- Auth API (Express â†’ AWS Cognito): https://auth.hirera.net
+- Jobs API (Express â†’ DynamoDB): https://jobs.hirera.net
 
 ## 1) Architecture Overview
 
-- Web app (`JOBSOFT-dev`)
+- Web app (`web-app`)
   - Next.js 15 app serving UI and thin API proxy routes
   - Proxies to microservices using envs:
-    - `NEXT_PUBLIC_AUTH_SERVICE_URL` → Auth API
-    - `JOB_SERVICE_URL` → Jobs API
+    - `NEXT_PUBLIC_AUTH_SERVICE_URL` â†’ Auth API
+    - `JOB_SERVICE_URL` â†’ Jobs API
   - HTTPS/cookies handled behind a load balancer
 
 - Auth microservice (`auth-service`)
@@ -87,7 +87,7 @@ NODE_ENV=production
 CORS_ALLOWED_ORIGINS=https://hirera.net,https://www.hirera.net
 ```
 
-Web app (`JOBSOFT-dev`)
+Web app (`web-app`)
 ```
 NEXT_PUBLIC_AUTH_SERVICE_URL=https://auth.hirera.net
 JOB_SERVICE_URL=https://jobs.hirera.net
@@ -151,20 +151,20 @@ If pushing from a machine behind a proxy causes broken pipe, push from a clean n
   - wildcard: `*.hirera.net` (66eee1a2-ac68-47bc-b769-24a0c6264ba5)
   - apex: `hirera.net` (8424a415-88ae-4815-aa51-eb4e659c6597)
 - Listeners:
-  - 80 → redirect to 443
-  - 443 → host rules
-    - `hirera.net`, `www.hirera.net` → `tg-web`
-    - `auth.hirera.net` → `tg-auth`
-    - `jobs.hirera.net` → `tg-jobs`
+  - 80 â†’ redirect to 443
+  - 443 â†’ host rules
+    - `hirera.net`, `www.hirera.net` â†’ `tg-web`
+    - `auth.hirera.net` â†’ `tg-auth`
+    - `jobs.hirera.net` â†’ `tg-jobs`
 
 ## 7) ECS/Fargate
 
 - Cluster: `hirera-cluster`
 - Task definitions: `web`, `auth`, `jobs` (each with execution role, task role, and envs/secrets from SSM)
 - Services:
-  - `web-svc` → `tg-web`
-  - `auth-svc` → `tg-auth`
-  - `jobs-svc` → `tg-jobs`
+  - `web-svc` â†’ `tg-web`
+  - `auth-svc` â†’ `tg-auth`
+  - `jobs-svc` â†’ `tg-jobs`
 
 IAM task role perms
 - Auth: SSM read on `/hirera/prod/auth/*` + Cognito IDP actions listed in code
@@ -182,7 +182,7 @@ Point ALIAS A records to the ALB for:
 - Local envs:
   - `Hirera/auth-service/.env.docker`
   - `Hirera/job-service/.env.docker`
-  - `Hirera/JOBSOFT-dev/.env.docker`
+  - `Hirera/web-app/.env.docker`
 - Start: `docker compose up --build`
 
 ## 10) Runbooks
@@ -207,4 +207,5 @@ Jobs
 - Create/validate ECS task definitions and services
 - Confirm DNS and ACM validation done
 - Optionally add CI/CD (build + push + deploy) and CloudWatch log groups/alarms
+
 
